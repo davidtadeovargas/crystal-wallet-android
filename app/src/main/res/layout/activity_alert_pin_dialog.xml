@@ -9,23 +9,8 @@
     android:paddingBottom="@dimen/activity_horizontal_margin"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="de.bitshares_munich.smartcoinswallet.TabActivity">
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true">
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/etPin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@drawable/edittext_bg"
-            android:inputType="numberPassword"
-            android:maxLines="1"
-            android:gravity="center_vertical|center_horizontal" />
-    </android.support.design.widget.TextInputLayout>
+    android:paddingTop="@dimen/activity_vertical_margin">
+
     <TextView
         android:id="@+id/warning"
         android:layout_width="match_parent"
