@@ -5,7 +5,7 @@ import android.arch.persistence.room.*;
 /**
  * Created by Henry Varona on 6/9/2017.
  */
-@Entity
+@Entity(tableName = "account_seed")
 public class AccountSeed {
 
     @PrimaryKey(autoGenerate = true)

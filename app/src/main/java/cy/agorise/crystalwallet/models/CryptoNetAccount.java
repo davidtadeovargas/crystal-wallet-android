@@ -6,7 +6,9 @@ import android.arch.persistence.room.*;
  * Created by Henry Varona on 6/9/2017.
  */
 
-@Entity (foreignKeys = @ForeignKey(entity = AccountSeed.class,
+@Entity (tableName = "crypto_net_account",
+        indices = {@Index("id"),@Index("seed_id")},
+        foreignKeys = @ForeignKey(entity = AccountSeed.class,
         parentColumns = "id",
         childColumns = "seed_id"))
 public class CryptoNetAccount {

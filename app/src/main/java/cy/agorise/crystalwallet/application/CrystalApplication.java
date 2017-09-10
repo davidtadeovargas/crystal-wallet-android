@@ -2,7 +2,7 @@ package cy.agorise.crystalwallet.application;
 
 import android.app.Application;
 
-import cy.agorise.crystalwallet.dao.DatabaseConnection;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
 
 /**
  * Created by Henry Varona on 6/9/2017.
@@ -15,6 +15,7 @@ public class CrystalApplication extends Application {
         super.onCreate();
 
         //initialize the database
-        DatabaseConnection.getConnection(this.getApplicationContext());
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(this.getApplicationContext());
+        db.accountSeedDao().getAll();
     }
 }
