@@ -38,9 +38,13 @@ public abstract class CrystalDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE 'account_seed' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "'name' TEXT, 'master_seed' NUMERIC)");
             database.execSQL("CREATE TABLE 'crypto_net_account' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + "'seed_id', "
+                    + "'seed_id' INTEGER, "
                     + "'account_number' INT, 'account_index' INT,"
                     + "FOREIGN_KEY(seed_id) REFERENCES seed(id))");
+            database.execSQL("CREATE TABLE 'crypto_coin_transaction' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "'account_id' INTEGER, "
+                    + "'date' INT, 'is_input' INT,"
+                    + "FOREIGN_KEY(account_id) REFERENCES crypto_net_account(id))");
         }
     };
 }

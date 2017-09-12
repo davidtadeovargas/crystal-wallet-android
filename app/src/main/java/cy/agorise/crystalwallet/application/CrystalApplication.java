@@ -16,6 +16,5 @@ public class CrystalApplication extends Application {
 
         //initialize the database
         CrystalDatabase db = CrystalDatabase.getAppDatabase(this.getApplicationContext());
-        db.accountSeedDao().getAll();
     }
 }
