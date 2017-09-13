@@ -7,23 +7,22 @@ import java.io.Serializable;
  */
 
 public enum CryptoCoin implements Serializable {
-    BITCOIN(CryptoNet.BITCOIN,"BTC",8,6),
-    BITCOIN_TEST(CryptoNet.BITCOIN_TEST,"BTC",8,6),
-    LITECOIN(CryptoNet.LITECOIN,"LTC",8,6),
-    DASH(CryptoNet.DASH,"DASH",8,6),
-    DOGECOIN(CryptoNet.DOGECOIN,"DOGE",8,6),
-    BITSHARES(CryptoNet.BITSHARES,"BTS",8,6);
+    BITCOIN(CryptoNet.BITCOIN,"BTC",8),
+    BITCOIN_TEST(CryptoNet.BITCOIN_TEST,"BTC",8),
+    LITECOIN(CryptoNet.LITECOIN,"LTC",8),
+    DASH(CryptoNet.DASH,"DASH",8),
+    DOGECOIN(CryptoNet.DOGECOIN,"DOGE",8),
+    BITSHARES(CryptoNet.BITSHARES,"BTS",8);
 
     protected CryptoNet cryptoNet;
     protected String label;
     protected int precision;
-    protected int confirmationsNeeded;
 
-    CryptoCoin(CryptoNet cryptoNet, String label, int precision, int confirmationsNeeded){
+    CryptoCoin(CryptoNet cryptoNet, String label, int precision){
         this.cryptoNet = cryptoNet;
         this.label = label;
         this.precision = precision;
-        this.confirmationsNeeded = confirmationsNeeded;
+
     }
 
     public CryptoNet getCryptoNet(){
@@ -35,7 +34,5 @@ public enum CryptoCoin implements Serializable {
     public int getPrecision(){
         return this.precision;
     }
-    public int getConfirmationsNeeded(){
-        return this.confirmationsNeeded;
-    }
+
 }

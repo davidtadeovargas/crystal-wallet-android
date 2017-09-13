@@ -9,26 +9,52 @@ import java.util.Date;
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 
 /**
+ * Represents a generic CryptoNet Transaction
+ *
  * Created by Henry Varona on 11/9/2017.
  */
 @Entity(tableName="crypto_coin_transaction")
 public class CryptoCoinTransaction {
 
+    /**
+     * The account associated with this transaction
+     */
     protected CryptoNetAccount account;
 
+    /**
+     * The id on the database
+     */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="id")
     protected int id;
+    /**
+     * The full date of this transaction
+     */
     @ColumnInfo(name="date")
     protected Date date;
+    /**
+     * If this transaction is input of the account associated with it
+     */
     @ColumnInfo(name="is_input")
     protected boolean isInput;
+    /**
+     * The id of the account assoiciated, this is used for the foreign key definition
+     */
     @ColumnInfo(name="account_id")
     protected int accountId;
+    /**
+     * The amount of asset is moved in this transaction
+     */
     @ColumnInfo(name="amount")
     protected int amount;
+    /**
+     * The crypto Coin associated with this transaction
+     */
     @ColumnInfo(name="crypto_coin")
     protected CryptoCoin coin;
+    /**
+     * If this transaction is confirmed
+     */
     @ColumnInfo(name="is_confirmed")
     protected boolean isConfirmed;
 

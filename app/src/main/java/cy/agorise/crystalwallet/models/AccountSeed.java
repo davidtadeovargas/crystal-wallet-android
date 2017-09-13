@@ -1,20 +1,34 @@
 package cy.agorise.crystalwallet.models;
 
-import android.arch.persistence.room.*;
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
+ * Represents a type of crypto seed for HD wallets
+ *
  * Created by Henry Varona on 6/9/2017.
  */
 @Entity(tableName = "account_seed")
 public class AccountSeed {
 
+    /**
+     * The id on the database
+     */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int mId;
 
+    /**
+     * The name or tag of this seed
+     */
     @ColumnInfo(name = "name")
     private String mName;
 
+    /**
+     * The bytes of the master seed
+     */
     @ColumnInfo(name = "master_seed")
     private String mMasterSeed;
 
