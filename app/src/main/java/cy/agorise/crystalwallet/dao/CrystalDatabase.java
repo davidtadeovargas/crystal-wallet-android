@@ -6,19 +6,21 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
 import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 /**
  * Created by Henry Varona on 4/9/2017.
  */
 
-@Database(entities = {AccountSeed.class/*, CryptoNetAccount.class*/}, version = 2)
+@Database(entities = {AccountSeed.class, CryptoNetAccount.class, CryptoCoinTransaction.class}, version = 2)
 public abstract class CrystalDatabase extends RoomDatabase {
 
     private static CrystalDatabase instance;
 
     public abstract AccountSeedDao accountSeedDao();
     public abstract CryptoNetAccountDao cryptoNetAccountDao();
+    public abstract TransactionDao transactionDao();
 
     public static CrystalDatabase getAppDatabase(Context context) {
         if (instance == null) {
@@ -43,7 +45,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
                     + "FOREIGN_KEY(seed_id) REFERENCES seed(id))");
             database.execSQL("CREATE TABLE 'crypto_coin_transaction' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + "'account_id' INTEGER, "
-                    + "'date' INT, 'is_input' INT,"
+                    + "'date' INT, 'is_input' INT, amount INT, crypto_coin TEXT, is_confirmed INT, "
                     + "FOREIGN_KEY(account_id) REFERENCES crypto_net_account(id))");
         }
     };

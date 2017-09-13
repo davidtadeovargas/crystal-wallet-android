@@ -6,6 +6,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
+import cy.agorise.crystalwallet.enums.CryptoCoin;
+
 /**
  * Created by Henry Varona on 11/9/2017.
  */
@@ -23,6 +25,12 @@ public class CryptoCoinTransaction {
     protected boolean isInput;
     @ColumnInfo(name="account_id")
     protected int accountId;
+    @ColumnInfo(name="amount")
+    protected int amount;
+    @ColumnInfo(name="crypto_coin")
+    protected CryptoCoin coin;
+    @ColumnInfo(name="is_confirmed")
+    protected boolean isConfirmed;
 
     public int getAccountId() {
         return accountId;

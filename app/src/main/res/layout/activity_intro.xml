@@ -14,4 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+    <cy.agorise.crystalwallet.views.TransactionListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </cy.agorise.crystalwallet.views.TransactionListView>
 </RelativeLayout>
