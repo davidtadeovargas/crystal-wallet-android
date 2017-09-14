@@ -1,7 +1,9 @@
 package cy.agorise.crystalwallet.dao;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.*;
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
@@ -10,6 +12,7 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 /**
+ * Manage the Database
  * Created by Henry Varona on 4/9/2017.
  */
 
