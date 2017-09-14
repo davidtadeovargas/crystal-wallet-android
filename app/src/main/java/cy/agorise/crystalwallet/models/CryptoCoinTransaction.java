@@ -48,61 +48,36 @@ public class CryptoCoinTransaction {
     @ColumnInfo(name="amount")
     protected int amount;
 
-    public CryptoCoin getCoin() {
-        return coin;
-    }
-
-    public void setCoin(CryptoCoin coin) {
-        this.coin = coin;
-    }
-
-    public boolean isConfirmed() {
-        return isConfirmed;
-    }
-
-    public void setConfirmed(boolean confirmed) {
-        isConfirmed = confirmed;
-    }
-
     /**
-     * The crypto Coin associated with this transaction
+     * The id of the Crypto Asset to use in the database
      */
-    @ColumnInfo(name="crypto_coin")
-    protected CryptoCoin coin;
+    @ColumnInfo(name="id_asset")
+    private int idAsset;
     /**
      * If this transaction is confirmed
      */
     @ColumnInfo(name="is_confirmed")
     protected boolean isConfirmed;
 
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
+    /**
+     * The address or account the amount of assets comes from
+     */
     @ColumnInfo(name="from")
     protected String from;
+
+    /**
+     * The address or account the amount of assets goes to
+     */
     @ColumnInfo(name="to")
     protected String to;
 
-    public String getFrom() {
-        return from;
-    }
+    public String getFrom() { return from; }
 
-    public void setFrom(String from) {
-        this.from = from;
-    }
+    public void setFrom(String from) { this.from = from; }
 
-    public String getTo() {
-        return to;
-    }
+    public String getTo() { return to; }
 
-    public void setTo(String to) {
-        this.to = to;
-    }
+    public void setTo(String to) { this.to = to; }
 
     public int getAccountId() {
         return accountId;
@@ -143,4 +118,16 @@ public class CryptoCoinTransaction {
     public void setInput(boolean input) {
         this.isInput = input;
     }
+
+    public boolean isConfirmed() { return isConfirmed; }
+
+    public void setConfirmed(boolean confirmed) { isConfirmed = confirmed; }
+
+    public int getAmount() { return amount; }
+
+    public void setAmount(int amount) { this.amount = amount; }
+
+    public int getIdAsset() { return idAsset; }
+
+    public void setIdAsset(int idAsset) { this.idAsset = idAsset; }
 }

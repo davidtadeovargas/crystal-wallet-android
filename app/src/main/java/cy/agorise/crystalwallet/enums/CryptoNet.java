@@ -8,7 +8,6 @@ import java.io.Serializable;
  *
  * Created by Henry Varona on 12/9/2017.
  */
-
 public enum CryptoNet implements Serializable {
     BITCOIN("BITCOIN",6), BITCOIN_TEST("BITCOIN(TEST)",6), LITECOIN("LITECOIN",6), DASH("DASH",6), DOGECOIN("DOGECOIN",6), BITSHARES("BITSHARES",1), STEEM("STEEN",1);
 
