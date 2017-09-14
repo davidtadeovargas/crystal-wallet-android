@@ -1,6 +1,8 @@
 package cy.agorise.crystalwallet;
 
 import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,7 +19,7 @@ public class IntroActivity extends LifecycleActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        transactionListViewModel = new TransactionListViewModel(getApplicationContext());
+        transactionListViewModel = ViewModelProviders.of(this).get(TransactionListViewModel.class);
         transactionListView = this.findViewById(R.id.transaction_list);
 
         transactionListView.init(transactionListViewModel);

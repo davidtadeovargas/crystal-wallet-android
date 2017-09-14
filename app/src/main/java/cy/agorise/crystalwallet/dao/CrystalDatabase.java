@@ -4,9 +4,11 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
+import cy.agorise.crystalwallet.dao.converters.Converters;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
@@ -17,6 +19,7 @@ import cy.agorise.crystalwallet.models.CryptoNetAccount;
  */
 
 @Database(entities = {AccountSeed.class, CryptoNetAccount.class, CryptoCoinTransaction.class}, version = 2)
+@TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
     private static CrystalDatabase instance;

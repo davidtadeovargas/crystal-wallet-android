@@ -47,6 +47,23 @@ public class CryptoCoinTransaction {
      */
     @ColumnInfo(name="amount")
     protected int amount;
+
+    public CryptoCoin getCoin() {
+        return coin;
+    }
+
+    public void setCoin(CryptoCoin coin) {
+        this.coin = coin;
+    }
+
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
+    }
+
     /**
      * The crypto Coin associated with this transaction
      */
