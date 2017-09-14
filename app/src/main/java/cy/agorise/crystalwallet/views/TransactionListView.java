@@ -23,19 +23,17 @@ public class TransactionListView extends RelativeLayout {
     ListView listView;
     ListAdapter listAdapter;
 
-
     TransactionListViewModel transactionListViewModel;
 
     public TransactionListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         rootView = inflate(context, R.layout.transaction_list, this);
         listView = rootView.findViewById(R.id.transactionListView);
+    }
 
-
-
-        transactionListViewModel = ViewModelProviders.of(this).get(TransactionListViewModel.class);
-
-        listAdapter = new TransactionListAdapter(context, getResources(), transactionDao.getAll());
+    public void init(TransactionListViewModel transactionListViewModel){
+        this.transactionListViewModel = transactionListViewModel;
+        listAdapter = new TransactionListAdapter(this.getContext(), transactionListViewModel.getTransactionList());
         listView.setAdapter(listAdapter);
     }
 
