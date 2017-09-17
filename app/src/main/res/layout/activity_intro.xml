@@ -10,11 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="cy.agorise.crystalwallet.IntroActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
     <cy.agorise.crystalwallet.views.TransactionListView
         android:id="@+id/transaction_list"
         android:layout_width="match_parent"

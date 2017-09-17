@@ -41,7 +41,7 @@
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:gravity="center"
-            android:inputType="number"
+            android:inputType="text"
             android:text="amount" />
     </RelativeLayout>
 </LinearLayout>

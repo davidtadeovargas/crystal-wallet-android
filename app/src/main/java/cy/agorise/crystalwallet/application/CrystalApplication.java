@@ -2,6 +2,8 @@ package cy.agorise.crystalwallet.application;
 
 import android.app.Application;
 
+import com.idescout.sql.SqlScoutServer;
+
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 
 /**
@@ -16,5 +18,6 @@ public class CrystalApplication extends Application {
 
         //initialize the database
         CrystalDatabase db = CrystalDatabase.getAppDatabase(this.getApplicationContext());
+        SqlScoutServer.create(this, getPackageName());
     }
 }

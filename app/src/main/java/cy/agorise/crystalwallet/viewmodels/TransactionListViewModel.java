@@ -1,5 +1,7 @@
 package cy.agorise.crystalwallet.viewmodels;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
@@ -14,13 +16,14 @@ import cy.agorise.crystalwallet.views.TransactionListView;
  * Created by Henry Varona on 12/9/2017.
  */
 
-public class TransactionListViewModel extends ViewModel {
+public class TransactionListViewModel extends AndroidViewModel {
 
     private LiveData<List<CryptoCoinTransaction>> transactionList;
     private CrystalDatabase db;
 
-    public TransactionListViewModel(Context context){
-        this.db = CrystalDatabase.getAppDatabase(context);
+    public TransactionListViewModel(Application application) {
+        super(application);
+        this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
         transactionList = this.db.transactionDao().getAll();
     }
 

@@ -25,9 +25,14 @@ public class TransactionListAdapter extends ArrayAdapter<CryptoCoinTransaction> 
 
     //List<CryptoCoinTransaction> items;
 
-    public TransactionListAdapter(Context context, LiveData<List<CryptoCoinTransaction>> items) {
-        super(context, 0, items.getValue());
+    public TransactionListAdapter(Context context, List<CryptoCoinTransaction> items) {
+        super(context, 0, items);
+    }
 
+    public void updateData(List<CryptoCoinTransaction> items){
+        this.clear();
+        this.addAll(items);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -44,7 +49,7 @@ public class TransactionListAdapter extends ArrayAdapter<CryptoCoinTransaction> 
 
         tvFrom.setText(transaction.getFrom());
         tvTo.setText(transaction.getTo());
-        tvAmount.setText(transaction.getAmount());
+        tvAmount.setText(""+transaction.getAmount());
 
         return convertView;
     }

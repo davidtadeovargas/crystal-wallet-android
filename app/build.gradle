@@ -39,4 +39,6 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0-alpha9"
     compile 'android.arch.persistence.room:runtime:1.0.0-alpha9';
     apt "android.arch.persistence.room:compiler:1.0.0-alpha9";
+
+    compile 'com.idescout.sql:sqlscout-server:2.0';
 }
