@@ -1,6 +1,9 @@
 package cy.agorise.crystalwallet.views;
 
+import android.arch.paging.PagedList;
+import android.arch.paging.PagedListAdapter;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ListView;
@@ -19,7 +22,7 @@ import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 public class TransactionListView extends RelativeLayout {
 
     View rootView;
-    ListView listView;
+    RecyclerView listView;
     TransactionListAdapter listAdapter;
 
     TransactionListViewModel transactionListViewModel;
@@ -30,12 +33,12 @@ public class TransactionListView extends RelativeLayout {
         this.listView = rootView.findViewById(R.id.transactionListView);
     }
 
-    public void setData(List<CryptoCoinTransaction> data){
+    public void setData(PagedList<CryptoCoinTransaction> data){
         if (this.listAdapter == null) {
-            this.listAdapter = new TransactionListAdapter(this.getContext(), data);
+            this.listAdapter = new TransactionListAdapter();
             this.listView.setAdapter(this.listAdapter);
         } else {
-            this.listAdapter.updateData(data);
+            this.listAdapter.setList(data);
         }
     }
 

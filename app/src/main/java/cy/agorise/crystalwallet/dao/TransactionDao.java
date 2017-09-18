@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.dao;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.LivePagedListProvider;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -18,6 +19,9 @@ public interface TransactionDao {
 
     @Query("SELECT * FROM crypto_coin_transaction")
     LiveData<List<CryptoCoinTransaction>> getAll();
+
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY date ASC")
+    LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByDate();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertTransaction(CryptoCoinTransaction... transactions);

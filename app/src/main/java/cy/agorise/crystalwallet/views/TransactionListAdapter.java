@@ -2,9 +2,11 @@ package cy.agorise.crystalwallet.views;
 
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,36 +23,24 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
  * Created by Henry Varona on 11/9/2017.
  */
 
-public class TransactionListAdapter extends ArrayAdapter<CryptoCoinTransaction> {
+public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransaction, TransactionViewHolder> {
 
-    //List<CryptoCoinTransaction> items;
-
-    public TransactionListAdapter(Context context, List<CryptoCoinTransaction> items) {
-        super(context, 0, items);
-    }
-
-    public void updateData(List<CryptoCoinTransaction> items){
-        this.clear();
-        this.addAll(items);
-        this.notifyDataSetChanged();
+    public TransactionListAdapter() {
+        super(CryptoCoinTransaction.DIFF_CALLBACK);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(TransactionViewHolder holder, int position) {
         CryptoCoinTransaction transaction = getItem(position);
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.transaction_list_item, parent, false);
+        if (transaction != null) {
+            holder.bindTo(transaction);
+        } else {
+            holder.clear();
         }
-
-        TextView tvFrom = (TextView) convertView.findViewById(R.id.fromText);
-        TextView tvTo = (TextView) convertView.findViewById(R.id.toText);
-        TextView tvAmount = (TextView) convertView.findViewById(R.id.amountText);
-
-        tvFrom.setText(transaction.getFrom());
-        tvTo.setText(transaction.getTo());
-        tvAmount.setText(""+transaction.getAmount());
-
-        return convertView;
     }
 }

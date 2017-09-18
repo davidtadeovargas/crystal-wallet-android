@@ -3,6 +3,8 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.DiffCallback;
 
 import java.util.Date;
 
@@ -130,4 +132,37 @@ public class CryptoCoinTransaction {
     public int getIdAsset() { return idAsset; }
 
     public void setIdAsset(int idAsset) { this.idAsset = idAsset; }
+
+
+    public static final DiffCallback<CryptoCoinTransaction> DIFF_CALLBACK = new DiffCallback<CryptoCoinTransaction>() {
+        @Override
+        public boolean areItemsTheSame(
+                @NonNull CryptoCoinTransaction oldTransaction, @NonNull CryptoCoinTransaction newTransaction) {
+            return oldTransaction.getId() == newTransaction.getId();
+        }
+        @Override
+        public boolean areContentsTheSame(
+                @NonNull CryptoCoinTransaction oldTransaction, @NonNull CryptoCoinTransaction newTransaction) {
+            return oldTransaction.equals(newTransaction);
+        }
+    };
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CryptoCoinTransaction that = (CryptoCoinTransaction) o;
+
+        if (isInput != that.isInput) return false;
+        if (accountId != that.accountId) return false;
+        if (amount != that.amount) return false;
+        if (idAsset != that.idAsset) return false;
+        if (isConfirmed != that.isConfirmed) return false;
+        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (from != null ? !from.equals(that.from) : that.from != null) return false;
+        return to != null ? to.equals(that.to) : that.to == null;
+
+    }
 }
