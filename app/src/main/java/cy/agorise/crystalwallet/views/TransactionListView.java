@@ -5,6 +5,7 @@ import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,15 +22,34 @@ import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 
 public class TransactionListView extends RelativeLayout {
 
+    LayoutInflater mInflater;
+
     View rootView;
     RecyclerView listView;
     TransactionListAdapter listAdapter;
 
     TransactionListViewModel transactionListViewModel;
 
+    public TransactionListView(Context context){
+        super(context);
+        this.mInflater = LayoutInflater.from(context);
+        init();
+    }
+
     public TransactionListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        rootView = inflate(context, R.layout.transaction_list, this);
+        this.mInflater = LayoutInflater.from(context);
+        init();
+    }
+
+    public TransactionListView(Context context, AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
+        this.mInflater = LayoutInflater.from(context);
+        init();
+    }
+
+    public void init(){
+        rootView = mInflater.inflate(R.layout.transaction_list, this, true);
         this.listView = rootView.findViewById(R.id.transactionListView);
     }
 
