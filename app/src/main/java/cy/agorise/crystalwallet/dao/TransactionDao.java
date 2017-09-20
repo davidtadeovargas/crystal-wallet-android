@@ -25,4 +25,7 @@ public interface TransactionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertTransaction(CryptoCoinTransaction... transactions);
+
+    @Query("DELETE FROM crypto_coin_transaction")
+    public void deleteAllTransactions();
 }
