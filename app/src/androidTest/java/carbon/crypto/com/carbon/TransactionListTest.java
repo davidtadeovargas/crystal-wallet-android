@@ -10,17 +10,24 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import carbon.crypto.com.carbon.Assertions.RecyclerViewItemsCountAssertion;
 import cy.agorise.crystalwallet.IntroActivity;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
  * Created by Henry Varona on 19/9/2017.
@@ -29,34 +36,17 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class TransactionListTest {
     CrystalDatabase db;
 
+    List<CryptoCoinTransaction> transactions;
+    int numberOfTransactions = 100;
+
     @Before
     public void addingTransactions(){
-        Calendar cal = Calendar.getInstance();
+        db = CrystalDatabase.getAppDatabase(InstrumentationRegistry.getTargetContext());
+        transactions = RandomTransactionsGenerator.generateTransactions(numberOfTransactions,1262304001,1496275201,1,999999999);
 
-        this.db = CrystalDatabase.getAppDatabase(InstrumentationRegistry.getTargetContext());
-        cal.set(2017,01,01,01,01,01);
-        CryptoCoinTransaction newTransaction = new CryptoCoinTransaction();
-        newTransaction.setAmount(1);
-        newTransaction.setFrom("friend1");
-        newTransaction.setTo("me1");
-        newTransaction.setDate(cal.getTime());
-        db.transactionDao().insertTransaction(newTransaction);
-
-        cal.set(2017,02,02,02,02,02);
-        newTransaction = new CryptoCoinTransaction();
-        newTransaction.setAmount(2);
-        newTransaction.setFrom("friend2");
-        newTransaction.setTo("me2");
-        newTransaction.setDate(cal.getTime());
-        db.transactionDao().insertTransaction(newTransaction);
-
-        cal.set(2017,03,03,03,03,03);
-        newTransaction = new CryptoCoinTransaction();
-        newTransaction.setAmount(3);
-        newTransaction.setFrom("friend3");
-        newTransaction.setTo("me3");
-        newTransaction.setDate(cal.getTime());
-        db.transactionDao().insertTransaction(newTransaction);
+        for(int i=0;i<transactions.size();i++) {
+            db.transactionDao().insertTransaction(transactions.get(i));
+        }
     }
 
     @Rule
@@ -64,7 +54,7 @@ public class TransactionListTest {
 
     @Test
     public void numberOfTransactionsInList(){
-        onView(withId(R.id.transactionListView)).check(new RecyclerViewItemsCountAssertion(3));
+        onView(withId(R.id.transactionListView)).check(new RecyclerViewItemsCountAssertion(numberOfTransactions));
     }
 
     @After

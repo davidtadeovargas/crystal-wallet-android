@@ -31,7 +31,10 @@ public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransacti
 
     @Override
     public TransactionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_list_item,parent,false);
+
+
+        return new TransactionViewHolder(v);
     }
 
     @Override
