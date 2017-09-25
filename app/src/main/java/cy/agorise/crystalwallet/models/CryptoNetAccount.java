@@ -40,7 +40,7 @@ public class CryptoNetAccount {
     private int mAccountNumber;
 
     /**
-     * The account index
+     * The account index on this wallet
      */
     @ColumnInfo(name = "account_index")
     private int mAccountIndex;

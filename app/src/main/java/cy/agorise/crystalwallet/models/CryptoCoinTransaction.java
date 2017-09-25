@@ -2,6 +2,7 @@ package cy.agorise.crystalwallet.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
@@ -15,7 +16,17 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  *
  * Created by Henry Varona on 11/9/2017.
  */
-@Entity(tableName="crypto_coin_transaction")
+@Entity(tableName="crypto_coin_transaction",
+        foreignKeys = {@ForeignKey(entity = CryptoNetAccount.class,
+                parentColumns = "id",
+                childColumns = "account_id",
+                onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = CryptoCurrency.class,
+                        parentColumns = "id",
+                        childColumns = "id_currency",
+                        onDelete = ForeignKey.CASCADE)
+}
+        )
 public class CryptoCoinTransaction {
 
     /**
@@ -51,10 +62,10 @@ public class CryptoCoinTransaction {
     protected int amount;
 
     /**
-     * The id of the Crypto Asset to use in the database
+     * The id of the Crypto Currency to use in the database
      */
-    @ColumnInfo(name="id_asset")
-    private int idAsset;
+    @ColumnInfo(name="id_currency")
+    protected int idCurrency;
     /**
      * If this transaction is confirmed
      */
@@ -129,9 +140,9 @@ public class CryptoCoinTransaction {
 
     public void setAmount(int amount) { this.amount = amount; }
 
-    public int getIdAsset() { return idAsset; }
+    public int getIdCurrency() { return idCurrency; }
 
-    public void setIdAsset(int idAsset) { this.idAsset = idAsset; }
+    public void setIdCurrency(int idCurrency) { this.idCurrency = idCurrency; }
 
 
     public static final DiffCallback<CryptoCoinTransaction> DIFF_CALLBACK = new DiffCallback<CryptoCoinTransaction>() {
@@ -158,7 +169,7 @@ public class CryptoCoinTransaction {
         if (isInput != that.isInput) return false;
         if (accountId != that.accountId) return false;
         if (amount != that.amount) return false;
-        if (idAsset != that.idAsset) return false;
+        if (idCurrency != that.idCurrency) return false;
         if (isConfirmed != that.isConfirmed) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
         if (from != null ? !from.equals(that.from) : that.from != null) return false;

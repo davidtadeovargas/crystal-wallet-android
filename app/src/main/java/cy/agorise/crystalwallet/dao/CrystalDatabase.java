@@ -11,6 +11,7 @@ import android.content.Context;
 import cy.agorise.crystalwallet.dao.converters.Converters;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 /**
@@ -18,7 +19,7 @@ import cy.agorise.crystalwallet.models.CryptoNetAccount;
  * Created by Henry Varona on 4/9/2017.
  */
 
-@Database(entities = {AccountSeed.class, CryptoNetAccount.class, CryptoCoinTransaction.class}, version = 2)
+@Database(entities = {AccountSeed.class, CryptoNetAccount.class, CryptoCoinTransaction.class, CryptoCurrency.class}, version = 2)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
