@@ -22,6 +22,7 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
         transactionFrom = (TextView) itemView.findViewById(R.id.fromText);
         transactionTo = (TextView) itemView.findViewById(R.id.toText);
         transactionAmount = (TextView) itemView.findViewById(R.id.amountText);
+
     }
 
     public void clear(){
@@ -31,14 +32,20 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindTo(final CryptoCoinTransaction transaction/*, final OnTransactionClickListener listener*/) {
-        transactionFrom.setText(transaction.getFrom());
-        transactionTo.setText(transaction.getTo());
-        transactionAmount.setText(""+transaction.getAmount());
-        /*itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onUserClick(user);
-            }
-        });*/
+        if (transaction == null){
+            transactionFrom.setText("loading...");
+            transactionTo.setText("");
+            transactionAmount.setText("");
+        } else {
+            transactionFrom.setText(transaction.getFrom());
+            transactionTo.setText(transaction.getTo());
+            transactionAmount.setText("" + transaction.getAmount());
+            /*itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onUserClick(user);
+                }
+            });*/
+        }
     }
 }

@@ -15,7 +15,11 @@ import android.widget.Button;
 import java.util.List;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
+import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
@@ -33,10 +37,20 @@ public class IntroActivity extends LifecycleActivity {
         setContentView(R.layout.activity_intro);
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
-        List<CryptoCoinTransaction> transactions = RandomTransactionsGenerator.generateTransactions(100,1262304001,1496275201,1,999999999);
-
+        List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);
+        for(int i=0;i<seeds.size();i++) {
+            long newId = db.accountSeedDao().insertAccountSeed(seeds.get(i))[0];
+            seeds.get(i).setId(newId);
+        }
+        List<CryptoNetAccount> accounts = RandomCryptoNetAccountGenerator.generateAccounts(5,seeds);
+        for(int i=0;i<accounts.size();i++) {
+            long newId = db.cryptoNetAccountDao().insertCryptoNetAccount(accounts.get(i))[0];
+            accounts.get(i).setId(newId);
+        }
+        List<CryptoCoinTransaction> transactions = RandomTransactionsGenerator.generateTransactions(accounts,100,1262304001,1496275201,1,999999999);
         for(int i=0;i<transactions.size();i++) {
-            db.transactionDao().insertTransaction(transactions.get(i));
+            long newId = db.transactionDao().insertTransaction(transactions.get(i))[0];
+            transactions.get(i).setId(newId);
         }*/
 
         transactionListView = this.findViewById(R.id.transaction_list);

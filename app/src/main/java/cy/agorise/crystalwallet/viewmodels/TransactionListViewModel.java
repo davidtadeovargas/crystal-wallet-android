@@ -27,6 +27,7 @@ public class TransactionListViewModel extends AndroidViewModel {
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
         transactionList = this.db.transactionDao().transactionsByDate().create(0,
                 new PagedList.Config.Builder()
+                        .setEnablePlaceholders(true)
                         .setPageSize(10)
                         .setPrefetchDistance(10)
                         .build()

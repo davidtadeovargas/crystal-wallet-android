@@ -1,6 +1,8 @@
 package cy.agorise.crystalwallet.dao;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import java.util.List;
@@ -17,4 +19,8 @@ public interface CryptoNetAccountDao {
 
     @Query("SELECT * FROM crypto_net_account")
     List<CryptoNetAccount> getAll();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public long[] insertCryptoNetAccount(CryptoNetAccount... accounts);
+
 }

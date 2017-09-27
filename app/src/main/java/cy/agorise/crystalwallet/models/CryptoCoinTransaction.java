@@ -39,7 +39,7 @@ public class CryptoCoinTransaction {
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="id")
-    protected int id;
+    protected long id;
     /**
      * The full date of this transaction
      */
@@ -54,7 +54,7 @@ public class CryptoCoinTransaction {
      * The id of the account assoiciated, this is used for the foreign key definition
      */
     @ColumnInfo(name="account_id")
-    protected int accountId;
+    protected long accountId;
     /**
      * The amount of asset is moved in this transaction
      */
@@ -92,11 +92,11 @@ public class CryptoCoinTransaction {
 
     public void setTo(String to) { this.to = to; }
 
-    public int getAccountId() {
+    public long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(int accountId) {
+    public void setAccountId(long accountId) {
         this.accountId = accountId;
     }
 
@@ -108,11 +108,11 @@ public class CryptoCoinTransaction {
         this.account = account;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

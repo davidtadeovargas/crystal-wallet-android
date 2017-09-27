@@ -24,7 +24,7 @@ public interface TransactionDao {
     LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByDate();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertTransaction(CryptoCoinTransaction... transactions);
+    public long[] insertTransaction(CryptoCoinTransaction... transactions);
 
     @Query("DELETE FROM crypto_coin_transaction")
     public void deleteAllTransactions();

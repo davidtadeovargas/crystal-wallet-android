@@ -25,13 +25,13 @@ public class CryptoNetAccount {
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int mId;
+    private long mId;
 
     /**
      * The id of the seed used by this account
      */
     @ColumnInfo(name = "seed_id")
-    private int mSeedId;
+    private long mSeedId;
 
     /**
      * The account number on the bip44 or slip44
@@ -45,19 +45,19 @@ public class CryptoNetAccount {
     @ColumnInfo(name = "account_index")
     private int mAccountIndex;
 
-    public int getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(int id){
+    public void setId(long id){
         this.mId = id;
     }
 
-    public int getSeedId() {
+    public long getSeedId() {
         return mSeedId;
     }
 
-    public void setSeedId(int mSeedId) {
+    public void setSeedId(long mSeedId) {
         this.mSeedId = mSeedId;
     }
 
