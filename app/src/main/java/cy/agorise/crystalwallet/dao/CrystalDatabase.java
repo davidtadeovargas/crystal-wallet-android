@@ -35,13 +35,13 @@ public abstract class CrystalDatabase extends RoomDatabase {
                     Room.databaseBuilder(context,
                             CrystalDatabase.class, "CrystalWallet.db")
                             .allowMainThreadQueries()
-                            .addMigrations(MIGRATION_1_2)
+                            //.addMigrations(MIGRATION_1_2)
                             .build();
         }
         return instance;
     }
 
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    /*static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE 'account_seed' ('id' INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -55,5 +55,5 @@ public abstract class CrystalDatabase extends RoomDatabase {
                     + "'date' INT, 'is_input' INT, amount INT, crypto_coin TEXT, is_confirmed INT, "
                     + "FOREIGN_KEY(account_id) REFERENCES crypto_net_account(id))");
         }
-    };
+    };*/
 }

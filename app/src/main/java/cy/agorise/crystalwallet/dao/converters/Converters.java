@@ -30,7 +30,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public int cryptoNetAccountToId(CryptoNetAccount account) {
+    public long cryptoNetAccountToId(CryptoNetAccount account) {
         if (account == null) {
             return -1;
         } else {
@@ -39,7 +39,7 @@ public class Converters {
     }
 
     @TypeConverter
-    public CryptoNetAccount fromCryptoNetAccountId(int value) {
+    public CryptoNetAccount fromCryptoNetAccountId(long value) {
         if (value == -1){
             return null;
         } else {

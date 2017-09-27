@@ -18,7 +18,7 @@ public class AccountSeed {
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int mId;
+    private long mId;
 
     /**
      * The name or tag of this seed
@@ -32,11 +32,11 @@ public class AccountSeed {
     @ColumnInfo(name = "master_seed")
     private String mMasterSeed;
 
-    public int getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(int id){
+    public void setId(long id){
         this.mId = id;
     }
 

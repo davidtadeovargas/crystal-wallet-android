@@ -31,6 +31,9 @@ public class TransactionListView extends RelativeLayout {
 
     TransactionListViewModel transactionListViewModel;
 
+    private int visibleThreshold = 5;
+    private boolean loading = true;
+
     public TransactionListView(Context context){
         super(context);
         this.mInflater = LayoutInflater.from(context);
@@ -52,9 +55,28 @@ public class TransactionListView extends RelativeLayout {
     public void init(){
         rootView = mInflater.inflate(R.layout.transaction_list, this, true);
         this.listView = rootView.findViewById(R.id.transactionListView);
-        this.listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
+        this.listView.setLayoutManager(linearLayoutManager);
         this.listView.setNestedScrollingEnabled(false);
+
+
+        /*this.listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(!loading && linearLayoutManager.getItemCount() <= (linearLayoutManager.findLastVisibleItemPosition() + visibleThreshold)){
+                    onLoadMore();
+                    loading = true;
+                }
+            }
+        });*/
     }
+
+    //public void onLoadMore(){
+    //    listAdapter.add();
+
+    //}
 
     public void setData(PagedList<CryptoCoinTransaction> data){
         if (this.listAdapter == null) {
