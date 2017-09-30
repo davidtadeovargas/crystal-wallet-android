@@ -4,6 +4,10 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.api.GetAccounts;
@@ -15,10 +19,6 @@ import cy.agorise.graphenej.models.BaseResponse;
 import cy.agorise.graphenej.models.HistoricalTransfer;
 import cy.agorise.graphenej.models.WitnessResponse;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Created by henry on 26/9/2017.
@@ -28,7 +28,7 @@ public class GrapheneApiGenerator {
 
     //TODO network connections
     private static int connectionTimeout = 5000;
-   private static String url = "http://128.0.69.157:8090"
+    private static String url = "http://128.0.69.157:8090";
 
     /**
      * Retrieves the data of an account searching by it's id
