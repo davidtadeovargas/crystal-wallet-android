@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -31,7 +32,10 @@ public class ImportSeedActivity extends AppCompatActivity {
     TextView tvPinConfirmation;
 
     @BindView(R.id.etSeedWords)
-    TextView etSeedWords;
+    EditText etSeedWords;
+
+    @BindView (R.id.etAccountName)
+    EditText etAccountName;
 
     @BindView(R.id.btnImport)
     Button btnImport;
@@ -54,6 +58,7 @@ public class ImportSeedActivity extends AppCompatActivity {
         //TODO verify if PIN and PIN confirmation are not null and are the same
         //TODO verify if words are already in the db
         seed.setMasterSeed(etSeedWords.getText().toString());
+        seed.setName(etAccountName.getText().toString());
 
         accountSeedViewModel.addSeed(seed);
     }

@@ -39,7 +39,7 @@ public class AccountSeedsManagementActivity extends AppCompatActivity {
 
         accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
         LiveData<List<AccountSeed>>  accountSeedData = accountSeedListViewModel.getAccountSeedList();
-        //vAccountSeedList = this.findViewById(R.id.vAccountSeedList);
+        vAccountSeedList.setData(null);
 
         accountSeedData.observe(this, new Observer<List<AccountSeed>>() {
             @Override
@@ -47,8 +47,6 @@ public class AccountSeedsManagementActivity extends AppCompatActivity {
                 vAccountSeedList.setData(accountSeeds);
             }
         });
-
-        //accountSeedListView.setData(null);
     }
 
     @OnClick (R.id.btnImportAccountSeed)
