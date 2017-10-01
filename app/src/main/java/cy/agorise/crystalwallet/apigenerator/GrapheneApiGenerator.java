@@ -28,7 +28,7 @@ public class GrapheneApiGenerator {
 
     //TODO network connections
     private static int connectionTimeout = 5000;
-   private static String url = "http://128.0.69.157:8090"
+   private static String url = "http://128.0.69.157:8090";
 
     /**
      * Retrieves the data of an account searching by it's id
