@@ -1,4 +1,4 @@
-package cy.agorise.crystalwallet;
+package cy.agorise.crystalwallet.activities;
 
 import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LiveData;
@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.widget.Button;
 
 import java.util.List;
 
+import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
@@ -21,12 +23,13 @@ import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
+import cy.agorise.crystalwallet.viewmodels.AccountSeedListViewModel;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
 
 import static cy.agorise.crystalwallet.R.string.transactions;
 
-public class IntroActivity extends LifecycleActivity {
+public class IntroActivity extends AppCompatActivity {
 
     TransactionListViewModel transactionListViewModel;
     TransactionListView transactionListView;
@@ -35,6 +38,16 @@ public class IntroActivity extends LifecycleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+
+        //Checks if the user has any seed created
+        AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
+
+        if (accountSeedListViewModel.accountSeedsCount() == 0){
+            //If the user doesn't have any seeds created, then
+            //send the user to create/import an account
+            Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
+            startActivity(intent);
+        }
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);
@@ -53,7 +66,7 @@ public class IntroActivity extends LifecycleActivity {
             transactions.get(i).setId(newId);
         }*/
 
-        transactionListView = this.findViewById(R.id.transaction_list);
+        /*transactionListView = this.findViewById(R.id.transaction_list);
 
         transactionListViewModel = ViewModelProviders.of(this).get(TransactionListViewModel.class);
         LiveData<PagedList<CryptoCoinTransaction>> transactionData = transactionListViewModel.getTransactionList();
@@ -64,6 +77,6 @@ public class IntroActivity extends LifecycleActivity {
             public void onChanged(PagedList<CryptoCoinTransaction> cryptoCoinTransactions) {
                 transactionListView.setData(cryptoCoinTransactions);
             }
-        });
+        });*/
     }
 }

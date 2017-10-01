@@ -10,13 +10,10 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import carbon.crypto.com.carbon.Assertions.RecyclerViewItemsCountAssertion;
-import cy.agorise.crystalwallet.IntroActivity;
+import cy.agorise.crystalwallet.activities.IntroActivity;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
@@ -24,9 +21,6 @@ import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 /**

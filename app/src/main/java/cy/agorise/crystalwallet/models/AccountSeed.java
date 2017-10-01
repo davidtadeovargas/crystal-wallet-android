@@ -4,6 +4,10 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.DiffCallback;
+
+import cy.agorise.crystalwallet.enums.SeedType;
 
 /**
  * Represents a type of crypto seed for HD wallets
@@ -32,6 +36,11 @@ public class AccountSeed {
     @ColumnInfo(name = "master_seed")
     private String mMasterSeed;
 
+    /**
+     * The type of this seed: BIP39, BRAINKEY
+     */
+    private SeedType type;
+
     public long getId() {
         return mId;
     }
@@ -56,5 +65,36 @@ public class AccountSeed {
         this.mMasterSeed = mMasterSeed;
     }
 
+    public SeedType getType() {
+        return type;
+    }
 
+    public void setType(SeedType type) {
+        this.type = type;
+    }
+
+    public static final DiffCallback<AccountSeed> DIFF_CALLBACK = new DiffCallback<AccountSeed>() {
+        @Override
+        public boolean areItemsTheSame(
+                @NonNull AccountSeed oldAccountSeed, @NonNull AccountSeed newAccountSeed) {
+            return oldAccountSeed.getId() == newAccountSeed.getId();
+        }
+        @Override
+        public boolean areContentsTheSame(
+                @NonNull AccountSeed oldAccountSeed, @NonNull AccountSeed newAccountSeed) {
+            return oldAccountSeed.equals(newAccountSeed);
+        }
+    };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AccountSeed that = (AccountSeed) o;
+
+        if (mId != that.mId) return false;
+        return  mMasterSeed.equals(that.mMasterSeed);
+
+    }
 }
