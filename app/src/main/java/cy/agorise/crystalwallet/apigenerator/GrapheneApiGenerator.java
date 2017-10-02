@@ -166,12 +166,12 @@ public class GrapheneApiGenerator {
     }
 
     /**
-     * Gets if an Account Name is avaible to be used for a new account
+     * Retrieves the account id by the name of the account
      *
      * @param accountName The account Name to find
      * @param request The Api request object, to answer this petition
      */
-    public static void isAccountNameAvaible(String accountName, final ApiRequest request){
+    public static void getAccountIdByName(String accountName, final ApiRequest request){
         WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
         try {
             final WebSocket webSocket = factory.createSocket(url);
@@ -180,9 +180,9 @@ public class GrapheneApiGenerator {
                 public void onSuccess(WitnessResponse response) {
                     AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
                     if(accountProperties != null){
-                        request.getListener().success(true,request.getId());
+                        request.getListener().success(null,request.getId());
                     }else{
-                        request.getListener().success(false,request.getId());
+                        request.getListener().success(accountProperties.id,request.getId());
                     }
                 }
 
