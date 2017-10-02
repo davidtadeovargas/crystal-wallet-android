@@ -6,7 +6,7 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  * Created by Henry Varona on 1/10/2017.
  */
 
-abstract class CryptoNetInfoRequest {
+public abstract class CryptoNetInfoRequest {
     protected CryptoCoin coin;
     protected CryptoNetInfoRequestListener listener;
 
