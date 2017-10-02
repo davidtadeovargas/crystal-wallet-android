@@ -57,6 +57,7 @@ public class ImportSeedActivity extends AppCompatActivity {
 
         //TODO verify if PIN and PIN confirmation are not null and are the same
         //TODO verify if words are already in the db
+        //TODO check if name has been asigned to other seed
         seed.setMasterSeed(etSeedWords.getText().toString());
         seed.setName(etAccountName.getText().toString());
 
