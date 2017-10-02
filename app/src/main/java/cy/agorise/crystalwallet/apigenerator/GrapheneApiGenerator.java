@@ -6,6 +6,7 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.UserAccount;
+import cy.agorise.graphenej.api.GetAccountByName;
 import cy.agorise.graphenej.api.GetAccounts;
 import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
@@ -165,12 +166,45 @@ public class GrapheneApiGenerator {
     }
 
     /**
-     * Gets if an Account Name is avaible to be used for a new account
+     * Retrieves the account id by the name of the account
      *
      * @param accountName The account Name to find
      * @param request The Api request object, to answer this petition
      */
-    public static void isAccountNameAvaible(String accountName, ApiRequest request){
-        //TODO implement
+    public static void getAccountIdByName(String accountName, final ApiRequest request){
+        WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
+        try {
+            final WebSocket webSocket = factory.createSocket(url);
+            webSocket.addListener(new GetAccountByName(accountName, new WitnessResponseListener() {
+                @Override
+                public void onSuccess(WitnessResponse response) {
+                    AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
+                    if(accountProperties != null){
+                        request.getListener().success(null,request.getId());
+                    }else{
+                        request.getListener().success(accountProperties.id,request.getId());
+                    }
+                }
+
+                @Override
+                public void onError(BaseResponse.Error error) {
+                    request.getListener().fail(request.getId());
+                }
+            }));
+            Thread thread = new Thread(){
+                public void run(){
+                    try {
+                        webSocket.connect();
+                    } catch (WebSocketException e) {
+                        e.printStackTrace();
+                        request.getListener().fail(request.getId());
+                    }
+                }
+            };
+            thread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            request.getListener().fail(request.getId());
+        }
     }
 }
