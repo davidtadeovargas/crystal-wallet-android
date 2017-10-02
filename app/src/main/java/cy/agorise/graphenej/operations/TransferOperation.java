@@ -1,7 +1,6 @@
 package cy.agorise.graphenej.operations;
 
 import com.google.common.primitives.Bytes;
-import com.google.common.primitives.UnsignedLong;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -14,13 +13,10 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.AssetAmount;
 import cy.agorise.graphenej.BaseOperation;
 import cy.agorise.graphenej.OperationType;
 import cy.agorise.graphenej.UserAccount;
-import cy.agorise.graphenej.Util;
-import cy.agorise.graphenej.errors.MalformedAddressException;
 import cy.agorise.graphenej.objects.Memo;
 
 /**
@@ -171,7 +167,6 @@ public class TransferOperation extends BaseOperation {
 
         @Override
         public TransferOperation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            System.out.println("Deserialized bitch start. Msg: "+ json.getAsString());
             if(json.isJsonArray()){
                 // This block is used just to check if we are in the first step of the deserialization
                 // when we are dealing with an array.
@@ -197,20 +192,10 @@ public class TransferOperation extends BaseOperation {
                 UserAccount to = new UserAccount(jsonObject.get(KEY_TO).getAsString());
                 TransferOperation transfer = new TransferOperation(from, to, amount, fee);
 
-                // Deserializing Memo if it exists
-                System.out.println("Deserialized bitch. Msg: "+ jsonObject.getAsString());
-                if(jsonObject.get(KEY_MEMO) != null){
-                    JsonObject memoObj = jsonObject.get(KEY_MEMO).getAsJsonObject();
-                    try{
-                        Address memoFrom = new Address(memoObj.get(Memo.KEY_FROM).getAsString());
-                        Address memoTo = new Address(memoObj.get(KEY_TO).getAsString());
-                        long nonce = UnsignedLong.valueOf(memoObj.get(Memo.KEY_NONCE).getAsString()).longValue();
-                        byte[] message = Util.hexToBytes(memoObj.get(Memo.KEY_MESSAGE).getAsString());
-                        Memo memo = new Memo(memoFrom, memoTo, nonce, message);
-                        transfer.setMemo(memo);
-                    }catch(MalformedAddressException e){
-                        System.out.println("MalformedAddressException. Msg: "+e.getMessage());
-                    }
+                // If the transfer had a memo, deserialize it
+                if(jsonObject.has(KEY_MEMO)){
+                    Memo memo = context.deserialize(jsonObject.get(KEY_MEMO), Memo.class);
+                    transfer.setMemo(memo);
                 }
 
                 return transfer;

@@ -6,6 +6,7 @@ import java.util.Date;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 import cy.agorise.crystalwallet.enums.CryptoNet;
+import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 import static cy.agorise.crystalwallet.R.string.account;
@@ -82,6 +83,24 @@ public class Converters {
             return null;
         } else {
             return CryptoNet.valueOf(value);
+        }
+    }
+
+    @TypeConverter
+    public String seedTypeToName(SeedType value) {
+        if (value == null) {
+            return "";
+        } else {
+            return value.name();
+        }
+    }
+
+    @TypeConverter
+    public SeedType nameToSeedType(String value) {
+        if (value.equals("")){
+            return null;
+        } else {
+            return SeedType.valueOf(value);
         }
     }
 }

@@ -1,5 +1,7 @@
 package cy.agorise.crystalwallet.dao;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -17,9 +19,17 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 public interface AccountSeedDao {
 
     @Query("SELECT * FROM account_seed")
-    List<AccountSeed> getAll();
+    LiveData<List<AccountSeed>> getAll();
+
+    @Query("SELECT * FROM account_seed WHERE id = :id")
+    LiveData<AccountSeed> findById(long id);
+
+    @Query("SELECT COUNT(*) from account_seed")
+    int countAccountSeeds();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public long[] insertAccountSeed(AccountSeed... seeds);
+    public long[] insertAccountSeeds(AccountSeed... seeds);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public long insertAccountSeed(AccountSeed seed);
 }

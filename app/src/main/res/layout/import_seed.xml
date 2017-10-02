@@ -55,13 +55,33 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/txt_brain_key"
+        android:text="@string/seed_words"
+        android:textStyle="bold"
         android:layout_marginTop="10dp"/>
 
     <EditText
-        android:id="@+id/etBrainKey"
+        android:id="@+id/etSeedWords"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/edittext_bg"
+        android:gravity="top"
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_account_name"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
+        android:id="@+id/etAccountName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:background="@drawable/edittext_bg"
@@ -95,17 +115,16 @@
             android:layout_gravity="center"
             android:id="@+id/btnCancel"
             android:text="@string/cancel"/>
-
         <Button
-            android:id="@+id/btnWallet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
             android:background="@color/green"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
             android:padding="10dp"
-            android:text="@string/import_new_account"
-            android:textColor="@color/white" />
+            android:layout_gravity="center"
+            android:id="@+id/btnImport"
+            android:text="@string/create_wallet"/>
 
     </LinearLayout>
 

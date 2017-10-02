@@ -33,6 +33,7 @@
     <string name="account_label">Choose File</string>
     <string name="loading_msg">Please wait until Balances are loading</string>
 
+    <string name="seed_words">Seed</string>
     <string name="txt_6_digits_pin">PIN (6+ digits)</string>
     <string name="txt_6_digits_pin_confirm">PIN confirm</string>
     <string name="create">CREATE</string>
