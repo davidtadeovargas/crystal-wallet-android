@@ -22,10 +22,12 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
 
     public void setAccountExists(boolean value){
         this.accountExists = value;
+        this.validate();
     }
 
     public void setMnemonicIsCorrect(boolean value){
         this.mnemonicIsCorrect = value;
+        this.validate();
     }
 
     public boolean getAccountExists(){
