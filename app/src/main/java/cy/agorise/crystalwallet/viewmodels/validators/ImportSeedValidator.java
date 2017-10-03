@@ -39,7 +39,7 @@ public class ImportSeedValidator {
     public void validate(){
         //validatePin();
         //validatePinConfirmation();
-        validateAccountName();
+        //validateAccountName();
     }
 
     public ValidationField getValidationField(String name){
@@ -66,7 +66,7 @@ public class ImportSeedValidator {
                 public void onCarryOut() {
                     if (!request.getAccountExists()){
                         validationField.setValid(false);
-                        validationField.setMessage(R.string.account_name_not_exist);
+                        //validationField.setMessage(R.string.account_name_not_exist);
                     } else {
                         validationField.setValid(true);
                     }
