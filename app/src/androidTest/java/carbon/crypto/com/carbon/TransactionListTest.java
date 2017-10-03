@@ -36,7 +36,7 @@ public class TransactionListTest {
     @Before
     public void addingTransactions(){
         db = CrystalDatabase.getAppDatabase(InstrumentationRegistry.getTargetContext());
-        transactions = RandomTransactionsGenerator.generateTransactions(numberOfTransactions,1262304001,1496275201,1,999999999);
+        //transactions = RandomTransactionsGenerator.generateTransactions(numberOfTransactions,1262304001,1496275201,1,999999999);
 
         for(int i=0;i<transactions.size();i++) {
             db.transactionDao().insertTransaction(transactions.get(i));
