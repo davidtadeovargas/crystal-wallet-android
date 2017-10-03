@@ -6,7 +6,7 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  * Created by Henry Varona on 1/10/2017.
  */
 
-class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
+public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
 
     private String accountName;
     private String mnemonic;
@@ -22,10 +22,12 @@ class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
 
     public void setAccountExists(boolean value){
         this.accountExists = value;
+        this.validate();
     }
 
     public void setMnemonicIsCorrect(boolean value){
         this.mnemonicIsCorrect = value;
+        this.validate();
     }
 
     public boolean getAccountExists(){

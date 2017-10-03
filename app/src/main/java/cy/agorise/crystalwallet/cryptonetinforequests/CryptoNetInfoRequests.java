@@ -10,20 +10,20 @@ import java.util.List;
 public class CryptoNetInfoRequests {
     private List<CryptoNetInfoRequest> requests;
     private List<CryptoNetInfoRequestsListener> listeners;
-    private CryptoNetInfoRequests instance;
+    private static CryptoNetInfoRequests instance;
 
     private void CryptoNetInfoRequests(){
         //Private constructor for singleton pattern
     }
 
-    public CryptoNetInfoRequests getInstance(){
-        if (this.instance == null){
-            this.instance = new CryptoNetInfoRequests();
-            this.requests = new ArrayList<CryptoNetInfoRequest>();
-            this.listeners = new ArrayList<CryptoNetInfoRequestsListener>();
+    public static CryptoNetInfoRequests getInstance(){
+        if (CryptoNetInfoRequests.instance == null){
+            CryptoNetInfoRequests.instance = new CryptoNetInfoRequests();
+            CryptoNetInfoRequests.instance.requests = new ArrayList<CryptoNetInfoRequest>();
+            CryptoNetInfoRequests.instance.listeners = new ArrayList<CryptoNetInfoRequestsListener>();
         }
 
-        return this.instance;
+        return CryptoNetInfoRequests.instance;
     }
 
     public void addRequest(CryptoNetInfoRequest request){
