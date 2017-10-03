@@ -41,4 +41,20 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
             this._fireOnCarryOutEvent();
         }
     }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
+    }
+
+    public void setMnemonic(String mnemonic) {
+        this.mnemonic = mnemonic;
+    }
 }
