@@ -21,11 +21,13 @@ public class AccountSeedViewModel extends AndroidViewModel {
 
     private LiveData<AccountSeed> accountSeed;
     private CrystalDatabase db;
-    private MutableLiveData<ImportSeedValidator> importSeedValidator;
+    private ImportSeedValidator importSeedValidator;
+    private Application app;
 
     public AccountSeedViewModel(Application application) {
         super(application);
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
+        this.app = application;
     }
 
     public void loadSeed(int seedId){
@@ -34,9 +36,10 @@ public class AccountSeedViewModel extends AndroidViewModel {
 
     public ImportSeedValidator getValidator(){
         if (this.importSeedValidator == null){
-            this.importSeedValidator = new ImportSeedValidator();
+            this.importSeedValidator = new ImportSeedValidator(this.app.getResources());
 
         }
+        return null;
     }
 
     public void addSeed(AccountSeed seed){

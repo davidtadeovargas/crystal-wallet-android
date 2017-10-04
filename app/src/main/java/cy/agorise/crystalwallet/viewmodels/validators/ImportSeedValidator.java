@@ -25,9 +25,8 @@ public class ImportSeedValidator {
 
     private boolean isValid = false;
 
-    public ImportSeedValidator(Resources res, AccountSeed seed){
+    public ImportSeedValidator(Resources res){
         this.res = res;
-        this.accountSeed = seed;
         this.validationFields = new ArrayList<ValidationField>();
         //this.validationFields.add(new ValidationField("pin"));
         //this.validationFields.add(new ValidationField("pinConfirmation"));
