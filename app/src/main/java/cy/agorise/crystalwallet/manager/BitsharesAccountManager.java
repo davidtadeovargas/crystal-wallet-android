@@ -7,6 +7,9 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.graphenej.BrainKey;
+import cy.agorise.graphenej.PublicKey;
+import cy.agorise.graphenej.models.AccountProperties;
 
 /**
  * Created by henry on 26/9/2017.
@@ -35,10 +38,25 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
                 @Override
                 public void success(Object answer, int idPetition) {
+                    importRequest.setAccountExists(true);
                     ApiRequest getAccountInfo = new ApiRequest(1,new ApiRequestListener(){
                         @Override
                         public void success(Object answer, int idPetition) {
-                                //TODO compare keys
+                            if(answer != null && answer instanceof AccountProperties) {
+                                AccountProperties prop = (AccountProperties) answer;
+                                //TODO change the key to compare
+                                BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
+                                for(PublicKey activeKey : prop.active.getKeyAuthList()){
+                                if(activeKey.toBytes().equals(bk.getPublicKey())){
+                                    importRequest.setMnemonicIsCorrect(true);
+                                    importRequest._fireOnCarryOutEvent();
+                                    return;
+                                }
+                                }
+                                importRequest.setMnemonicIsCorrect(false);
+                                importRequest._fireOnCarryOutEvent();
+                            }
+
                         }
 
                         @Override
