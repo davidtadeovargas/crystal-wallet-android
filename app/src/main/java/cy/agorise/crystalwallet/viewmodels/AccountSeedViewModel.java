@@ -34,9 +34,10 @@ public class AccountSeedViewModel extends AndroidViewModel {
 
     public ImportSeedValidator getValidator(){
         if (this.importSeedValidator == null){
-            this.importSeedValidator = new ImportSeedValidator();
+            //this.importSeedValidator = new ImportSeedValidator();
 
         }
+        return null;
     }
 
     public void addSeed(AccountSeed seed){
