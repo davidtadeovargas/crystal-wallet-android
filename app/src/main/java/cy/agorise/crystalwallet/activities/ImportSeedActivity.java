@@ -61,21 +61,23 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
     @OnTextChanged(value = R.id.etAccountName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterAccountNameChanged(Editable editable) {
-        this.validator.validateAccountName(editable.getT);
+        this.importSeedValidator.validateAccountName(editable.toString());
     }
 
     @OnClick(R.id.btnImport)
     public void importSeed(){
-        if (this.validator)
-        AccountSeed seed = new AccountSeed();
+        if (this.importSeedValidator.isValid()) {
+            AccountSeed seed = new AccountSeed();
 
-        //TODO verify if PIN and PIN confirmation are not null and are the same
-        //TODO verify if words are already in the db
-        //TODO check if name has been asigned to other seed
-        seed.setMasterSeed(etSeedWords.getText().toString());
-        seed.setName(etAccountName.getText().toString());
+            //TODO verify if PIN and PIN confirmation are not null and are the same
+            //TODO verify if words are already in the db
+            //TODO check if name has been asigned to other seed
+            seed.setMasterSeed(etSeedWords.getText().toString());
+            seed.setName(etAccountName.getText().toString());
 
-        accountSeedViewModel.addSeed(seed);
+            accountSeedViewModel.addSeed(seed);
+            //TODO get back to the previous activity
+        }
     }
 
     @Override

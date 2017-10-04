@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.viewmodels.validators;
 
 import android.accounts.Account;
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,14 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 public class ImportSeedValidator {
 
     private ImportSeedValidatorListener listener;
-
     private List<ValidationField> validationFields;
     private AccountSeed accountSeed;
+    private Resources res;
 
     private boolean isValid = false;
 
-    public ImportSeedValidator(AccountSeed seed){
+    public ImportSeedValidator(Resources res, AccountSeed seed){
+        this.res = res;
         this.accountSeed = seed;
         this.validationFields = new ArrayList<ValidationField>();
         //this.validationFields.add(new ValidationField("pin"));
@@ -36,10 +38,16 @@ public class ImportSeedValidator {
         this.listener = listener;
     }
 
-    public void validate(){
-        //validatePin();
-        //validatePinConfirmation();
-        validateAccountName();
+    public boolean isValid(){
+        for(int i=0;i<this.validationFields.size();i++){
+            ValidationField nextField = this.validationFields.get(i);
+
+            if (!nextField.getValid()){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public ValidationField getValidationField(String name){
@@ -56,8 +64,9 @@ public class ImportSeedValidator {
 
     //}
 
-    public void validateAccountName(String accountName){
+    public void validateAccountName(final String accountName){
         final ValidationField validationField = getValidationField("accountname");
+        validationField.setLastValue(accountName);
 
         if (this.accountSeed != null){
             final ValidateImportBitsharesAccountRequest request = new ValidateImportBitsharesAccountRequest(this.accountSeed.getName(),this.accountSeed.getMasterSeed());
@@ -65,10 +74,10 @@ public class ImportSeedValidator {
                 @Override
                 public void onCarryOut() {
                     if (!request.getAccountExists()){
-                        validationField.setValid(false);
-                        validationField.setMessage(R.string.account_name_not_exist);
+                        validationField.setValidForValue(accountName, false);
+                        validationField.setMessage(res.getString(R.string.account_name_not_exist));
                     } else {
-                        validationField.setValid(true);
+                        validationField.setValidForValue(accountName, true);
                     }
                 }
             });

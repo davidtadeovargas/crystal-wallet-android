@@ -7,6 +7,7 @@ package cy.agorise.crystalwallet.viewmodels.validators;
 public class ValidationField {
 
     public String name;
+
     public String lastValue;
     public String message;
     public boolean validating;
@@ -32,8 +33,11 @@ public class ValidationField {
         this.validating = false;
     }
 
-    public void setValid(boolean newValue){
-        this.valid = newValue;
+    public void setValidForValue(String value, boolean newValue){
+        if (this.lastValue.equals(value)) {
+            this.validating = false;
+            this.valid = newValue;
+        }
     }
 
     public void setMessage(String newValue){
@@ -50,5 +54,17 @@ public class ValidationField {
 
     public boolean getValid(){
         return this.valid;
+    }
+
+    public String getLastValue() {
+        return lastValue;
+    }
+
+    public void setLastValue(String lastValue) {
+        if (!this.lastValue.equals(lastValue)) {
+            this.valid = false;
+            this.validating = false;
+            this.lastValue = lastValue;
+        }
     }
 }
