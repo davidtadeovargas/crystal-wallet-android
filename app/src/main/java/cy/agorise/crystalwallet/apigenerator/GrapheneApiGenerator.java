@@ -54,7 +54,6 @@ public class GrapheneApiGenerator {
                             }
                         }
                     }
-                    System.out.println("ERROR : " + response.result);
                     request.getListener().fail(request.getId());
                 }
 

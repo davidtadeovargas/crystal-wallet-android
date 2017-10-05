@@ -7,6 +7,7 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.BrainKey;
 import cy.agorise.graphenej.PublicKey;
 import cy.agorise.graphenej.models.AccountProperties;
@@ -45,10 +46,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                         public void success(Object answer, int idPetition) {
                             if(answer != null && answer instanceof AccountProperties) {
                                 AccountProperties prop = (AccountProperties) answer;
-                                //TODO change the key to compare
+                                //TODO change the way to compare keys
+
                                 BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
                                 for(PublicKey activeKey : prop.active.getKeyAuthList()){
-                                if(activeKey.toBytes().equals(bk.getPublicKey())){
+                                if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
                                     importRequest.setMnemonicIsCorrect(true);
                                     return;
                                 }
