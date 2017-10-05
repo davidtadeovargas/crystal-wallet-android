@@ -34,6 +34,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     @Override
     public void onNewRequest(CryptoNetInfoRequest request) {
         if (request instanceof ValidateImportBitsharesAccountRequest){
+
             final ValidateImportBitsharesAccountRequest importRequest = (ValidateImportBitsharesAccountRequest) request;
             ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
                 @Override
