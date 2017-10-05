@@ -49,10 +49,12 @@ public class GrapheneApiGenerator {
                         if (list.size() > 0) {
                             if (list.get(0).getClass() == AccountProperties.class) {
                                 request.getListener().success(list.get(0),request.getId());
+                                return;
                                 //TODO answer a crystal model
                             }
                         }
                     }
+                    System.out.println("ERROR : " + response.result);
                     request.getListener().fail(request.getId());
                 }
 
@@ -63,6 +65,7 @@ public class GrapheneApiGenerator {
             }));
             Thread thread = new Thread(){
                 public void run(){
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                     try {
                         webSocket.connect();
                     } catch (WebSocketException e) {
@@ -108,6 +111,7 @@ public class GrapheneApiGenerator {
             }));
             Thread thread = new Thread(){
                 public void run(){
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                     try {
                         webSocket.connect();
                     } catch (WebSocketException e) {
@@ -150,6 +154,7 @@ public class GrapheneApiGenerator {
             }));
             Thread thread = new Thread(){
                 public void run(){
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                     try {
                         webSocket.connect();
                     } catch (WebSocketException e) {
@@ -179,7 +184,7 @@ public class GrapheneApiGenerator {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
-                    if(accountProperties != null){
+                    if(accountProperties == null){
                         request.getListener().success(null,request.getId());
                     }else{
                         request.getListener().success(accountProperties.id,request.getId());
@@ -193,6 +198,7 @@ public class GrapheneApiGenerator {
             }));
             Thread thread = new Thread(){
                 public void run(){
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
                     try {
                         webSocket.connect();
                     } catch (WebSocketException e) {
