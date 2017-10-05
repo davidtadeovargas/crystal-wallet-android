@@ -24,6 +24,7 @@ import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidatorListener;
+import cy.agorise.crystalwallet.viewmodels.validators.ValidationField;
 import cy.agorise.crystalwallet.views.TransactionListView;
 
 public class ImportSeedActivity extends AppCompatActivity implements ImportSeedValidatorListener {
@@ -31,17 +32,23 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
     AccountSeedViewModel accountSeedViewModel;
     ImportSeedValidator importSeedValidator;
 
-    @BindView(R.id.tvPin)
-    TextView tvPin;
+    @BindView(R.id.etPin)
+    EditText etPin;
+    @BindView(R.id.tvPinError)
+    TextView tvPinError;
 
-    @BindView(R.id.tvPinConfirmation)
-    TextView tvPinConfirmation;
+    @BindView(R.id.etPinConfirmation)
+    EditText etPinConfirmation;
+    @BindView(R.id.tvPinConfirmationError)
+    TextView tvPinConfirmationError;
 
     @BindView(R.id.etSeedWords)
     EditText etSeedWords;
 
     @BindView (R.id.etAccountName)
     EditText etAccountName;
+    @BindView(R.id.tvAccountNameError)
+    TextView tvAccountNameError;
 
     @BindView(R.id.btnImport)
     Button btnImport;
@@ -57,6 +64,19 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
         importSeedValidator = accountSeedViewModel.getValidator();
 
         importSeedValidator.setListener(this);
+    }
+
+    @OnTextChanged(value = R.id.etPin,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterPinChanged(Editable editable) {
+        this.importSeedValidator.validatePin(editable.toString());
+        this.importSeedValidator.validatePinConfirmation(etPinConfirmation.getText().toString(),editable.toString());
+    }
+
+    @OnTextChanged(value = R.id.etPinConfirmation,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterPinConfirmationChanged(Editable editable) {
+        this.importSeedValidator.validatePinConfirmation(editable.toString(), etPin.getText().toString());
     }
 
     @OnTextChanged(value = R.id.etAccountName,
@@ -82,14 +102,32 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
     }
 
     @Override
-    public void onValidationSucceeded() {
-        //Clear all errors
+    public void onValidationSucceeded(ValidationField field) {
+        switch (field.getName()){
+            case "pin":
+                tvPinError.setText("");
+                break;
+            case "pinconfirmation":
+                tvPinConfirmationError.setText("");
+                break;
+            case "accountname":
+                tvAccountNameError.setText("");
+                break;
+        }
     }
 
     @Override
-    public void onValidationFailed(String error) {
-        //Show errors
-        Toast.makeText(this, error,
-                Toast.LENGTH_LONG).show();
+    public void onValidationFailed(ValidationField field) {
+        switch (field.getName()){
+            case "pin":
+                tvPinError.setText(field.getMessage());
+                break;
+            case "pinconfirmation":
+                tvPinConfirmationError.setText(field.getMessage());
+                break;
+            case "accountname":
+                tvAccountNameError.setText(field.getMessage());
+                break;
+        }
     }
 }

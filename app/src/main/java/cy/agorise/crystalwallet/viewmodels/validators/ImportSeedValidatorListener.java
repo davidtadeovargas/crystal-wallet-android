@@ -6,6 +6,6 @@ package cy.agorise.crystalwallet.viewmodels.validators;
 
 public interface ImportSeedValidatorListener {
 
-    public void onValidationSucceeded();
-    public void onValidationFailed(String error);
+    public void onValidationSucceeded(ValidationField field);
+    public void onValidationFailed(ValidationField field);
 }

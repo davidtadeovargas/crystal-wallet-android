@@ -28,8 +28,8 @@ public class ImportSeedValidator {
     public ImportSeedValidator(Resources res){
         this.res = res;
         this.validationFields = new ArrayList<ValidationField>();
-        //this.validationFields.add(new ValidationField("pin"));
-        //this.validationFields.add(new ValidationField("pinConfirmation"));
+        this.validationFields.add(new ValidationField("pin"));
+        this.validationFields.add(new ValidationField("pinconfirmation"));
         this.validationFields.add(new ValidationField("accountname"));
     }
 
@@ -59,9 +59,33 @@ public class ImportSeedValidator {
         return null;
     }
 
-    //public validatePin(){
+    public void validatePin(final String pin){
+        final ValidationField validationField = getValidationField("pin");
+        validationField.setLastValue(pin);
 
-    //}
+        if ((pin.length() < 6)){
+            validationField.setValidForValue(pin,false);
+            validationField.setMessage(res.getString(R.string.pin_number_warning));
+            listener.onValidationFailed(validationField);
+        } else {
+            validationField.setValidForValue(pin, true);
+            listener.onValidationSucceeded(validationField);
+        }
+    }
+
+    public void validatePinConfirmation(final String pinConfirmation, final String pin){
+        final ValidationField validationField = getValidationField("pinconfirmation");
+        validationField.setLastValue(pinConfirmation);
+
+        if (!pinConfirmation.equals(pin)){
+            validationField.setValidForValue(pinConfirmation,false);
+            validationField.setMessage(res.getString(R.string.mismatch_pin));
+            listener.onValidationFailed(validationField);
+        } else {
+            validationField.setValidForValue(pinConfirmation, true);
+            listener.onValidationSucceeded(validationField);
+        }
+    }
 
     public void validateAccountName(final String accountName, final String mnemonic){
         final ValidationField validationField = getValidationField("accountname");
@@ -74,8 +98,10 @@ public class ImportSeedValidator {
                 if (!request.getAccountExists()){
                     validationField.setValidForValue(accountName, false);
                     validationField.setMessage(res.getString(R.string.account_name_not_exist));
+                    listener.onValidationFailed(validationField);
                 } else {
                     validationField.setValidForValue(accountName, true);
+                    listener.onValidationSucceeded(validationField);
                 }
             }
         });

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Smartcoins Wallet</string>
+    <string name="app_name" translatable="false">Crystal Wallet</string>
     <string name="dialog_positive">Ok</string>
     <string name="send_capital">Send</string>
     <string name="send_success">Success!</string>
