@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
     @OnTextChanged(value = R.id.etAccountName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterAccountNameChanged(Editable editable) {
-        this.importSeedValidator.validateAccountName(editable.toString());
+        this.importSeedValidator.validateAccountName(editable.toString(), etSeedWords.getText().toString());
     }
 
     @OnClick(R.id.btnImport)
@@ -88,5 +89,7 @@ public class ImportSeedActivity extends AppCompatActivity implements ImportSeedV
     @Override
     public void onValidationFailed(String error) {
         //Show errors
+        Toast.makeText(this, error,
+                Toast.LENGTH_LONG).show();
     }
 }

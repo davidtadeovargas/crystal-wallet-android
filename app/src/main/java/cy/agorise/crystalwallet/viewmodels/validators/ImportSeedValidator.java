@@ -63,24 +63,22 @@ public class ImportSeedValidator {
 
     //}
 
-    public void validateAccountName(final String accountName){
+    public void validateAccountName(final String accountName, final String mnemonic){
         final ValidationField validationField = getValidationField("accountname");
         validationField.setLastValue(accountName);
 
-        if (this.accountSeed != null){
-            final ValidateImportBitsharesAccountRequest request = new ValidateImportBitsharesAccountRequest(this.accountSeed.getName(),this.accountSeed.getMasterSeed());
-            request.setListener(new CryptoNetInfoRequestListener() {
-                @Override
-                public void onCarryOut() {
-                    if (!request.getAccountExists()){
-                        validationField.setValidForValue(accountName, false);
-                        validationField.setMessage(res.getString(R.string.account_name_not_exist));
-                    } else {
-                        validationField.setValidForValue(accountName, true);
-                    }
+        final ValidateImportBitsharesAccountRequest request = new ValidateImportBitsharesAccountRequest(accountName,mnemonic);
+        request.setListener(new CryptoNetInfoRequestListener() {
+            @Override
+            public void onCarryOut() {
+                if (!request.getAccountExists()){
+                    validationField.setValidForValue(accountName, false);
+                    validationField.setMessage(res.getString(R.string.account_name_not_exist));
+                } else {
+                    validationField.setValidForValue(accountName, true);
                 }
-            });
-            CryptoNetInfoRequests.getInstance().addRequest(request);
-        }
+            }
+        });
+        CryptoNetInfoRequests.getInstance().addRequest(request);
     }
 }

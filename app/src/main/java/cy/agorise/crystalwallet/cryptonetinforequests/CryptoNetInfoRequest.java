@@ -18,7 +18,7 @@ public abstract class CryptoNetInfoRequest {
         this.listener = listener;
     }
 
-    public void _fireOnCarryOutEvent(){
+    protected void _fireOnCarryOutEvent(){
         listener.onCarryOut();
     }
 }

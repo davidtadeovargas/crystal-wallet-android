@@ -49,19 +49,17 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                                 for(PublicKey activeKey : prop.active.getKeyAuthList()){
                                 if(activeKey.toBytes().equals(bk.getPublicKey())){
                                     importRequest.setMnemonicIsCorrect(true);
-                                    importRequest._fireOnCarryOutEvent();
                                     return;
                                 }
                                 }
                                 importRequest.setMnemonicIsCorrect(false);
-                                importRequest._fireOnCarryOutEvent();
                             }
 
                         }
 
                         @Override
                         public void fail(int idPetition) {
-                            importRequest._fireOnCarryOutEvent();
+                            //
                         }
                     });
                     GrapheneApiGenerator.getAccountById((String)answer,getAccountInfo);
@@ -69,7 +67,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                 @Override
                 public void fail(int idPetition) {
-                    importRequest._fireOnCarryOutEvent();
+                    //
                 }
             });
 
