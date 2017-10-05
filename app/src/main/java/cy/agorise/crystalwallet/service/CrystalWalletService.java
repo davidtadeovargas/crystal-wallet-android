@@ -1,19 +1,15 @@
 package cy.agorise.crystalwallet.service;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 
 /**
@@ -28,6 +24,7 @@ public class CrystalWalletService extends Service {
     private BitsharesAccountManager  bitsharesAccountManager;
     private Thread LoadAccountTransactionsThread;
     private boolean keepLoadingAccountTransactions;
+    private CryptoNetInfoRequests cryptoNetInfoRequests;
 
     // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
@@ -50,8 +47,9 @@ public class CrystalWalletService extends Service {
 
         while(this.keepLoadingAccountTransactions){
             try{
-                Log.i("CrystalServiceLATThread","Searching for transactions...");
-                Thread.sleep(60000);//Sleep for 1 minutes //TODO Configurable time
+                Log.i("Crystal Service","Searching for transactions...");
+                Thread.sleep(60000);//Sleep for 1 minutes
+                // TODO search for accounts and make managers find new transactions
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -60,7 +58,13 @@ public class CrystalWalletService extends Service {
 
     @Override
     public void onCreate() {
+        //Creates a instance for the cryptoNetInfoRequest and the managers
+        this.cryptoNetInfoRequests = CryptoNetInfoRequests.getInstance();
         this.bitsharesAccountManager = new BitsharesAccountManager();
+
+        //Add the managers as listeners of the CryptoNetInfoRequest so
+        //they can carry out the info requests from the ui
+        this.cryptoNetInfoRequests.addListener(this.bitsharesAccountManager);
     }
 
     @Override

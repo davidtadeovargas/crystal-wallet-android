@@ -39,7 +39,7 @@ public class AccountSeedViewModel extends AndroidViewModel {
             this.importSeedValidator = new ImportSeedValidator(this.app.getResources());
 
         }
-        return null;
+        return this.importSeedValidator;
     }
 
     public void addSeed(AccountSeed seed){
