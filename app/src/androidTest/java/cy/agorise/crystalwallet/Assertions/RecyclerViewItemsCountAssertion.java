@@ -1,4 +1,4 @@
-package carbon.crypto.com.carbon.Assertions;
+package cy.agorise.crystalwallet.Assertions;
 
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewAssertion;

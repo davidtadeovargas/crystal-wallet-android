@@ -1,4 +1,4 @@
-package carbon.crypto.com.carbon;
+package cy.agorise.crystalwallet;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,12 +12,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import java.util.List;
 
-import carbon.crypto.com.carbon.Assertions.RecyclerViewItemsCountAssertion;
+import cy.agorise.crystalwallet.Assertions.RecyclerViewItemsCountAssertion;
 import cy.agorise.crystalwallet.activities.IntroActivity;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
-import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;

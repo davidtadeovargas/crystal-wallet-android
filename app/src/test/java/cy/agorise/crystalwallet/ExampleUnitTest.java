@@ -1,4 +1,4 @@
-package carbon.crypto.com.carbon;
+package cy.agorise.crystalwallet;
 
 import org.junit.Test;
 
