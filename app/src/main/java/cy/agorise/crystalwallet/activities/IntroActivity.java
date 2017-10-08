@@ -42,12 +42,15 @@ public class IntroActivity extends AppCompatActivity {
         //Checks if the user has any seed created
         AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
 
-        //if (accountSeedListViewModel.accountSeedsCount() == 0){
+        if (accountSeedListViewModel.accountSeedsCount() == 0){
             //If the user doesn't have any seeds created, then
             //send the user to create/import an account
             Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
             startActivity(intent);
-        //}
+        } else {
+            Intent intent = new Intent(this, BoardActivity.class);
+            startActivity(intent);
+        }
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);

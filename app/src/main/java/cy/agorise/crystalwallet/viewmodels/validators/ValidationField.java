@@ -1,33 +1,39 @@
 package cy.agorise.crystalwallet.viewmodels.validators;
 
+import android.content.Context;
+import android.view.View;
+
 /**
  * Created by Henry Varona on 2/10/2017.
  */
 
-public class ValidationField {
+public abstract class ValidationField {
 
-    public String name;
+    protected String lastValue;
+    protected String message;
+    protected boolean validating;
+    protected Boolean valid;
+    protected UIValidator validator;
+    protected View view;
 
-    public String lastValue;
-    public String message;
-    public boolean validating;
-    public boolean valid;
-
-    public ValidationField(String name){
-        this.name = name;
+    public ValidationField(View view){
         this.lastValue = "";
         this.message = "";
         this.validating = false;
-        this.valid = false;
+        this.valid = null;
+        this.view = view;
     }
 
-    public String getName(){
-        return this.name;
+    public void setValidator(UIValidator validator){
+        this.validator = validator;
     }
 
     public void startValidating(){
+        this.valid = null;
         this.validating = true;
     }
+
+    abstract public void validate();
 
     public void stopValidating(){
         this.validating = false;
@@ -53,7 +59,7 @@ public class ValidationField {
     }
 
     public boolean getValid(){
-        return this.valid;
+        return (this.valid != null?this.valid:false);
     }
 
     public String getLastValue() {
@@ -62,9 +68,17 @@ public class ValidationField {
 
     public void setLastValue(String lastValue) {
         if (!this.lastValue.equals(lastValue)) {
-            this.valid = false;
+            this.valid = null;
             this.validating = false;
             this.lastValue = lastValue;
         }
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
+
+    public View getView(){
+        return this.view;
     }
 }

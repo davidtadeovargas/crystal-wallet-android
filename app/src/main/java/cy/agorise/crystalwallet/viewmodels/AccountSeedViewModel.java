@@ -21,7 +21,6 @@ public class AccountSeedViewModel extends AndroidViewModel {
 
     private LiveData<AccountSeed> accountSeed;
     private CrystalDatabase db;
-    private ImportSeedValidator importSeedValidator;
     private Application app;
 
     public AccountSeedViewModel(Application application) {
@@ -34,14 +33,6 @@ public class AccountSeedViewModel extends AndroidViewModel {
         this.accountSeed = this.db.accountSeedDao().findById(seedId);
     }
 
-    public ImportSeedValidator getValidator(){
-        if (this.importSeedValidator == null){
-            this.importSeedValidator = new ImportSeedValidator(this.app.getResources());
-
-        }
-        return this.importSeedValidator;
-    }
-
     public void addSeed(AccountSeed seed){
         this.db.accountSeedDao().insertAccountSeed(seed);
     }
@@ -50,17 +41,4 @@ public class AccountSeedViewModel extends AndroidViewModel {
         return this.accountSeed;
     }
 
-    public void validateAccountSeed(){
-        if (this.accountSeed != null){
-            AccountSeed seed = this.accountSeed.getValue();
-
-            ValidateImportBitsharesAccountRequest request = new ValidateImportBitsharesAccountRequest(seed.getName(),seed.getMasterSeed());
-            request.setListener(new CryptoNetInfoRequestListener() {
-                @Override
-                public void onCarryOut() {
-
-                }
-            });
-        }
-    }
 }

@@ -449,4 +449,7 @@
     <!-- Import Backup activity -->
     <string name="txt_existing_password">Current backup password</string>
     <string name="txt_new_pin">New PIN (6+ digits)</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
