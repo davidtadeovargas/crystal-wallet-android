@@ -5,6 +5,7 @@ import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.graphenej.Address;
@@ -74,6 +75,21 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 }
             });
 
+            GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
+        } else if (request instanceof ValidateExistBitsharesAccountRequest){
+            final ValidateExistBitsharesAccountRequest importRequest = (ValidateExistBitsharesAccountRequest) request;
+            ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
+                @Override
+                public void success(Object answer, int idPetition) {
+                    importRequest.setAccountExists(true);
+                }
+
+                @Override
+                public void fail(int idPetition) {
+                    //TODO verified
+                    importRequest.setAccountExists(false);
+                }
+            });
             GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
         }
     }

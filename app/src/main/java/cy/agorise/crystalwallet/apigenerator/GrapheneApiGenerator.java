@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.api.GetAccountByName;
@@ -22,12 +23,14 @@ import cy.agorise.graphenej.models.WitnessResponse;
 
 
 /**
+ * This class manage all the api request directly to the Graphene Servers
  * Created by henry on 26/9/2017.
  */
 
 public class GrapheneApiGenerator {
 
     //TODO network connections
+    //TODO make to work with all Graphene stype, not only bitshares
     private static int connectionTimeout = 5000;
     private static String url = "http://128.0.69.157:8090";
 
@@ -38,46 +41,28 @@ public class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountById(String accountId, final ApiRequest request){
-        WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
-        try {
-            final WebSocket webSocket = factory.createSocket(url);
-            webSocket.addListener(new GetAccounts(accountId, new WitnessResponseListener() {
-                @Override
-                public void onSuccess(WitnessResponse response) {
-                    if (response.result.getClass() == ArrayList.class) {
-                        List list = (List) response.result;
-                        if (list.size() > 0) {
-                            if (list.get(0).getClass() == AccountProperties.class) {
-                                request.getListener().success(list.get(0),request.getId());
-                                return;
-                                //TODO answer a crystal model
-                            }
+        WebSocketThread thread = new WebSocketThread(new GetAccounts(accountId, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                if (response.result.getClass() == ArrayList.class) {
+                    List list = (List) response.result;
+                    if (list.size() > 0) {
+                        if (list.get(0).getClass() == AccountProperties.class) {
+                            request.getListener().success(list.get(0),request.getId());
+                            return;
+                            //TODO answer a crystal model
                         }
                     }
-                    request.getListener().fail(request.getId());
                 }
+                request.getListener().fail(request.getId());
+            }
 
-                @Override
-                public void onError(BaseResponse.Error error) {
-                    request.getListener().fail(request.getId());
-                }
-            }));
-            Thread thread = new Thread(){
-                public void run(){
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                    try {
-                        webSocket.connect();
-                    } catch (WebSocketException e) {
-                        e.printStackTrace();
-                        request.getListener().fail(request.getId());
-                    }
-                }
-            };
-            thread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            request.getListener().fail(request.getId());
-        }
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
+        thread.start();
     }
 
     /**
@@ -87,11 +72,7 @@ public class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountByOwnerOrActiveAddress(Address address, final ApiRequest request){
-        //TODO change address
-        WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
-        try {
-            final WebSocket webSocket = factory.createSocket(url);
-            webSocket.addListener(new GetKeyReferences(address, true, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetKeyReferences(address, true, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     final List<List<UserAccount>> resp = (List<List<UserAccount>>) response.result;
@@ -107,23 +88,9 @@ public class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }));
-            Thread thread = new Thread(){
-                public void run(){
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                    try {
-                        webSocket.connect();
-                    } catch (WebSocketException e) {
-                        e.printStackTrace();
-                        request.getListener().fail(request.getId());
-                    }
-                }
-            };
+            }),url);
+
             thread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            request.getListener().fail(request.getId());
-        }
     }
 
     /**
@@ -136,10 +103,7 @@ public class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountTransaction(String accountId, int start, int stop, int limit, final ApiRequest request){
-        WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
-        try {
-            final WebSocket webSocket = factory.createSocket(url);
-            webSocket.addListener(new GetRelativeAccountHistory(new UserAccount(accountId), stop, limit, start, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountId), stop, limit, start, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     WitnessResponse<List<HistoricalTransfer>> resp = response;
@@ -150,23 +114,8 @@ public class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }));
-            Thread thread = new Thread(){
-                public void run(){
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                    try {
-                        webSocket.connect();
-                    } catch (WebSocketException e) {
-                        e.printStackTrace();
-                        request.getListener().fail(request.getId());
-                    }
-                }
-            };
+            }),url);
             thread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            request.getListener().fail(request.getId());
-        }
     }
 
     /**
@@ -176,10 +125,7 @@ public class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountIdByName(String accountName, final ApiRequest request){
-        WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(connectionTimeout);
-        try {
-            final WebSocket webSocket = factory.createSocket(url);
-            webSocket.addListener(new GetAccountByName(accountName, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
@@ -194,22 +140,7 @@ public class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }));
-            Thread thread = new Thread(){
-                public void run(){
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                    try {
-                        webSocket.connect();
-                    } catch (WebSocketException e) {
-                        e.printStackTrace();
-                        request.getListener().fail(request.getId());
-                    }
-                }
-            };
-            thread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            request.getListener().fail(request.getId());
-        }
+            }),url);
+        thread.start();
     }
 }
