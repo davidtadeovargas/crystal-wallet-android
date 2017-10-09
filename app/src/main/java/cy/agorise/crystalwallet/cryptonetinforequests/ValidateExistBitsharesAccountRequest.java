@@ -15,8 +15,8 @@ public class ValidateExistBitsharesAccountRequest extends CryptoNetInfoRequest {
     // The result of the validation, or null if there isn't a response
     private Boolean accountExists;
 
-    public ValidateExistBitsharesAccountRequest(CryptoCoin coin, String accountName) {
-        super(coin);
+    public ValidateExistBitsharesAccountRequest(String accountName) {
+        super(CryptoCoin.BITSHARES);
         this.accountName = accountName;
     }
 

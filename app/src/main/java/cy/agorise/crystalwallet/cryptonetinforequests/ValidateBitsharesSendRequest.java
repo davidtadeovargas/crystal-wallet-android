@@ -18,10 +18,10 @@ public class ValidateBitsharesSendRequest extends CryptoNetInfoRequest {
 
     private Boolean isSend;
 
-    public ValidateBitsharesSendRequest(CryptoCoin coin, String sourceAccount, String toAccount,
+    public ValidateBitsharesSendRequest(String sourceAccount, String toAccount,
                                         long baseAmount, String baseAsset, long feeAmount,
                                         String feeAsset, String memo) {
-        super(coin);
+        super(CryptoCoin.BITSHARES);
         this.mSourceAccount = sourceAccount;
         this.mToAccount = toAccount;
         this.mBaseAmount = baseAmount;
@@ -31,10 +31,10 @@ public class ValidateBitsharesSendRequest extends CryptoNetInfoRequest {
         this.mMemo = memo;
     }
 
-    public ValidateBitsharesSendRequest(CryptoCoin coin, String sourceAccount, String toAccount,
+    public ValidateBitsharesSendRequest(String sourceAccount, String toAccount,
                                         long baseAmount, String baseAsset, long feeAmount,
                                         String feeAsset) {
-        this(coin,sourceAccount,toAccount,baseAmount,baseAsset,feeAmount,feeAsset,null);
+        this(sourceAccount,toAccount,baseAmount,baseAsset,feeAmount,feeAsset,null);
     }
 
     public String getSourceAccount() {
