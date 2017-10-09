@@ -8,13 +8,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
+import cy.agorise.graphenej.Asset;
+import cy.agorise.graphenej.Transaction;
 import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.api.GetAccountByName;
 import cy.agorise.graphenej.api.GetAccounts;
 import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
+import cy.agorise.graphenej.api.ListAssets;
+import cy.agorise.graphenej.api.LookupAssetSymbols;
+import cy.agorise.graphenej.api.TransactionBroadcastSequence;
 import cy.agorise.graphenej.interfaces.WitnessResponseListener;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
@@ -31,7 +37,6 @@ public class GrapheneApiGenerator {
 
     //TODO network connections
     //TODO make to work with all Graphene stype, not only bitshares
-    private static int connectionTimeout = 5000;
     private static String url = "http://128.0.69.157:8090";
 
     /**
@@ -141,6 +146,107 @@ public class GrapheneApiGenerator {
                     request.getListener().fail(request.getId());
                 }
             }),url);
+        thread.start();
+    }
+
+    public static void broadcastTransaction(Transaction transaction, Asset feeAsset, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new TransactionBroadcastSequence(transaction, feeAsset, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                request.getListener().success(true,request.getId());
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
+        thread.start();
+    }
+
+    public static void getAssetByName(ArrayList<String> assetNames, final ApiRequest request){
+        //TODO the graphenej library needs a way to creates the Asset object only with the symbol
+        ArrayList<Asset> assets = new ArrayList<>();
+        for(String assetName : assetNames){
+            Asset asset = new Asset("",assetName,-1);
+            assets.add(asset);
+        }
+        //TODO the graphenj library needs to add the lookupAssetSymbols to be able to search the asset by symbol
+        // this can be done with the same lookupassetsymbol, but passing only the symbol not the objetcid
+        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                List<Asset> assets = (List<Asset>) response.result;
+                if(assets.size() <= 0){
+                    request.getListener().fail(request.getId());
+                }else{
+                    ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
+                    for(Asset asset: assets){
+                        BitsharesAsset.Type assetType = null;
+                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                            assetType = BitsharesAsset.Type.CORE;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
+                            assetType = BitsharesAsset.Type.SMART_COIN;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
+                            assetType = BitsharesAsset.Type.UIA;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
+                            assetType = BitsharesAsset.Type.PREDICTION_MARKET;
+                        }
+                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                        responseAssets.add(responseAsset);
+                    }
+                    request.getListener().success(responseAssets,request.getId());
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
+        thread.start();
+    }
+
+    public static void getAssetById(ArrayList<String> assetIds, final ApiRequest request){
+        //TODO the graphenej library needs a way to creates the Asset object only with the symbol
+        ArrayList<Asset> assets = new ArrayList<>();
+        for(String assetId : assetIds){
+            Asset asset = new Asset(assetId);
+            assets.add(asset);
+        }
+        //TODO the graphenj library needs to add the lookupAssetSymbols to be able to search the asset by symbol
+        // this can be done with the same lookupassetsymbol, but passing only the symbol not the objetcid
+        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                List<Asset> assets = (List<Asset>) response.result;
+                if(assets.size() <= 0){
+                    request.getListener().fail(request.getId());
+                }else{
+                    ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
+                    for(Asset asset: assets){
+                        BitsharesAsset.Type assetType = null;
+                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                            assetType = BitsharesAsset.Type.CORE;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
+                            assetType = BitsharesAsset.Type.SMART_COIN;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
+                            assetType = BitsharesAsset.Type.UIA;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
+                            assetType = BitsharesAsset.Type.PREDICTION_MARKET;
+                        }
+                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                        responseAssets.add(responseAsset);
+                    }
+                    request.getListener().success(responseAssets,request.getId());
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
         thread.start();
     }
 }

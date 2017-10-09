@@ -1,17 +1,32 @@
 package cy.agorise.crystalwallet.manager;
 
+import com.google.common.primitives.UnsignedLong;
+
+import org.bitcoinj.core.ECKey;
+
+import java.util.ArrayList;
+
 import cy.agorise.crystalwallet.apigenerator.ApiRequest;
 import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.graphenej.Address;
+import cy.agorise.graphenej.Asset;
+import cy.agorise.graphenej.AssetAmount;
+import cy.agorise.graphenej.BaseOperation;
+import cy.agorise.graphenej.BlockData;
 import cy.agorise.graphenej.BrainKey;
 import cy.agorise.graphenej.PublicKey;
+import cy.agorise.graphenej.Transaction;
+import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.models.AccountProperties;
+import cy.agorise.graphenej.operations.TransferOperation;
+import cy.agorise.graphenej.operations.TransferOperationBuilder;
 
 /**
  * Created by henry on 26/9/2017.
@@ -36,61 +51,98 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     @Override
     public void onNewRequest(CryptoNetInfoRequest request) {
         if (request instanceof ValidateImportBitsharesAccountRequest){
+            this.validateImportAccount((ValidateImportBitsharesAccountRequest) request);
+        } else if (request instanceof ValidateExistBitsharesAccountRequest){
+            this.validateExistAcccount((ValidateExistBitsharesAccountRequest) request);
+        }
+    }
 
-            final ValidateImportBitsharesAccountRequest importRequest = (ValidateImportBitsharesAccountRequest) request;
-            ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
-                @Override
-                public void success(Object answer, int idPetition) {
-                    importRequest.setAccountExists(true);
-                    ApiRequest getAccountInfo = new ApiRequest(1,new ApiRequestListener(){
-                        @Override
-                        public void success(Object answer, int idPetition) {
-                            if(answer != null && answer instanceof AccountProperties) {
-                                AccountProperties prop = (AccountProperties) answer;
-                                //TODO change the way to compare keys
+    private void validateImportAccount(final ValidateImportBitsharesAccountRequest importRequest){
+        ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
+            @Override
+            public void success(Object answer, int idPetition) {
+                importRequest.setAccountExists(true);
+                ApiRequest getAccountInfo = new ApiRequest(1,new ApiRequestListener(){
+                    @Override
+                    public void success(Object answer, int idPetition) {
+                        if(answer != null && answer instanceof AccountProperties) {
+                            AccountProperties prop = (AccountProperties) answer;
+                            //TODO change the way to compare keys
 
-                                BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
-                                for(PublicKey activeKey : prop.active.getKeyAuthList()){
+                            BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
+                            for(PublicKey activeKey : prop.active.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
                                     importRequest.setMnemonicIsCorrect(true);
                                     return;
                                 }
-                                }
-                                importRequest.setMnemonicIsCorrect(false);
                             }
-
+                            importRequest.setMnemonicIsCorrect(false);
                         }
 
-                        @Override
-                        public void fail(int idPetition) {
-                            //
-                        }
-                    });
-                    GrapheneApiGenerator.getAccountById((String)answer,getAccountInfo);
-                }
+                    }
 
-                @Override
-                public void fail(int idPetition) {
-                    //
-                }
-            });
+                    @Override
+                    public void fail(int idPetition) {
+                        //
+                    }
+                });
+                GrapheneApiGenerator.getAccountById((String)answer,getAccountInfo);
+            }
 
-            GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
-        } else if (request instanceof ValidateExistBitsharesAccountRequest){
-            final ValidateExistBitsharesAccountRequest importRequest = (ValidateExistBitsharesAccountRequest) request;
-            ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
-                @Override
-                public void success(Object answer, int idPetition) {
-                    importRequest.setAccountExists(true);
-                }
+            @Override
+            public void fail(int idPetition) {
+                //
+            }
+        });
 
-                @Override
-                public void fail(int idPetition) {
-                    //TODO verified
-                    importRequest.setAccountExists(false);
-                }
-            });
-            GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
-        }
+        GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
+    }
+
+    private void validateExistAcccount(final ValidateExistBitsharesAccountRequest validateRequest){
+        ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
+            @Override
+            public void success(Object answer, int idPetition) {
+                validateRequest.setAccountExists(true);
+            }
+
+            @Override
+            public void fail(int idPetition) {
+                //TODO verified
+                validateRequest.setAccountExists(false);
+            }
+        });
+        GrapheneApiGenerator.getAccountIdByName(validateRequest.getAccountName(),checkAccountName);
+    }
+
+    private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
+        Asset feeAsset = new Asset(sendRequest.getFeeAsset());
+        TransferOperationBuilder builder = new TransferOperationBuilder()
+                .setSource(new UserAccount(sendRequest.getSourceAccount()))
+                .setDestination(new UserAccount(sendRequest.getToAccount()))
+                .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getBaseAmount()), new Asset(sendRequest.getBaseAsset())))
+                .setFee(new AssetAmount(UnsignedLong.valueOf(sendRequest.getFeeAmount()), feeAsset));
+        //TODO memo
+        ArrayList<BaseOperation> operationList = new ArrayList();
+        operationList.add(builder.build());
+
+        //TODO blockdata
+        BlockData blockData = null;
+        //TODO privateKey
+        ECKey privateKey = null;
+        Transaction transaction = new Transaction(privateKey, blockData, operationList);
+
+        ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
+            @Override
+            public void success(Object answer, int idPetition) {
+                sendRequest.setSend(true);
+            }
+
+            @Override
+            public void fail(int idPetition) {
+                sendRequest.setSend(false);
+            }
+        });
+
+        GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
     }
 }
