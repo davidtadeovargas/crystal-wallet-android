@@ -1,5 +1,7 @@
 package cy.agorise.crystalwallet.manager;
 
+import android.arch.lifecycle.LiveData;
+
 import com.google.common.primitives.UnsignedLong;
 
 import org.bitcoinj.core.ECKey;
@@ -14,18 +16,18 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListe
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
 import cy.agorise.graphenej.BaseOperation;
-import cy.agorise.graphenej.BlockData;
 import cy.agorise.graphenej.BrainKey;
 import cy.agorise.graphenej.PublicKey;
 import cy.agorise.graphenej.Transaction;
 import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.models.AccountProperties;
-import cy.agorise.graphenej.operations.TransferOperation;
 import cy.agorise.graphenej.operations.TransferOperationBuilder;
 
 /**
@@ -117,7 +119,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
         Asset feeAsset = new Asset(sendRequest.getFeeAsset());
         TransferOperationBuilder builder = new TransferOperationBuilder()
-                .setSource(new UserAccount(sendRequest.getSourceAccount()))
+                .setSource(new UserAccount(sendRequest.getSourceAccount().getAccountId()))
                 .setDestination(new UserAccount(sendRequest.getToAccount()))
                 .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getBaseAmount()), new Asset(sendRequest.getBaseAsset())))
                 .setFee(new AssetAmount(UnsignedLong.valueOf(sendRequest.getFeeAmount()), feeAsset));
@@ -125,11 +127,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         ArrayList<BaseOperation> operationList = new ArrayList();
         operationList.add(builder.build());
 
-        //TODO blockdata
-        BlockData blockData = null;
-        //TODO privateKey
-        ECKey privateKey = null;
-        Transaction transaction = new Transaction(privateKey, blockData, operationList);
+        //TODO get privateKey with seed model
+        LiveData<AccountSeed> seed = CrystalDatabase.getAppDatabase(sendRequest.getContext()).accountSeedDao().findById(sendRequest.getSourceAccount().getSeedId());
+
+        ECKey privateKey = new BrainKey(seed.getValue().getMasterSeed(),0).getPrivateKey();
+        Transaction transaction = new Transaction(privateKey, null, operationList);
 
         ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
             @Override

@@ -7,5 +7,21 @@ package cy.agorise.crystalwallet.models;
 public class GrapheneAccount extends CryptoNetAccount {
 
     protected String name;
+    protected String accountId;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
 }

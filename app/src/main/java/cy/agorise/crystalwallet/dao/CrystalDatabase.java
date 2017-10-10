@@ -41,6 +41,8 @@ public abstract class CrystalDatabase extends RoomDatabase {
         return instance;
     }
 
+
+
     /*static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
