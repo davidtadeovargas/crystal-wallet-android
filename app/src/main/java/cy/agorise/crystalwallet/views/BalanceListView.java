@@ -17,7 +17,7 @@ import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
  * Created by Henry Varona on 10/9/2017.
  */
 
-public class TransactionListView extends RelativeLayout {
+public class BalanceListView extends RelativeLayout {
 
     LayoutInflater mInflater;
 
@@ -25,56 +25,39 @@ public class TransactionListView extends RelativeLayout {
     RecyclerView listView;
     BalanceListAdapter listAdapter;
 
-    TransactionListViewModel transactionListViewModel;
+    BalanceListViewModel balanceListViewModel;
 
     private int visibleThreshold = 5;
     private boolean loading = true;
 
-    public TransactionListView(Context context){
+    public BalanceListView(Context context){
         super(context);
         this.mInflater = LayoutInflater.from(context);
         init();
     }
 
-    public TransactionListView(Context context, AttributeSet attrs) {
+    public BalanceListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mInflater = LayoutInflater.from(context);
         init();
     }
 
-    public TransactionListView(Context context, AttributeSet attrs, int defStyle){
+    public BalanceListView(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs, defStyle);
         this.mInflater = LayoutInflater.from(context);
         init();
     }
 
     public void init(){
-        rootView = mInflater.inflate(R.layout.transaction_list, this, true);
-        this.listView = rootView.findViewById(R.id.transactionListView);
+        rootView = mInflater.inflate(R.layout.balance_list, this, true);
+        this.listView = rootView.findViewById(R.id.balanceListView);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         this.listView.setLayoutManager(linearLayoutManager);
         this.listView.setNestedScrollingEnabled(false);
-
-
-        /*this.listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if(!loading && linearLayoutManager.getItemCount() <= (linearLayoutManager.findLastVisibleItemPosition() + visibleThreshold)){
-                    onLoadMore();
-                    loading = true;
-                }
-            }
-        });*/
     }
 
-    //public void onLoadMore(){
-    //    listAdapter.add();
-
-    //}
-
-    public void setData(PagedList<CryptoCoinTransaction> data){
+    public void setData(List<CryptoNetBalance> data){
         if (this.listAdapter == null) {
             this.listAdapter = new BalanceListAdapter();
             this.listView.setAdapter(this.listAdapter);

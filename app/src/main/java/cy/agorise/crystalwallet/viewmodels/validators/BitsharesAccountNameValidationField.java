@@ -6,6 +6,7 @@ import android.widget.EditText;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 
 /**
@@ -27,13 +28,13 @@ public class BitsharesAccountNameValidationField extends ValidationField {
         this.startValidating();
         final ValidationField field = this;
 
-        final ValidateImportBitsharesAccountRequest request = new ValidateImportBitsharesAccountRequest(newValue,"");
+        final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(newValue);
         request.setListener(new CryptoNetInfoRequestListener() {
             @Override
             public void onCarryOut() {
                 if (!request.getAccountExists()){
                     setValidForValue(newValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.error_invalid_account));
+                    setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
                     validator.validationFailed(field);
                 } else {
                     setValidForValue(newValue, true);

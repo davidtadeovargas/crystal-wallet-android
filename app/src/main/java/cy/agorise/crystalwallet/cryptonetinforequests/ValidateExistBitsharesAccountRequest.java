@@ -20,6 +20,9 @@ public class ValidateExistBitsharesAccountRequest extends CryptoNetInfoRequest {
         this.accountName = accountName;
     }
 
+    public boolean getAccountExists(){
+        return this.accountExists;
+    }
 
     public void setAccountExists(boolean value){
         this.accountExists = value;
