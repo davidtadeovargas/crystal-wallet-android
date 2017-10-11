@@ -123,4 +123,8 @@ public class WebSocketThread extends Thread {
         }
         WebSocketThread.currentThreads.remove(this.getId());
     }
+
+    public boolean isConnected(){
+        return mWebSocket.isOpen();
+    }
 }
