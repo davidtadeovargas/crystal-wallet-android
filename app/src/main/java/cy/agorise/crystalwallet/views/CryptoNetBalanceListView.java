@@ -1,6 +1,5 @@
 package cy.agorise.crystalwallet.views;
 
-import android.arch.paging.PagedList;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,40 +8,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.util.List;
+
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
-import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
+import cy.agorise.crystalwallet.models.CryptoNetBalance;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
 
 /**
  * Created by Henry Varona on 10/9/2017.
  */
 
-public class BalanceListView extends RelativeLayout {
+public class CryptoNetBalanceListView extends RelativeLayout {
 
     LayoutInflater mInflater;
 
     View rootView;
     RecyclerView listView;
-    BalanceListAdapter listAdapter;
+    CryptoNetBalanceListAdapter listAdapter;
 
-    BalanceListViewModel balanceListViewModel;
+    CryptoNetBalanceListViewModel cryptoNetBalanceListViewModel;
 
     private int visibleThreshold = 5;
     private boolean loading = true;
 
-    public BalanceListView(Context context){
+    public CryptoNetBalanceListView(Context context){
         super(context);
         this.mInflater = LayoutInflater.from(context);
         init();
     }
 
-    public BalanceListView(Context context, AttributeSet attrs) {
+    public CryptoNetBalanceListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mInflater = LayoutInflater.from(context);
         init();
     }
 
-    public BalanceListView(Context context, AttributeSet attrs, int defStyle){
+    public CryptoNetBalanceListView(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs, defStyle);
         this.mInflater = LayoutInflater.from(context);
         init();
@@ -59,7 +60,7 @@ public class BalanceListView extends RelativeLayout {
 
     public void setData(List<CryptoNetBalance> data){
         if (this.listAdapter == null) {
-            this.listAdapter = new BalanceListAdapter();
+            this.listAdapter = new CryptoNetBalanceListAdapter();
             this.listView.setAdapter(this.listAdapter);
         }
 

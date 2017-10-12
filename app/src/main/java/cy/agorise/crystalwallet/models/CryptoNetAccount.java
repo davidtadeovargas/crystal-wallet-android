@@ -76,4 +76,5 @@ public class CryptoNetAccount {
     public void setAccountIndex(int mAccountIndex) {
         this.mAccountIndex = mAccountIndex;
     }
+
 }

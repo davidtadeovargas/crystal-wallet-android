@@ -8,7 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.util.List;
+
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.models.CryptoCoinBalance;
+import cy.agorise.crystalwallet.viewmodels.CryptoCoinBalanceListViewModel;
 
 /**
  * Created by Henry Varona on 10/9/2017.
@@ -22,7 +26,7 @@ public class CryptoCoinBalanceListView extends RelativeLayout {
     RecyclerView listView;
     CryptoCoinBalanceListAdapter listAdapter;
 
-    CryptoCoinBalanceListViewModel CryptoCoinBalanceListViewModel;
+    CryptoCoinBalanceListViewModel cryptoCoinBalanceListViewModel;
 
     private int visibleThreshold = 5;
     private boolean loading = true;

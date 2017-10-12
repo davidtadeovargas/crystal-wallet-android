@@ -23,7 +23,7 @@ public class TransactionListView extends RelativeLayout {
 
     View rootView;
     RecyclerView listView;
-    BalanceListAdapter listAdapter;
+    TransactionListAdapter listAdapter;
 
     TransactionListViewModel transactionListViewModel;
 
@@ -76,7 +76,7 @@ public class TransactionListView extends RelativeLayout {
 
     public void setData(PagedList<CryptoCoinTransaction> data){
         if (this.listAdapter == null) {
-            this.listAdapter = new BalanceListAdapter();
+            this.listAdapter = new TransactionListAdapter();
             this.listView.setAdapter(this.listAdapter);
         }
 

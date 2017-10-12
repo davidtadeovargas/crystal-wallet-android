@@ -1,11 +1,13 @@
 package cy.agorise.crystalwallet.views;
 
 
+import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 
 /**
  * Created by Henry Varona on 11/9/2017.

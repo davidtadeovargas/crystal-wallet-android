@@ -10,6 +10,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.CryptoNetBalance;
 
 /**
  * Created by Henry Varona on 10/9/2017.
