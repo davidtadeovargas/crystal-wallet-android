@@ -19,6 +19,7 @@ import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAcc
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
@@ -37,17 +38,37 @@ import cy.agorise.graphenej.operations.TransferOperationBuilder;
 public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetInfoRequestsListener {
     @Override
     public CryptoNetAccount createAccountFromSeed(CryptoNetAccount account) {
+        //TODO generate account keys
+        //TODO register account
+        //TODO save account on DB
+        //TODO subscribe account
         return null;
     }
 
     @Override
     public CryptoNetAccount importAccountFromSeed(CryptoNetAccount account) {
+        //TODO check account info
+        //TODO save account on DB
+        //TODO subscribe account
+        //TODO refresh account transaction
+        //TODO refresh account balance
         return null;
     }
 
     @Override
     public void loadAccountFromDB(CryptoNetAccount account) {
+        if(account instanceof GrapheneAccount){
+            GrapheneAccount grapheneAccount = (GrapheneAccount) account;
+            if(grapheneAccount.getAccountId() == null){
+                //TODO find account data by name
+            }else if(grapheneAccount.getName() == null){
+                //TODO find account data by id
+            }
 
+            GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getAccountId());
+            //TODO refresh account transactions
+            //TODO refresh account balance
+        }
     }
 
     @Override
