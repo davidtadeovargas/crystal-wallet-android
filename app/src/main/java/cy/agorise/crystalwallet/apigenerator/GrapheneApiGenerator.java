@@ -1,10 +1,5 @@
 package cy.agorise.crystalwallet.apigenerator;
 
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFactory;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +7,7 @@ import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
+import cy.agorise.graphenej.ObjectType;
 import cy.agorise.graphenej.Transaction;
 import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.api.GetAccountByName;
@@ -20,11 +16,15 @@ import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
 import cy.agorise.graphenej.api.ListAssets;
 import cy.agorise.graphenej.api.LookupAssetSymbols;
+import cy.agorise.graphenej.api.SubscriptionMessagesHub;
 import cy.agorise.graphenej.api.TransactionBroadcastSequence;
+import cy.agorise.graphenej.interfaces.NodeErrorListener;
+import cy.agorise.graphenej.interfaces.SubscriptionListener;
 import cy.agorise.graphenej.interfaces.WitnessResponseListener;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
 import cy.agorise.graphenej.models.HistoricalTransfer;
+import cy.agorise.graphenej.models.SubscriptionResponse;
 import cy.agorise.graphenej.models.WitnessResponse;
 
 
@@ -38,6 +38,16 @@ public class GrapheneApiGenerator {
     //TODO network connections
     //TODO make to work with all Graphene stype, not only bitshares
     private static String url = "http://128.0.69.157:8090";
+
+    // The meesage broker for bitshares
+    private static SubscriptionMessagesHub bitsharesSubscriptionHub = new SubscriptionMessagesHub("", "", true, new NodeErrorListener() {
+        @Override
+        public void onError(BaseResponse.Error error) {
+            //TODO subcription hub error
+        }
+    });
+
+    private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub,url);
 
     /**
      * Retrieves the data of an account searching by it's id
@@ -249,4 +259,43 @@ public class GrapheneApiGenerator {
         }),url);
         thread.start();
     }
+
+    public static void subscribeBitsharesAccount(String accountId){
+        SubscriptionListener balanceListener = new SubscriptionListener() {
+            @Override
+            public ObjectType getInterestObjectType() {
+                return ObjectType.BALANCE_OBJECT;
+            }
+
+            @Override
+            public void onSubscriptionUpdate(SubscriptionResponse response) {
+                //TODO balance function
+            }
+        };
+
+        SubscriptionListener transactionListener = new SubscriptionListener() {
+            @Override
+            public ObjectType getInterestObjectType() {
+                return ObjectType.TRANSACTION_OBJECT;
+            }
+
+            @Override
+            public void onSubscriptionUpdate(SubscriptionResponse response) {
+                //TODO transaciton function
+            }
+        };
+        bitsharesSubscriptionHub.addSubscriptionListener(balanceListener);
+        bitsharesSubscriptionHub.addSubscriptionListener(transactionListener);
+
+        if(!subscriptionThread.isConnected()){
+            subscriptionThread.start();
+        }else if(!bitsharesSubscriptionHub.isSubscribed()){
+            bitsharesSubscriptionHub.resubscribe();
+        }
+    }
+
+    public static void cancelBitsharesAccountSubcriptions(){
+        bitsharesSubscriptionHub.cancelSubscriptions();
+    }
+
 }
