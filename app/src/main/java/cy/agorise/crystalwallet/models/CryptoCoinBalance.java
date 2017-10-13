@@ -17,14 +17,29 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  * Created by Henry Varona on 6/9/2017.
  */
 
-@Entity
+@Entity(tableName="crypto_coin_balance",
+        indices = {@Index("id"),@Index("account_id")},
+        foreignKeys = @ForeignKey(entity = CryptoNetAccount.class,
+        parentColumns = "id",
+        childColumns = "account_id"))
 public class CryptoCoinBalance {
+
+    @ColumnInfo(name="account_id")
+    private long mAccountId;
 
     @ColumnInfo(name = "coin")
     private CryptoCoin mCoin;
 
     @ColumnInfo(name = "balance")
     private int mBalance;
+
+    public long getAccountId() {
+        return mAccountId;
+    }
+
+    public void setAccountId(long accountId) {
+        this.mAccountId = accountId;
+    }
 
     public CryptoCoin getCoin() {
         return mCoin;
@@ -62,8 +77,9 @@ public class CryptoCoinBalance {
 
         CryptoCoinBalance that = (CryptoCoinBalance) o;
 
-        if (this.mCoin != that.mCoin) return false;
-        return  mBalance == that.mBalance;
+        if (mAccountId != that.mAccountId) return false;
+        if (mBalance != that.mBalance) return false;
+        return mCoin == that.mCoin;
 
     }
 }
