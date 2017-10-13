@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.apigenerator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,10 @@ import cy.agorise.graphenej.api.TransactionBroadcastSequence;
 import cy.agorise.graphenej.interfaces.NodeErrorListener;
 import cy.agorise.graphenej.interfaces.SubscriptionListener;
 import cy.agorise.graphenej.interfaces.WitnessResponseListener;
+import cy.agorise.graphenej.models.AccountBalanceUpdate;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
+import cy.agorise.graphenej.models.BroadcastedTransaction;
 import cy.agorise.graphenej.models.HistoricalTransfer;
 import cy.agorise.graphenej.models.SubscriptionResponse;
 import cy.agorise.graphenej.models.WitnessResponse;
@@ -260,7 +263,7 @@ public class GrapheneApiGenerator {
         thread.start();
     }
 
-    public static void subscribeBitsharesAccount(String accountId){
+    public static void subscribeBitsharesAccount(final String accountId){
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
@@ -269,23 +272,22 @@ public class GrapheneApiGenerator {
 
             @Override
             public void onSubscriptionUpdate(SubscriptionResponse response) {
-                //TODO balance function
+                List<Serializable> updatedObjects = (List<Serializable>) response.params.get(1);
+                if(updatedObjects.size() > 0){
+                    for(Serializable update : updatedObjects){
+                        if(update instanceof AccountBalanceUpdate){
+                            AccountBalanceUpdate balanceUpdate = (AccountBalanceUpdate) update;
+                            if(balanceUpdate.owner.equals(accountId)){
+                                //TODO balance function
+                                //TODO refresh transactions
+                            }
+                        }
+                    }
+                }
             }
         };
 
-        SubscriptionListener transactionListener = new SubscriptionListener() {
-            @Override
-            public ObjectType getInterestObjectType() {
-                return ObjectType.TRANSACTION_OBJECT;
-            }
-
-            @Override
-            public void onSubscriptionUpdate(SubscriptionResponse response) {
-                //TODO transaciton function
-            }
-        };
         bitsharesSubscriptionHub.addSubscriptionListener(balanceListener);
-        bitsharesSubscriptionHub.addSubscriptionListener(transactionListener);
 
         if(!subscriptionThread.isConnected()){
             subscriptionThread.start();
