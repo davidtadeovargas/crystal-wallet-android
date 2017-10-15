@@ -16,14 +16,14 @@ import cy.agorise.crystalwallet.models.CryptoNetBalance;
 public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
     private ImageView cryptoNetIcon;
     private TextView cryptoNetName;
-    private CryptoNetBalanceListView cryptoNetBalanceListView;
+    private CryptoCoinBalanceListView cryptoCoinBalanceListView;
 
 
     public CryptoNetBalanceViewHolder(View itemView) {
         super(itemView);
         cryptoNetIcon = (ImageView) itemView.findViewById(R.id.ivCryptoNetIcon);
         cryptoNetName = (TextView) itemView.findViewById(R.id.tvCryptoNetName);
-        cryptoNetBalanceListView = (CryptoNetBalanceListView) itemView.findViewById(R.id.cryptoCoinBalanceListView);
+        cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalanceListView);
 
     }
 
@@ -35,7 +35,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         if (balance == null){
             cryptoNetName.setText("loading...");
         } else {
-            cryptoNetName.setText(balance.getCryptoCoin().getLabel());
+            cryptoNetName.setText(balance.getCryptoNet().getLabel());
         }
     }
 }

@@ -4,98 +4,59 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
+import cy.agorise.crystalwallet.enums.CryptoNet;
+
+import static android.arch.persistence.room.ColumnInfo.INTEGER;
 
 /**
- * Represents a geneeric CryptoNet Account Balance
+ * Represents a generic CryptoNet Account Balance
  *
  * Created by Henry Varona on 6/9/2017.
  */
 
-@Entity(tableName = "crypto_net_account",
-        indices = {@Index("id"),@Index("seed_id")},
-        foreignKeys = @ForeignKey(entity = AccountSeed.class,
-        parentColumns = "id",
-        childColumns = "seed_id"))
+@Entity
 public class CryptoNetBalance {
 
     /**
-     * The id on the database
+     * The id of the account of this balance
      */
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private long mId;
+    @ColumnInfo(name = "account_id")
+    private long mAccountId;
 
     /**
-     * The id of the seed used by this account
+     * The cryptonet of the account
      */
-    @ColumnInfo(name = "seed_id")
-    private long mSeedId;
+    @ColumnInfo(name = "account_number", typeAffinity = INTEGER)
+    private CryptoNet mCryptoNet;
 
-    /**
-     * The account number on the bip44 or slip44
-     */
-    @ColumnInfo(name = "account_number")
-    private int mAccountNumber;
-
-    /**
-     * The account index on this wallet
-     */
-    @ColumnInfo(name = "account_index")
-    private int mAccountIndex;
-
-    private CryptoCoin mCryptoCoin;
-
-    public long getId() {
-        return mId;
+    public long getAccountId() {
+        return mAccountId;
     }
 
-    public void setId(long id) {
-        this.mId = id;
+    public CryptoNet getCryptoNet() {
+        return mCryptoNet;
     }
 
-    public long getSeedId() {
-        return mSeedId;
+    public void setAccountId(long accountId) {
+        this.mAccountId = accountId;
     }
 
-    public void setSeedId(long seedId) {
-        this.mSeedId = seedId;
-    }
-
-    public int getAccountNumber() {
-        return mAccountNumber;
-    }
-
-    public void setAccountNumber(int accountNumber) {
-        this.mAccountNumber = accountNumber;
-    }
-
-    public int getAccountIndex() {
-        return mAccountIndex;
-    }
-
-    public void setAccountIndex(int accountIndex) {
-        this.mAccountIndex = accountIndex;
-    }
-
-    public CryptoCoin getCryptoCoin() {
-        return mCryptoCoin;
-    }
-
-    public void setCryptoCoin(CryptoCoin cryptoCoin) {
-        this.mCryptoCoin = cryptoCoin;
+    public void setCryptoNet(CryptoNet cryptoNet) {
+        this.mCryptoNet = cryptoNet;
     }
 
     public static final DiffCallback<CryptoNetBalance> DIFF_CALLBACK = new DiffCallback<CryptoNetBalance>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoNetBalance oldBalance, @NonNull CryptoNetBalance newBalance) {
-            return oldBalance.getId() == newBalance.getId();
+            return oldBalance.getAccountId() == newBalance.getAccountId();
         }
         @Override
         public boolean areContentsTheSame(
@@ -110,11 +71,7 @@ public class CryptoNetBalance {
         if (o == null || getClass() != o.getClass()) return false;
 
         CryptoNetBalance that = (CryptoNetBalance) o;
-
-        if (mId != that.mId) return false;
-        if (mSeedId != that.mSeedId) return false;
-        if (mAccountNumber != that.mAccountNumber) return false;
-        return mAccountIndex == that.mAccountIndex;
+        return mAccountId == that.mAccountId;
 
     }
 }

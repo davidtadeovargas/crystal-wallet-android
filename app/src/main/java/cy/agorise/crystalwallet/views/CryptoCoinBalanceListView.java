@@ -51,11 +51,11 @@ public class CryptoCoinBalanceListView extends RelativeLayout {
 
     public void init(){
         rootView = mInflater.inflate(R.layout.crypto_coin_balance_list, this, true);
-        this.listView = rootView.findViewById(R.id.cryptoCoinBalanceListView);
+        /*this.listView = rootView.findViewById(R.id.cryptoCoinBalanceListView);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         this.listView.setLayoutManager(linearLayoutManager);
-        this.listView.setNestedScrollingEnabled(false);
+        this.listView.setNestedScrollingEnabled(false);*/
     }
 
     public void setData(List<CryptoCoinBalance> data){

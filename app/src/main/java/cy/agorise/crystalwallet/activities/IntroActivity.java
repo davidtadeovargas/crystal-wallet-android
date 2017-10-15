@@ -55,7 +55,7 @@ public class IntroActivity extends AppCompatActivity {
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);
         for(int i=0;i<seeds.size();i++) {
-            long newId = db.accountSeedDao().insertAccountSeed(seeds.get(i))[0];
+            long newId = db.accountSeedDao().insertAccountSeed(seeds.get(i));
             seeds.get(i).setId(newId);
         }
         List<CryptoNetAccount> accounts = RandomCryptoNetAccountGenerator.generateAccounts(5,seeds);

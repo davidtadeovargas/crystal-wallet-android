@@ -22,7 +22,7 @@ public class CryptoNetBalanceListViewModel extends AndroidViewModel {
     public CryptoNetBalanceListViewModel(Application application) {
         super(application);
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
-        this.cryptoNetBalanceList = this.db.cryptoNetAccountDao().getAllBalances();
+        this.cryptoNetBalanceList = this.db.cryptoCoinBalanceDao().getAllBalances();
     }
 
     public LiveData<List<CryptoNetBalance>> getCryptoNetBalanceList(){

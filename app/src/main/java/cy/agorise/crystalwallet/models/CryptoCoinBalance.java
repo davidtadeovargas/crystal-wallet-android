@@ -24,6 +24,13 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
         childColumns = "account_id"))
 public class CryptoCoinBalance {
 
+    /**
+     * The id on the database
+     */
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private long mId;
+
     @ColumnInfo(name="account_id")
     private long mAccountId;
 
@@ -32,6 +39,14 @@ public class CryptoCoinBalance {
 
     @ColumnInfo(name = "balance")
     private int mBalance;
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        this.mId = id;
+    }
 
     public long getAccountId() {
         return mAccountId;

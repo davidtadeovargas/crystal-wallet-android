@@ -23,14 +23,7 @@ public interface CryptoNetAccountDao {
     @Query("SELECT * FROM crypto_net_account")
     List<CryptoNetAccount> getAll();
 
-    @Query("SELECT * FROM crypto_net_account")
-    LiveData<List<CryptoNetBalance>> getAllBalances();
-
-    @Query("SELECT 'Bitshares' as coin, 1 as balance FROM crypto_net_account WHERE id = :accountId")
-    LiveData<List<CryptoCoinBalance>> getBalancesFromAccount(long accountId);
-
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public long[] insertCryptoNetAccount(CryptoNetAccount... accounts);
+    public long[]  insertCryptoNetAccount(CryptoNetAccount... accounts);
 
 }

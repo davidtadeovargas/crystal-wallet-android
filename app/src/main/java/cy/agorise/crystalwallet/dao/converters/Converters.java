@@ -103,4 +103,18 @@ public class Converters {
             return SeedType.valueOf(value);
         }
     }
+
+    @TypeConverter
+    public int cryptoNetToAccountNumber(CryptoNet value) {
+        if (value == null) {
+            return -1;
+        } else {
+            return value.getBip44Index();
+        }
+    }
+
+    @TypeConverter
+    public CryptoNet accountNumberToCryptoNet(int value) {
+        return CryptoNet.fromBip44Index(value);
+    }
 }
