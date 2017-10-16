@@ -38,7 +38,7 @@ public class CryptoCoinBalance {
     private CryptoCoin mCoin;
 
     @ColumnInfo(name = "balance")
-    private int mBalance;
+    private long mBalance;
 
     public long getId() {
         return mId;
@@ -64,11 +64,11 @@ public class CryptoCoinBalance {
         this.mCoin = coin;
     }
 
-    public int getBalance() {
+    public long getBalance() {
         return mBalance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(long balance) {
         this.mBalance = balance;
     }
 

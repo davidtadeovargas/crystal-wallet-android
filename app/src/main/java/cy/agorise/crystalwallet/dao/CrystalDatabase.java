@@ -30,6 +30,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
     public abstract CryptoNetAccountDao cryptoNetAccountDao();
     public abstract TransactionDao transactionDao();
     public abstract CryptoCoinBalanceDao cryptoCoinBalanceDao();
+    public abstract CryptoCurrencyDao cryptoCurrencyDao();
 
     public static CrystalDatabase getAppDatabase(Context context) {
         if (instance == null) {

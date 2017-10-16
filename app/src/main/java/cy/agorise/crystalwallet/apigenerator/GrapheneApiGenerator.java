@@ -1,16 +1,24 @@
 package cy.agorise.crystalwallet.apigenerator;
 
+import android.arch.lifecycle.LiveData;
+import android.content.Context;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
+import cy.agorise.crystalwallet.models.CryptoCoinBalance;
+import cy.agorise.crystalwallet.models.CryptoNetBalance;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
+import cy.agorise.graphenej.AssetAmount;
 import cy.agorise.graphenej.ObjectType;
 import cy.agorise.graphenej.Transaction;
 import cy.agorise.graphenej.UserAccount;
+import cy.agorise.graphenej.api.GetAccountBalances;
 import cy.agorise.graphenej.api.GetAccountByName;
 import cy.agorise.graphenej.api.GetAccounts;
 import cy.agorise.graphenej.api.GetKeyReferences;
@@ -36,7 +44,7 @@ import cy.agorise.graphenej.models.WitnessResponse;
  * Created by henry on 26/9/2017.
  */
 
-public class GrapheneApiGenerator {
+public abstract class GrapheneApiGenerator {
 
     //TODO network connections
     //TODO make to work with all Graphene stype, not only bitshares
@@ -114,18 +122,18 @@ public class GrapheneApiGenerator {
     /**
      * Gets the Transaction for an Account
      *
-     * @param accountId The account id to search
+     * @param accountGrapheneId The account id to search
      * @param start The start index of the transaction list
      * @param stop The stop index of the transaction list
      * @param limit the maximun transactions to retrieve
      * @param request The Api request object, to answer this petition
      */
-    public static void getAccountTransaction(String accountId, int start, int stop, int limit, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountId), stop, limit, start, new WitnessResponseListener() {
+    public static void getAccountTransaction(String accountGrapheneId, int start, int stop, int limit, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountGrapheneId), stop, limit, start, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     WitnessResponse<List<HistoricalTransfer>> resp = response;
-                    request.getListener().success(resp,request.getId());
+                    request.getListener().success(resp.result,request.getId());
                 }
 
                 @Override
@@ -134,6 +142,32 @@ public class GrapheneApiGenerator {
                 }
             }),url);
             thread.start();
+    }
+
+    /**
+     * Retrieves the account id by the name of the account
+     *
+     * @param accountName The account Name to find
+     * @param request The Api request object, to answer this petition
+     */
+    public static void getAccountByName(String accountName, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
+                if(accountProperties == null){
+                    request.getListener().fail(request.getId());
+                }else{
+                    request.getListener().success(accountProperties,request.getId());
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
+        thread.start();
     }
 
     /**
@@ -221,14 +255,12 @@ public class GrapheneApiGenerator {
     }
 
     public static void getAssetById(ArrayList<String> assetIds, final ApiRequest request){
-        //TODO the graphenej library needs a way to creates the Asset object only with the symbol
         ArrayList<Asset> assets = new ArrayList<>();
         for(String assetId : assetIds){
             Asset asset = new Asset(assetId);
             assets.add(asset);
         }
-        //TODO the graphenj library needs to add the lookupAssetSymbols to be able to search the asset by symbol
-        // this can be done with the same lookupassetsymbol, but passing only the symbol not the objetcid
+
         WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets, new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
@@ -263,7 +295,8 @@ public class GrapheneApiGenerator {
         thread.start();
     }
 
-    public static void subscribeBitsharesAccount(final String accountId){
+    public static void subscribeBitsharesAccount(long accountId, final String accountBitsharesId, Context context){
+        final LiveData<List<CryptoCoinBalance>> balances = CrystalDatabase.getAppDatabase(context).cryptoCoinBalanceDao().getBalancesFromAccount(accountId);
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
@@ -277,7 +310,10 @@ public class GrapheneApiGenerator {
                     for(Serializable update : updatedObjects){
                         if(update instanceof AccountBalanceUpdate){
                             AccountBalanceUpdate balanceUpdate = (AccountBalanceUpdate) update;
-                            if(balanceUpdate.owner.equals(accountId)){
+                            if(balanceUpdate.owner.equals(accountBitsharesId)){
+                                boolean find = false;
+                                for(CryptoCoinBalance balance : balances.getValue()){
+                                }
                                 //TODO balance function
                                 //TODO refresh transactions
                             }
@@ -298,6 +334,33 @@ public class GrapheneApiGenerator {
 
     public static void cancelBitsharesAccountSubcriptions(){
         bitsharesSubscriptionHub.cancelSubscriptions();
+    }
+
+    public static void getAccountBalance(final long accountId, final String accountGrapheneId, final Context context){
+
+
+        WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), null, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                List<AssetAmount> balances = (List<AssetAmount>) response.result;
+                for(AssetAmount balance : balances){
+                    CryptoCoinBalance ccBalance = new CryptoCoinBalance();
+                    ccBalance.setAccountId(accountId);
+                    ccBalance.setBalance(balance.getAmount().longValue());
+
+                    //TODO cryptocyrrency
+                    CrystalDatabase.getAppDatabase(context).cryptoCoinBalanceDao().insertCryptoCoinBalance(ccBalance);
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+
+            }
+        }),url);
+
+        thread.start();
+
     }
 
 }

@@ -59,7 +59,7 @@ public class CryptoCoinTransaction {
      * The amount of asset is moved in this transaction
      */
     @ColumnInfo(name="amount")
-    protected int amount;
+    protected long amount;
 
     /**
      * The id of the Crypto Currency to use in the database
@@ -136,9 +136,9 @@ public class CryptoCoinTransaction {
 
     public void setConfirmed(boolean confirmed) { isConfirmed = confirmed; }
 
-    public int getAmount() { return amount; }
+    public long getAmount() { return amount; }
 
-    public void setAmount(int amount) { this.amount = amount; }
+    public void setAmount(long amount) { this.amount = amount; }
 
     public int getIdCurrency() { return idCurrency; }
 
