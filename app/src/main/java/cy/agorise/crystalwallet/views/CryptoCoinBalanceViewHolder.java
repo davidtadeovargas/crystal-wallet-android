@@ -34,7 +34,7 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
             cryptoCoinBalance.setText("");
         } else {
             cryptoCoinName.setText(balance.getCoin().getLabel());
-            cryptoCoinBalance.setText(balance.getBalance());
+            //cryptoCoinBalance.setText(balance.getBalance());
         }
     }
 }
