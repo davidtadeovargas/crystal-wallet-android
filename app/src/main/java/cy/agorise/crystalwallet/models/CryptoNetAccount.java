@@ -47,6 +47,16 @@ public class CryptoNetAccount {
     @ColumnInfo(name = "crypto_net")
     private CryptoNet mCryptoNet;
 
+    public CryptoNetAccount() {
+    }
+
+    public CryptoNetAccount(long mId, long mSeedId, int mAccountIndex, CryptoNet mCryptoNet) {
+        this.mId = mId;
+        this.mSeedId = mSeedId;
+        this.mAccountIndex = mAccountIndex;
+        this.mCryptoNet = mCryptoNet;
+    }
+
     public long getId() {
         return mId;
     }

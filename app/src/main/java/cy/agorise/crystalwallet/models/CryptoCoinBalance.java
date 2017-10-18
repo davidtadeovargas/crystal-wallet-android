@@ -34,8 +34,8 @@ public class CryptoCoinBalance {
     @ColumnInfo(name="account_id")
     private long mAccountId;
 
-    @ColumnInfo(name = "coin")
-    private CryptoCoin mCoin;
+    @ColumnInfo(name = "crypto_currency_id")
+    private long mCryptoCurrencyId;
 
     @ColumnInfo(name = "balance")
     private long mBalance;
@@ -56,12 +56,12 @@ public class CryptoCoinBalance {
         this.mAccountId = accountId;
     }
 
-    public CryptoCoin getCoin() {
-        return mCoin;
+    public long getCryptoCurrency() {
+        return mCryptoCurrencyId;
     }
 
-    public void setCoin(CryptoCoin coin) {
-        this.mCoin = coin;
+    public void setCryptoCurrency(long cryptoCurrencyId) {
+        this.mCryptoCurrencyId = cryptoCurrencyId;
     }
 
     public long getBalance() {
@@ -76,7 +76,7 @@ public class CryptoCoinBalance {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoCoinBalance oldBalance, @NonNull CryptoCoinBalance newBalance) {
-            return oldBalance.getCoin() == newBalance.getCoin();
+            return oldBalance.getCryptoCurrency() == newBalance.getCryptoCurrency();
         }
         @Override
         public boolean areContentsTheSame(
@@ -94,7 +94,7 @@ public class CryptoCoinBalance {
 
         if (mAccountId != that.mAccountId) return false;
         if (mBalance != that.mBalance) return false;
-        return mCoin == that.mCoin;
+        return mCryptoCurrencyId == that.mCryptoCurrencyId;
 
     }
 }

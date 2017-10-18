@@ -23,6 +23,9 @@ public interface CryptoNetAccountDao {
     @Query("SELECT * FROM crypto_net_account")
     List<CryptoNetAccount> getAll();
 
+    @Query("SELECT * FROM crypto_net_account WHERE id = :accountId")
+    LiveData<CryptoNetAccount> getById( long accountId);
+
     @Query("SELECT * FROM crypto_net_account WHERE crypto_net = 'BITSHARES'")
     LiveData<List<CryptoNetAccount>> getBitsharesAccounts();
 

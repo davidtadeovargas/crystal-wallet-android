@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.apigenerator;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
@@ -7,7 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoNetBalance;
@@ -295,8 +298,10 @@ public abstract class GrapheneApiGenerator {
         thread.start();
     }
 
-    public static void subscribeBitsharesAccount(long accountId, final String accountBitsharesId, Context context){
-        final LiveData<List<CryptoCoinBalance>> balances = CrystalDatabase.getAppDatabase(context).cryptoCoinBalanceDao().getBalancesFromAccount(accountId);
+    public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId, final Context context){
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+        final LiveData<List<CryptoCoinBalance>> balances = db.cryptoCoinBalanceDao().getBalancesFromAccount(accountId);
+        final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
@@ -313,12 +318,19 @@ public abstract class GrapheneApiGenerator {
                             if(balanceUpdate.owner.equals(accountBitsharesId)){
                                 boolean find = false;
                                 for(CryptoCoinBalance balance : balances.getValue()){
+
+                                }
+                                if(!find){
+                                    CryptoCoinBalance balance = new CryptoCoinBalance();
+
+                                    balanceDao.insertCryptoCoinBalance(balance);
                                 }
                                 //TODO balance function
-                                //TODO refresh transactions
+                                BitsharesAccountManager.refreshAccountTransactions(accountId,context);
                             }
                         }
                     }
+
                 }
             }
         };
@@ -337,8 +349,8 @@ public abstract class GrapheneApiGenerator {
     }
 
     public static void getAccountBalance(final long accountId, final String accountGrapheneId, final Context context){
-
-
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+        final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), null, new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
@@ -347,9 +359,11 @@ public abstract class GrapheneApiGenerator {
                     CryptoCoinBalance ccBalance = new CryptoCoinBalance();
                     ccBalance.setAccountId(accountId);
                     ccBalance.setBalance(balance.getAmount().longValue());
+                    //TODO find asset
+                    //ccBalance.setCryptoCurrency();
 
-                    //TODO cryptocyrrency
-                    CrystalDatabase.getAppDatabase(context).cryptoCoinBalanceDao().insertCryptoCoinBalance(ccBalance);
+
+                    balanceDao.insertCryptoCoinBalance(ccBalance);
                 }
             }
 

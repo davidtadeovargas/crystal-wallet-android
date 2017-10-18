@@ -17,7 +17,7 @@ import android.arch.persistence.room.Index;
 public class GrapheneAccountInfo {
 
     @ColumnInfo(name = "crypto_net_account_id")
-    protected String cryptoNetAccountId;
+    protected long cryptoNetAccountId;
 
     @ColumnInfo(name = "account_name")
     protected String name;
@@ -25,11 +25,21 @@ public class GrapheneAccountInfo {
     @ColumnInfo(name = "account_id")
     protected String accountId;
 
-    public String getCryptoNetAccountId() {
+    public GrapheneAccountInfo(long cryptoNetAccountId) {
+        this.cryptoNetAccountId = cryptoNetAccountId;
+    }
+
+    public GrapheneAccountInfo(GrapheneAccount account) {
+        this.cryptoNetAccountId = account.getId();
+        this.name = account.getName();
+        this.accountId = account.getAccountId();
+    }
+
+    public long getCryptoNetAccountId() {
         return cryptoNetAccountId;
     }
 
-    public void setCryptoNetAccountId(String cryptoNetAccountId) {
+    public void setCryptoNetAccountId(long cryptoNetAccountId) {
         this.cryptoNetAccountId = cryptoNetAccountId;
     }
 
