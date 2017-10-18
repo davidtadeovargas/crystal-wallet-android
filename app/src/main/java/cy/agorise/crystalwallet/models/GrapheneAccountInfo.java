@@ -10,7 +10,7 @@ import android.arch.persistence.room.Index;
  */
 
 @Entity(tableName = "graphene_account",
-        indices = {@Index("id"),@Index(value = "crypto_net_account_id",unique=true)},
+        primaryKeys = {"crypto_net_account_id"},
         foreignKeys = @ForeignKey(entity = CryptoNetAccount.class,
         parentColumns = "id",
         childColumns = "crypto_net_account_id"))

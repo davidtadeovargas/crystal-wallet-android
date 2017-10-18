@@ -19,8 +19,11 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 @Dao
 public interface GrapheneAccountInfoDao {
 
-    @Query("SELECT * FROM graphene_account WHERE subclass = 1")
+    @Query("SELECT * FROM graphene_account")
     LiveData<List<GrapheneAccountInfo>> getAll();
+
+    @Query("SELECT * FROM graphene_account WHERE crypto_net_account_id = :cryptoNetAccountId")
+    LiveData<GrapheneAccountInfo> getGrapheneAccountInfo(int cryptoNetAccountId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertGrapheneAccountInfo(GrapheneAccountInfo... accounts);

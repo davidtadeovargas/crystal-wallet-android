@@ -33,7 +33,7 @@ public class CryptoNetBalance {
     /**
      * The cryptonet of the account
      */
-    @ColumnInfo(name = "account_number", typeAffinity = INTEGER)
+    @ColumnInfo(name = "crypto_net")
     private CryptoNet mCryptoNet;
 
     public long getAccountId() {

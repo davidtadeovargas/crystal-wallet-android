@@ -31,7 +31,7 @@ public class RandomCryptoCoinBalanceGenerator {
             int randomAccountIndex = randomGenerator.nextInt(accounts.size());
             CryptoNetAccount randomSelectedAccount = accounts.get(randomAccountIndex);
             randomAmount = randomGenerator.nextInt((maxAmount - minAmount) + 1) + minAmount;
-            accountCryptoCoins = CryptoCoin.getByCryptoNet(converters.accountNumberToCryptoNet(randomSelectedAccount.getAccountNumber()));
+            accountCryptoCoins = CryptoCoin.getByCryptoNet(randomSelectedAccount.getCryptoNet());
             randomCryptoCoin = accountCryptoCoins.get(randomGenerator.nextInt(accountCryptoCoins.size()));
 
             randomBalance = new CryptoCoinBalance();

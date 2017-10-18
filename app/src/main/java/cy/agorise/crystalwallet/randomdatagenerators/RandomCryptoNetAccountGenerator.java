@@ -30,13 +30,13 @@ public class RandomCryptoNetAccountGenerator {
         for (int i=0;i<numberOfAccounts;i++){
             int randomSeedIndex = randomGenerator.nextInt(seeds.size());
             AccountSeed randomSelectedSeed = seeds.get(randomSeedIndex);
-            int randomAccountNumber = cryptoNetList.get(randomGenerator.nextInt(cryptoNetList.size())).getBip44Index();
+            CryptoNet randomCryptoNet = cryptoNetList.get(randomGenerator.nextInt(cryptoNetList.size()));
             int randomAccountIndex = randomGenerator.nextInt(1000);
 
             randomAccount = new CryptoNetAccount();
             randomAccount.setSeedId(randomSelectedSeed.getId());
             randomAccount.setAccountIndex(randomAccountIndex);
-            randomAccount.setAccountNumber(randomAccountNumber);
+            randomAccount.setCryptoNet(randomCryptoNet);
             result.add(randomAccount);
         }
 

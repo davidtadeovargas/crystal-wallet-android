@@ -22,7 +22,7 @@ public interface CryptoCoinBalanceDao {
     @Query("SELECT * FROM crypto_coin_balance")
     List<CryptoCoinBalance> getAll();
 
-    @Query("SELECT id as account_id, account_number FROM crypto_net_account")
+    @Query("SELECT id as account_id, crypto_net FROM crypto_net_account")
     LiveData<List<CryptoNetBalance>> getAllBalances();
 
     @Query("SELECT * FROM crypto_coin_balance WHERE account_id = :accountId")

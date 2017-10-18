@@ -7,14 +7,16 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import cy.agorise.crystalwallet.enums.CryptoNet;
+
 /**
- * Represents a geneeric CryptoNet Account
+ * Represents a generic CryptoNet Account
  *
  * Created by Henry Varona on 6/9/2017.
  */
 
 @Entity(tableName = "crypto_net_account",
-        indices = {@Index("id"),@Index("seed_id")},
+        indices = {@Index("id"),@Index("seed_id"),@Index(value = {"seed_id","crypto_net","account_index"},unique=true)},
         foreignKeys = @ForeignKey(entity = AccountSeed.class,
         parentColumns = "id",
         childColumns = "seed_id"))
@@ -34,22 +36,16 @@ public class CryptoNetAccount {
     private long mSeedId;
 
     /**
-     * The account number on the bip44 or slip44
-     */
-    @ColumnInfo(name = "account_number")
-    private int mAccountNumber;
-
-    /**
      * The account index on this wallet
      */
     @ColumnInfo(name = "account_index")
     private int mAccountIndex;
 
     /**
-     * The type of the account
+     * The crypto net of the account
      */
-    @ColumnInfo(name = "type")
-    private int type;
+    @ColumnInfo(name = "crypto_net")
+    private CryptoNet mCryptoNet;
 
     public long getId() {
         return mId;
@@ -67,14 +63,6 @@ public class CryptoNetAccount {
         this.mSeedId = mSeedId;
     }
 
-    public int getAccountNumber() {
-        return mAccountNumber;
-    }
-
-    public void setAccountNumber(int mAccountNumber) {
-        this.mAccountNumber = mAccountNumber;
-    }
-
     public int getAccountIndex() {
         return mAccountIndex;
     }
@@ -83,11 +71,11 @@ public class CryptoNetAccount {
         this.mAccountIndex = mAccountIndex;
     }
 
-    public int getType() {
-        return type;
+    public CryptoNet getCryptoNet() {
+        return mCryptoNet;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setCryptoNet(CryptoNet cryptoNet) {
+        this.mCryptoNet = cryptoNet;
     }
 }
