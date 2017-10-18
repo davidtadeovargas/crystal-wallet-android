@@ -1,6 +1,8 @@
 package cy.agorise.crystalwallet.enums;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Henry Varona on 12/9/2017.
@@ -33,6 +35,17 @@ public enum CryptoCoin implements Serializable {
     }
     public int getPrecision(){
         return this.precision;
+    }
+    public static List<CryptoCoin> getByCryptoNet(CryptoNet cryptoNet){
+        List<CryptoCoin> result = new ArrayList<CryptoCoin>();
+
+        for (CryptoCoin nextCryptoCoin : CryptoCoin.values()){
+            if (nextCryptoCoin.getCryptoNet().equals(cryptoNet)) {
+                result.add(nextCryptoCoin);
+            }
+        }
+
+        return result;
     }
 
 }

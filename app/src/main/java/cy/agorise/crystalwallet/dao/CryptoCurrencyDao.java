@@ -19,7 +19,7 @@ public interface CryptoCurrencyDao {
     @Query("SELECT * FROM crypto_currency")
     List<CryptoCurrency> getAll();
 
-    @Query("SELECT * FROM crypto_currency WHERE id := id")
+    @Query("SELECT * FROM crypto_currency WHERE id = :id")
     CryptoCurrency getById(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

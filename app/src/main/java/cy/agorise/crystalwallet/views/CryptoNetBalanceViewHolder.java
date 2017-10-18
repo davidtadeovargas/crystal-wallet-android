@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.views;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +24,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         cryptoNetIcon = (ImageView) itemView.findViewById(R.id.ivCryptoNetIcon);
         cryptoNetName = (TextView) itemView.findViewById(R.id.tvCryptoNetName);
-        cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalanceListView);
+        cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalancesListView);
 
     }
 
@@ -36,6 +37,21 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
             cryptoNetName.setText("loading...");
         } else {
             cryptoNetName.setText(balance.getCryptoNet().getLabel());
+
+            /*transactionListView = this.findViewById(R.id.transaction_list);
+
+        transactionListViewModel = ViewModelProviders.of(getContext).get(TransactionListViewModel.class);
+        LiveData<PagedList<CryptoCoinTransaction>> transactionData = transactionListViewModel.getTransactionList();
+        transactionListView.setData(null);
+
+        transactionData.observe(this, new Observer<PagedList<CryptoCoinTransaction>>() {
+            @Override
+            public void onChanged(PagedList<CryptoCoinTransaction> cryptoCoinTransactions) {
+                transactionListView.setData(cryptoCoinTransactions);
+            }
+        });
+
+            cryptoCoinBalanceListView.setData();*/
         }
     }
 }

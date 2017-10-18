@@ -45,6 +45,12 @@ public class CryptoNetAccount {
     @ColumnInfo(name = "account_index")
     private int mAccountIndex;
 
+    /**
+     * The type of the account
+     */
+    @ColumnInfo(name = "type")
+    private int type;
+
     public long getId() {
         return mId;
     }
@@ -77,4 +83,11 @@ public class CryptoNetAccount {
         this.mAccountIndex = mAccountIndex;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }

@@ -23,6 +23,9 @@ public interface CryptoNetAccountDao {
     @Query("SELECT * FROM crypto_net_account")
     List<CryptoNetAccount> getAll();
 
+    @Query("SELECT * FROM crypto_net_account WHERE type = 1")
+    LiveData<List<CryptoNetAccount>> getGrapheneAccounts();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[]  insertCryptoNetAccount(CryptoNetAccount... accounts);
 

@@ -18,8 +18,10 @@ import java.util.List;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoCoinBalanceGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
@@ -62,6 +64,11 @@ public class IntroActivity extends AppCompatActivity {
         for(int i=0;i<accounts.size();i++) {
             long newId = db.cryptoNetAccountDao().insertCryptoNetAccount(accounts.get(i))[0];
             accounts.get(i).setId(newId);
+        }
+        List<CryptoCoinBalance> balances = RandomCryptoCoinBalanceGenerator.generateCryptoCoinBalances(accounts,5,1,20);
+        for(int i=0;i<balances.size();i++) {
+            long newId = db.cryptoCoinBalanceDao().insertCryptoCoinBalance(balances.get(i))[0];
+            balances.get(i).setId(newId);
         }
         List<CryptoCoinTransaction> transactions = RandomTransactionsGenerator.generateTransactions(accounts,100,1262304001,1496275201,1,999999999);
         for(int i=0;i<transactions.size();i++) {
