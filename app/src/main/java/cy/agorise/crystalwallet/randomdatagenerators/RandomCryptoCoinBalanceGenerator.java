@@ -37,7 +37,7 @@ public class RandomCryptoCoinBalanceGenerator {
             randomBalance = new CryptoCoinBalance();
             randomBalance.setAccountId(randomSelectedAccount.getId());
             randomBalance.setBalance(randomAmount);
-            randomBalance.setCoin(randomCryptoCoin);
+            //randomBalance.setCoin(randomCryptoCoin);
             result.add(randomBalance);
         }
 

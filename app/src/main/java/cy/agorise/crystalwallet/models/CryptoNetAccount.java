@@ -4,6 +4,7 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -50,6 +51,7 @@ public class CryptoNetAccount {
     public CryptoNetAccount() {
     }
 
+    @Ignore
     public CryptoNetAccount(long mId, long mSeedId, int mAccountIndex, CryptoNet mCryptoNet) {
         this.mId = mId;
         this.mSeedId = mSeedId;

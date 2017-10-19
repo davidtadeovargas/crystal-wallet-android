@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.views;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoNetBalance;
+import cy.agorise.crystalwallet.viewmodels.CryptoCoinBalanceListViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
 
 /**
@@ -58,9 +60,9 @@ public class CryptoNetBalanceListView extends RelativeLayout {
         this.listView.setNestedScrollingEnabled(false);
     }
 
-    public void setData(List<CryptoNetBalance> data){
+    public void setData(List<CryptoNetBalance> data, Fragment fragment){
         if (this.listAdapter == null) {
-            this.listAdapter = new CryptoNetBalanceListAdapter();
+            this.listAdapter = new CryptoNetBalanceListAdapter(fragment);
             this.listView.setAdapter(this.listAdapter);
         }
 
