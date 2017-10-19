@@ -73,7 +73,7 @@ public class Converters {
         if (net == null) {
             return "";
         } else {
-            return net.getLabel();
+            return net.name();
         }
     }
 

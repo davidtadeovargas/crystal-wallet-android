@@ -52,12 +52,14 @@ public class BalanceFragment extends Fragment {
 
         cryptoNetBalanceListViewModel = ViewModelProviders.of(this).get(CryptoNetBalanceListViewModel.class);
         LiveData<List<CryptoNetBalance>> cryptoNetBalanceData = cryptoNetBalanceListViewModel.getCryptoNetBalanceList();
-        vCryptoNetBalanceListView.setData(null);
+        vCryptoNetBalanceListView.setData(null, this);
 
+        final Fragment fragment = this;
+        
         cryptoNetBalanceData.observe(this, new Observer<List<CryptoNetBalance>>() {
             @Override
             public void onChanged(List<CryptoNetBalance> cryptoNetBalances) {
-                vCryptoNetBalanceListView.setData(cryptoNetBalances);
+                vCryptoNetBalanceListView.setData(cryptoNetBalances, fragment);
             }
         });
 

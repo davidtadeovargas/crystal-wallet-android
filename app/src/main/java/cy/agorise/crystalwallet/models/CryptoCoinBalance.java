@@ -56,11 +56,11 @@ public class CryptoCoinBalance {
         this.mAccountId = accountId;
     }
 
-    public long getCryptoCurrency() {
+    public long getCryptoCurrencyId() {
         return mCryptoCurrencyId;
     }
 
-    public void setCryptoCurrency(long cryptoCurrencyId) {
+    public void setCryptoCurrencyId(long cryptoCurrencyId) {
         this.mCryptoCurrencyId = cryptoCurrencyId;
     }
 
@@ -76,7 +76,7 @@ public class CryptoCoinBalance {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoCoinBalance oldBalance, @NonNull CryptoCoinBalance newBalance) {
-            return oldBalance.getCryptoCurrency() == newBalance.getCryptoCurrency();
+            return oldBalance.getCryptoCurrencyId() == newBalance.getCryptoCurrencyId();
         }
         @Override
         public boolean areContentsTheSame(
