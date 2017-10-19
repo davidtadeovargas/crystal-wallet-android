@@ -3,6 +3,9 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.TypeConverters;
+
+import cy.agorise.crystalwallet.dao.converters.Converters;
 
 /**
  * This represents the extens attributes of the Bitshares Assets, to be saved in the database
@@ -22,7 +25,11 @@ public class BitsharesAssetInfo {
     private String bitsharesId;
     // The bitshares type see the enum below
     @ColumnInfo(name = "asset_type")
+    @TypeConverters(Converters.class)
     private BitsharesAsset.Type assetType;
+
+    public BitsharesAssetInfo() {
+    }
 
     public BitsharesAssetInfo(String symbol, int precision, String bitsharesId, BitsharesAsset.Type assetType) {
         this.bitsharesId = bitsharesId;

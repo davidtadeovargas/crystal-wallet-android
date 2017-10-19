@@ -35,6 +35,9 @@ public class BitsharesAsset extends CryptoCurrency {
             this.code = code;
         }
 
+        public int getCode() {
+            return code;
+        }
     }
 
     public BitsharesAsset(String symbol, int precision, String bitsharesId, Type assetType) {

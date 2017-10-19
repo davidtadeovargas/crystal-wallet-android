@@ -7,6 +7,7 @@ import java.util.Date;
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.enums.SeedType;
+import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 import static cy.agorise.crystalwallet.R.string.account;
@@ -116,5 +117,18 @@ public class Converters {
     @TypeConverter
     public CryptoNet accountNumberToCryptoNet(int value) {
         return CryptoNet.fromBip44Index(value);
+    }
+
+    @TypeConverter
+    public String assetTypeToName(BitsharesAsset.Type type){
+        if(type == null){
+            return "";
+        }
+        return type.name();
+    }
+
+    @TypeConverter
+    public BitsharesAsset.Type nameToAssetType(String value){
+        return BitsharesAsset.Type.valueOf(value);
     }
 }
