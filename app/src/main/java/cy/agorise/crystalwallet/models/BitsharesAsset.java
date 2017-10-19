@@ -45,6 +45,18 @@ public class BitsharesAsset extends CryptoCurrency {
         this.setPrecision(precision);
     }
 
+    public BitsharesAsset(CryptoCurrency currency){
+        this.setId(currency.getId());
+        this.setPrecision(currency.getPrecision());
+        this.setCryptoNet(currency.getCryptoNet());
+        this.setName(currency.getName());
+    }
+
+    public void loadInfo(BitsharesAssetInfo info){
+        this.bitsharesId = info.getBitsharesId();
+        this.assetType = info.getAssetType();
+    }
+
     public String getBitsharesId() {
         return bitsharesId;
     }

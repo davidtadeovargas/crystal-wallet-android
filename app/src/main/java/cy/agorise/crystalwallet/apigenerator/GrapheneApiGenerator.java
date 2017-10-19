@@ -8,10 +8,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
 import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
+import cy.agorise.crystalwallet.dao.CryptoCurrencyDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
+import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoNetBalance;
 import cy.agorise.crystalwallet.network.WebSocketThread;
@@ -300,8 +303,9 @@ public abstract class GrapheneApiGenerator {
 
     public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId, final Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-        final LiveData<List<CryptoCoinBalance>> balances = db.cryptoCoinBalanceDao().getBalancesFromAccount(accountId);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
+        final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
+        final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
@@ -316,15 +320,33 @@ public abstract class GrapheneApiGenerator {
                         if(update instanceof AccountBalanceUpdate){
                             AccountBalanceUpdate balanceUpdate = (AccountBalanceUpdate) update;
                             if(balanceUpdate.owner.equals(accountBitsharesId)){
-                                boolean find = false;
-                                for(CryptoCoinBalance balance : balances.getValue()){
+                                CryptoCoinBalance balance = new CryptoCoinBalance();
+                                balance.setAccountId(accountId);
+                                balance.setBalance(((AccountBalanceUpdate) update).balance);
+                                /*LiveData<BitsharesAssetInfo> assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(((AccountBalanceUpdate) update).asset_type);
+                                if(assetInfo == null || assetInfo.getValue() == null){
+                                    BitsharesAsset.Type assetType;
+                                    Asset asset = balance.getAsset();
+                                    if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                                        assetType = BitsharesAsset.Type.CORE;
+                                    }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
+                                        assetType = BitsharesAsset.Type.SMART_COIN;
+                                    }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
+                                        assetType = BitsharesAsset.Type.UIA;
+                                    }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
+                                        assetType = BitsharesAsset.Type.PREDICTION_MARKET;
+                                    }
 
+                                    BitsharesAsset newAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                                    BitsharesAssetInfo info = new BitsharesAssetInfo(newAsset);
+                                    cryptoCurrencyDao.insertCryptoCurrency(newAsset);
+                                    bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                                    assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
                                 }
-                                if(!find){
-                                    CryptoCoinBalance balance = new CryptoCoinBalance();
 
-                                    balanceDao.insertCryptoCoinBalance(balance);
-                                }
+                                balance.setCryptoCurrency(assetInfo.getValue().getCryptoCurrencyId());
+
+                                    balanceDao.insertCryptoCoinBalance(balance);*/
                                 //TODO balance function
                                 BitsharesAccountManager.refreshAccountTransactions(accountId,context);
                             }
@@ -351,6 +373,8 @@ public abstract class GrapheneApiGenerator {
     public static void getAccountBalance(final long accountId, final String accountGrapheneId, final Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
+        final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
+        final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
         WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), null, new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
@@ -359,10 +383,28 @@ public abstract class GrapheneApiGenerator {
                     CryptoCoinBalance ccBalance = new CryptoCoinBalance();
                     ccBalance.setAccountId(accountId);
                     ccBalance.setBalance(balance.getAmount().longValue());
-                    //TODO find asset
-                    //ccBalance.setCryptoCurrency();
+                    LiveData<BitsharesAssetInfo> assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
+                    if(assetInfo == null || assetInfo.getValue() == null){
+                        BitsharesAsset.Type assetType = null;
+                        Asset asset = balance.getAsset();
+                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                            assetType = BitsharesAsset.Type.CORE;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
+                            assetType = BitsharesAsset.Type.SMART_COIN;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
+                            assetType = BitsharesAsset.Type.UIA;
+                        }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
+                            assetType = BitsharesAsset.Type.PREDICTION_MARKET;
+                        }
 
+                        BitsharesAsset newAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                        BitsharesAssetInfo info = new BitsharesAssetInfo(newAsset);
+                        cryptoCurrencyDao.insertCryptoCurrency(newAsset);
+                        bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                        assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
+                    }
 
+                    ccBalance.setCryptoCurrency(assetInfo.getValue().getCryptoCurrencyId());
                     balanceDao.insertCryptoCoinBalance(ccBalance);
                 }
             }
