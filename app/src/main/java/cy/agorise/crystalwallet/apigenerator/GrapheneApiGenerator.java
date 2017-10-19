@@ -404,7 +404,7 @@ public abstract class GrapheneApiGenerator {
                         assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
                     }
 
-                    ccBalance.setCryptoCurrency(assetInfo.getValue().getCryptoCurrencyId());
+                    ccBalance.setCryptoCurrencyId(assetInfo.getValue().getCryptoCurrencyId());
                     balanceDao.insertCryptoCoinBalance(ccBalance);
                 }
             }
