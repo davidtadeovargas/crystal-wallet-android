@@ -55,7 +55,7 @@ public class BalanceFragment extends Fragment {
         vCryptoNetBalanceListView.setData(null, this);
 
         final Fragment fragment = this;
-        
+
         cryptoNetBalanceData.observe(this, new Observer<List<CryptoNetBalance>>() {
             @Override
             public void onChanged(List<CryptoNetBalance> cryptoNetBalances) {

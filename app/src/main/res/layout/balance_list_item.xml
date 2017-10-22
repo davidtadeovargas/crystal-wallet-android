@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true">
 
         <LinearLayout
+            android:id="@+id/cryptoNetBalanceTitleBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -32,10 +33,12 @@
                 android:ems="10"
                 android:text="unknown coin" />
         </LinearLayout>
+
         <cy.agorise.crystalwallet.views.CryptoCoinBalanceListView
+            android:id="@+id/cryptoCoinBalancesListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/cryptoCoinBalancesListView">
+            android:layout_below="@+id/cryptoNetBalanceTitleBarLayout">
 
         </cy.agorise.crystalwallet.views.CryptoCoinBalanceListView>
 

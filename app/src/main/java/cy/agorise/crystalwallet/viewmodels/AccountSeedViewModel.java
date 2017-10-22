@@ -34,7 +34,8 @@ public class AccountSeedViewModel extends AndroidViewModel {
     }
 
     public void addSeed(AccountSeed seed){
-        this.db.accountSeedDao().insertAccountSeed(seed);
+        long newId = this.db.accountSeedDao().insertAccountSeed(seed);
+        seed.setId(newId);
     }
 
     public LiveData<AccountSeed> getAccountSeed(){

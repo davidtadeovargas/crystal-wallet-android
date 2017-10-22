@@ -21,7 +21,7 @@ import cy.agorise.crystalwallet.models.CryptoNetBalance;
 public interface CryptoNetAccountDao {
 
     @Query("SELECT * FROM crypto_net_account")
-    List<CryptoNetAccount> getAll();
+    LiveData<List<CryptoNetAccount>> getAll();
 
     @Query("SELECT * FROM crypto_net_account WHERE id = :accountId")
     LiveData<CryptoNetAccount> getById( long accountId);
@@ -31,5 +31,4 @@ public interface CryptoNetAccountDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[]  insertCryptoNetAccount(CryptoNetAccount... accounts);
-
 }

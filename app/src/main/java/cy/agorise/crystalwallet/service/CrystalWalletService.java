@@ -2,15 +2,22 @@ package cy.agorise.crystalwallet.service;
 
 
 import android.app.Service;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.List;
+
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
 
 /**
  * Created by Henry Varona on 3/10/2017.
@@ -43,17 +50,32 @@ public class CrystalWalletService extends Service {
     }
 
     public void loadAccountTransactions(){
-        this.keepLoadingAccountTransactions = true;
+        /*this.keepLoadingAccountTransactions = true;
+        final CrystalWalletService thisService = this;
 
-        while(this.keepLoadingAccountTransactions){
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(this);
+        final LiveData<List<CryptoNetAccount>> cryptoNetAccountList = db.cryptoNetAccountDao().getAll();
+        cryptoNetAccountList.observe(this, new Observer<List<CryptoNetAccount>>() {
+            @Override
+            public void onChanged(@Nullable List<CryptoNetAccount> cryptoNetAccounts) {
+                for(CryptoNetAccount nextAccount : cryptoNetAccountList.getValue()) {
+                    bitsharesAccountManager.loadAccountFromDB(nextAccount,thisService);
+                }
+            }
+        });*/
+
+
+
+        /*while(this.keepLoadingAccountTransactions){
             try{
                 Log.i("Crystal Service","Searching for transactions...");
+                this.bitsharesAccountManager.loadAccountFromDB();
                 Thread.sleep(60000);//Sleep for 1 minutes
                 // TODO search for accounts and make managers find new transactions
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }
+        }*/
     }
 
     @Override
