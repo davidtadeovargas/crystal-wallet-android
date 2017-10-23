@@ -22,6 +22,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
+import cy.agorise.crystalwallet.viewmodels.GrapheneAccountInfoViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.ValidationField;
@@ -115,12 +116,15 @@ public class ImportSeedActivity extends AppCompatActivity implements UIValidator
             accountSeedViewModel.addSeed(seed);
 
             CryptoNetAccountViewModel cryptoNetAccountViewModel = ViewModelProviders.of(this).get(CryptoNetAccountViewModel.class);
+            GrapheneAccountInfoViewModel grapheneAccountInfoViewModel = ViewModelProviders.of(this).get(GrapheneAccountInfoViewModel.class);
             CryptoNetAccount cryptoNetAccount = new CryptoNetAccount();
             cryptoNetAccount.setSeedId(seed.getId());
             cryptoNetAccount.setAccountIndex(0);
             cryptoNetAccount.setCryptoNet(cy.agorise.crystalwallet.enums.CryptoNet.BITSHARES);
             cryptoNetAccountViewModel.addCryptoNetAccount(cryptoNetAccount);
             GrapheneAccountInfo grapheneAccountInfo = new GrapheneAccountInfo(cryptoNetAccount.getId());
+            grapheneAccountInfo.setName(etAccountName.getText().toString());
+            grapheneAccountInfoViewModel.addGrapheneAccountInfo(grapheneAccountInfo);
 
             this.finish();
         }
