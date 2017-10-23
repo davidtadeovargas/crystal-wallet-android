@@ -24,7 +24,10 @@ public interface TransactionDao {
     LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByDate();
 
     @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date ASC")
-    LiveData<List<CryptoCoinTransaction>> getByIdAccount(long idAccount);
+    LiveData<List<CryptoCoinTransaction>> getByIdAccountLiveData(long idAccount);
+
+    @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date ASC")
+    List<CryptoCoinTransaction> getByIdAccount(long idAccount);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertTransaction(CryptoCoinTransaction... transactions);

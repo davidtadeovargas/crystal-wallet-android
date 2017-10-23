@@ -269,7 +269,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
     public static void refreshAccountTransactions(long idAccount, Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-        LiveData<List<CryptoCoinTransaction>> transactions = db.transactionDao().getByIdAccount(idAccount);
+        List<CryptoCoinTransaction> transactions = db.transactionDao().getByIdAccount(idAccount);
         CryptoNetAccount account = db.cryptoNetAccountDao().getById(idAccount);
         if(account.getCryptoNet() == CryptoNet.BITSHARES) {
 
@@ -278,7 +278,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(idAccount));
 
 
-            int start = transactions.getValue().size();
+            int start = transactions.size();
             int limit = 50;
             int stop = start + limit;
 
