@@ -103,7 +103,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         if(account instanceof GrapheneAccount){
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
             CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-            grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getGrapheneAccountInfo(account.getId()).getValue());
+            grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(account.getId()));
             if(grapheneAccount.getAccountId() == null){
                 grapheneAccount = this.getAccountInfoByName(grapheneAccount.getName());
             }else if(grapheneAccount.getName() == null){
@@ -270,12 +270,12 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     public static void refreshAccountTransactions(long idAccount, Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         LiveData<List<CryptoCoinTransaction>> transactions = db.transactionDao().getByIdAccount(idAccount);
-        LiveData<CryptoNetAccount> account = db.cryptoNetAccountDao().getById(idAccount);
-        if(account.getValue().getCryptoNet() == CryptoNet.BITSHARES) {
+        CryptoNetAccount account = db.cryptoNetAccountDao().getById(idAccount);
+        if(account.getCryptoNet() == CryptoNet.BITSHARES) {
 
-            GrapheneAccount grapheneAccount = new GrapheneAccount(account.getValue());
+            GrapheneAccount grapheneAccount = new GrapheneAccount(account);
 
-            grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getGrapheneAccountInfo(idAccount).getValue());
+            grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(idAccount));
 
 
             int start = transactions.getValue().size();

@@ -25,6 +25,9 @@ public interface GrapheneAccountInfoDao {
     @Query("SELECT * FROM graphene_account WHERE crypto_net_account_id = :cryptoNetAccountId")
     LiveData<GrapheneAccountInfo> getGrapheneAccountInfo(long cryptoNetAccountId);
 
+    @Query("SELECT * FROM graphene_account WHERE crypto_net_account_id = :cryptoNetAccountId")
+    GrapheneAccountInfo getByAccountId(long cryptoNetAccountId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertGrapheneAccountInfo(GrapheneAccountInfo... accounts);
 

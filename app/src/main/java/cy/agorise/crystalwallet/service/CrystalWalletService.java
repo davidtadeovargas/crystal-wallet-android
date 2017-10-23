@@ -19,6 +19,8 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 
 /**
  * Created by Henry Varona on 3/10/2017.
@@ -54,13 +56,19 @@ public class CrystalWalletService extends LifecycleService {
         this.keepLoadingAccountTransactions = true;
         final CrystalWalletService thisService = this;
 
-        CrystalDatabase db = CrystalDatabase.getAppDatabase(this);
+        final CrystalDatabase db = CrystalDatabase.getAppDatabase(this);
         final LiveData<List<CryptoNetAccount>> cryptoNetAccountList = db.cryptoNetAccountDao().getAll();
         cryptoNetAccountList.observe(this, new Observer<List<CryptoNetAccount>>() {
             @Override
             public void onChanged(@Nullable List<CryptoNetAccount> cryptoNetAccounts) {
+                GrapheneAccount nextGrapheneAccount;
                 for(CryptoNetAccount nextAccount : cryptoNetAccountList.getValue()) {
-                    bitsharesAccountManager.loadAccountFromDB(nextAccount,thisService);
+                    GrapheneAccountInfo grapheneAccountInfo = db.grapheneAccountInfoDao().getByAccountId(nextAccount.getId());
+                    nextGrapheneAccount = new GrapheneAccount(nextAccount);
+                    nextGrapheneAccount.loadInfo(grapheneAccountInfo);
+
+
+                    bitsharesAccountManager.loadAccountFromDB(nextGrapheneAccount,thisService);
                 }
             }
         });
@@ -81,6 +89,7 @@ public class CrystalWalletService extends LifecycleService {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         //Creates a instance for the cryptoNetInfoRequest and the managers
         this.cryptoNetInfoRequests = CryptoNetInfoRequests.getInstance();
         this.bitsharesAccountManager = new BitsharesAccountManager();
@@ -92,6 +101,8 @@ public class CrystalWalletService extends LifecycleService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent,flags,startId);
+
         if (LoadAccountTransactionsThread == null) {
             LoadAccountTransactionsThread = new Thread() {
                 public void run() {
@@ -107,11 +118,13 @@ public class CrystalWalletService extends LifecycleService {
 
     @Override
     public IBinder onBind(Intent intent) {
+        super.onBind(intent);
         return null;
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         Log.i("Crystal Service", "Destroying service");
     }
 }

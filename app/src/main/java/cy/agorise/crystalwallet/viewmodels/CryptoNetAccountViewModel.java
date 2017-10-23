@@ -25,7 +25,7 @@ public class CryptoNetAccountViewModel extends AndroidViewModel {
     }
 
     public void loadCryptoNetAccount(int accountId){
-        this.cryptoNetAccount = this.db.cryptoNetAccountDao().getById(accountId);
+        this.cryptoNetAccount = this.db.cryptoNetAccountDao().getByIdLiveData(accountId);
     }
 
     public void addCryptoNetAccount(CryptoNetAccount account){
