@@ -2,6 +2,7 @@ package cy.agorise.crystalwallet.service;
 
 
 import android.app.Service;
+import android.arch.lifecycle.LifecycleService;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
@@ -24,7 +25,7 @@ import cy.agorise.crystalwallet.models.CryptoNetAccount;
  */
 
 
-public class CrystalWalletService extends Service {
+public class CrystalWalletService extends LifecycleService {
 
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
@@ -50,7 +51,7 @@ public class CrystalWalletService extends Service {
     }
 
     public void loadAccountTransactions(){
-        /*this.keepLoadingAccountTransactions = true;
+        this.keepLoadingAccountTransactions = true;
         final CrystalWalletService thisService = this;
 
         CrystalDatabase db = CrystalDatabase.getAppDatabase(this);
@@ -62,7 +63,7 @@ public class CrystalWalletService extends Service {
                     bitsharesAccountManager.loadAccountFromDB(nextAccount,thisService);
                 }
             }
-        });*/
+        });
 
 
 
