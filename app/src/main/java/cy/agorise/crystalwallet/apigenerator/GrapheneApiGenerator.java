@@ -6,6 +6,7 @@ import android.content.Context;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
@@ -65,6 +66,7 @@ public abstract class GrapheneApiGenerator {
     });
 
     private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub,url);
+    private static HashMap<Long,SubscriptionListener> currentBitsharesListener = new HashMap<>();
 
     /**
      * Retrieves the data of an account searching by it's id
@@ -302,6 +304,7 @@ public abstract class GrapheneApiGenerator {
     }
 
     public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId, final Context context){
+        if(!currentBitsharesListener.containsKey(accountId)){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
@@ -357,12 +360,14 @@ public abstract class GrapheneApiGenerator {
             }
         };
 
+        currentBitsharesListener.put(accountId,balanceListener);
         bitsharesSubscriptionHub.addSubscriptionListener(balanceListener);
 
         if(!subscriptionThread.isConnected()){
             subscriptionThread.start();
         }else if(!bitsharesSubscriptionHub.isSubscribed()){
             bitsharesSubscriptionHub.resubscribe();
+        }
         }
     }
 
@@ -371,6 +376,7 @@ public abstract class GrapheneApiGenerator {
     }
 
     public static void getAccountBalance(final long accountId, final String accountGrapheneId, final Context context){
+
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
