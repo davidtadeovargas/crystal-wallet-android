@@ -1,6 +1,5 @@
 package cy.agorise.crystalwallet.apigenerator;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
@@ -17,7 +16,7 @@ import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
-import cy.agorise.crystalwallet.models.CryptoNetBalance;
+import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
@@ -28,6 +27,7 @@ import cy.agorise.graphenej.UserAccount;
 import cy.agorise.graphenej.api.GetAccountBalances;
 import cy.agorise.graphenej.api.GetAccountByName;
 import cy.agorise.graphenej.api.GetAccounts;
+import cy.agorise.graphenej.api.GetBlockHeader;
 import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
 import cy.agorise.graphenej.api.ListAssets;
@@ -40,7 +40,6 @@ import cy.agorise.graphenej.interfaces.WitnessResponseListener;
 import cy.agorise.graphenej.models.AccountBalanceUpdate;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
-import cy.agorise.graphenej.models.BroadcastedTransaction;
 import cy.agorise.graphenej.models.HistoricalTransfer;
 import cy.agorise.graphenej.models.SubscriptionResponse;
 import cy.agorise.graphenej.models.WitnessResponse;
@@ -237,8 +236,8 @@ public abstract class GrapheneApiGenerator {
                 }else{
                     ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
                     for(Asset asset: assets){
-                        BitsharesAsset.Type assetType = null;
-                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                        BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
+                        /*if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
                             assetType = BitsharesAsset.Type.CORE;
                         }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
                             assetType = BitsharesAsset.Type.SMART_COIN;
@@ -246,7 +245,7 @@ public abstract class GrapheneApiGenerator {
                             assetType = BitsharesAsset.Type.UIA;
                         }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
                             assetType = BitsharesAsset.Type.PREDICTION_MARKET;
-                        }
+                        }*/
                         BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
                         responseAssets.add(responseAsset);
                     }
@@ -278,8 +277,8 @@ public abstract class GrapheneApiGenerator {
                 }else{
                     ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
                     for(Asset asset: assets){
-                        BitsharesAsset.Type assetType = null;
-                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
+                        BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
+                        /*if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
                             assetType = BitsharesAsset.Type.CORE;
                         }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
                             assetType = BitsharesAsset.Type.SMART_COIN;
@@ -287,7 +286,7 @@ public abstract class GrapheneApiGenerator {
                             assetType = BitsharesAsset.Type.UIA;
                         }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
                             assetType = BitsharesAsset.Type.PREDICTION_MARKET;
-                        }
+                        }*/
                         BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
                         responseAssets.add(responseAsset);
                     }
@@ -323,35 +322,40 @@ public abstract class GrapheneApiGenerator {
                         if(update instanceof AccountBalanceUpdate){
                             AccountBalanceUpdate balanceUpdate = (AccountBalanceUpdate) update;
                             if(balanceUpdate.owner.equals(accountBitsharesId)){
-                                CryptoCoinBalance balance = new CryptoCoinBalance();
+                                final CryptoCoinBalance balance = new CryptoCoinBalance();
                                 balance.setAccountId(accountId);
                                 balance.setBalance(((AccountBalanceUpdate) update).balance);
-                                /*LiveData<BitsharesAssetInfo> assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(((AccountBalanceUpdate) update).asset_type);
+                                LiveData<BitsharesAssetInfo> assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(((AccountBalanceUpdate) update).asset_type);
                                 if(assetInfo == null || assetInfo.getValue() == null){
-                                    BitsharesAsset.Type assetType;
-                                    Asset asset = balance.getAsset();
-                                    if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
-                                        assetType = BitsharesAsset.Type.CORE;
-                                    }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
-                                        assetType = BitsharesAsset.Type.SMART_COIN;
-                                    }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
-                                        assetType = BitsharesAsset.Type.UIA;
-                                    }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
-                                        assetType = BitsharesAsset.Type.PREDICTION_MARKET;
-                                    }
+                                    final String assetType = ((AccountBalanceUpdate) update).asset_type;
+                                    ArrayList<String> idAssets = new ArrayList<>();
+                                    idAssets.add(assetType);
+                                    ApiRequest getAssetRequest = new ApiRequest(1, new ApiRequestListener() {
+                                        @Override
+                                        public void success(Object answer, int idPetition) {
+                                            if(answer instanceof  BitsharesAsset){
+                                                BitsharesAssetInfo info = new BitsharesAssetInfo((BitsharesAsset) answer);
+                                                cryptoCurrencyDao.insertCryptoCurrency((CryptoCurrency)answer );
+                                                bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                                                balance.setCryptoCurrencyId(bitsharesAssetDao.getBitsharesAssetInfoById(assetType).getValue().getCryptoCurrencyId());
+                                                balanceDao.insertCryptoCoinBalance(balance);
+                                            }
+                                        }
 
-                                    BitsharesAsset newAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
-                                    BitsharesAssetInfo info = new BitsharesAssetInfo(newAsset);
-                                    cryptoCurrencyDao.insertCryptoCurrency(newAsset);
-                                    bitsharesAssetDao.insertBitsharesAssetInfo(info);
-                                    assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
+                                        @Override
+                                        public void fail(int idPetition) {
+
+                                        }
+                                    });
+                                    getAssetById(idAssets,getAssetRequest);
+                                }else {
+
+                                    balance.setCryptoCurrencyId(assetInfo.getValue().getCryptoCurrencyId());
+                                    balanceDao.insertCryptoCoinBalance(balance);
+                                    //TODO balance function
                                 }
-
-                                balance.setCryptoCurrency(assetInfo.getValue().getCryptoCurrencyId());
-
-                                    balanceDao.insertCryptoCoinBalance(balance);*/
-                                //TODO balance function
                                 BitsharesAccountManager.refreshAccountTransactions(accountId,context);
+
                             }
                         }
                     }
@@ -381,37 +385,42 @@ public abstract class GrapheneApiGenerator {
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
         final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
-        WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), null, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), new ArrayList<Asset>(), new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<AssetAmount> balances = (List<AssetAmount>) response.result;
-                for(AssetAmount balance : balances){
-                    CryptoCoinBalance ccBalance = new CryptoCoinBalance();
+                for(final AssetAmount balance : balances){
+                    final CryptoCoinBalance ccBalance = new CryptoCoinBalance();
                     ccBalance.setAccountId(accountId);
                     ccBalance.setBalance(balance.getAmount().longValue());
                     LiveData<BitsharesAssetInfo> assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
                     if(assetInfo == null || assetInfo.getValue() == null){
-                        BitsharesAsset.Type assetType = null;
-                        Asset asset = balance.getAsset();
-                        if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
-                            assetType = BitsharesAsset.Type.CORE;
-                        }else if(asset.getAssetType().equals(Asset.AssetType.SMART_COIN)){
-                            assetType = BitsharesAsset.Type.SMART_COIN;
-                        }else if(asset.getAssetType().equals(Asset.AssetType.UIA)){
-                            assetType = BitsharesAsset.Type.UIA;
-                        }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
-                            assetType = BitsharesAsset.Type.PREDICTION_MARKET;
-                        }
+                        ArrayList<String> idAssets = new ArrayList<>();
+                        idAssets.add(balance.getAsset().getObjectId());
+                        ApiRequest getAssetRequest = new ApiRequest(1, new ApiRequestListener() {
+                            @Override
+                            public void success(Object answer, int idPetition) {
+                                if(answer instanceof  BitsharesAsset){
+                                    BitsharesAssetInfo info = new BitsharesAssetInfo((BitsharesAsset) answer);
+                                    cryptoCurrencyDao.insertCryptoCurrency((CryptoCurrency)answer );
+                                    bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                                    ccBalance.setCryptoCurrencyId(bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId()).getValue().getCryptoCurrencyId());
+                                    balanceDao.insertCryptoCoinBalance(ccBalance);
+                                }
+                            }
 
-                        BitsharesAsset newAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
-                        BitsharesAssetInfo info = new BitsharesAssetInfo(newAsset);
-                        cryptoCurrencyDao.insertCryptoCurrency(newAsset);
-                        bitsharesAssetDao.insertBitsharesAssetInfo(info);
-                        assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(balance.getAsset().getObjectId());
+                            @Override
+                            public void fail(int idPetition) {
+
+                            }
+                        });
+                        getAssetById(idAssets,getAssetRequest);
+
+                    }else {
+
+                        ccBalance.setCryptoCurrencyId(assetInfo.getValue().getCryptoCurrencyId());
+                        balanceDao.insertCryptoCoinBalance(ccBalance);
                     }
-
-                    ccBalance.setCryptoCurrencyId(assetInfo.getValue().getCryptoCurrencyId());
-                    balanceDao.insertCryptoCoinBalance(ccBalance);
                 }
             }
 
@@ -421,6 +430,26 @@ public abstract class GrapheneApiGenerator {
             }
         }),url);
 
+        thread.start();
+
+    }
+
+    public static void getBlockHeaderTime(long blockHeader, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetBlockHeader(blockHeader, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                if(response == null){
+                    request.getListener().fail(request.getId());
+                }else {
+                    request.getListener().success(response.result, request.getId());
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
         thread.start();
 
     }
