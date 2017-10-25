@@ -2,6 +2,7 @@ package cy.agorise.crystalwallet.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -13,7 +14,8 @@ import cy.agorise.crystalwallet.enums.CryptoNet;
  *
  * Created by henry Henry Varona on 11/9/2017.
  */
-@Entity(tableName="crypto_currency")
+@Entity(tableName="crypto_currency",
+        indices = {@Index(value = {"crypto_net","name"}, unique=true)})
 public class CryptoCurrency {
 
     /**

@@ -85,15 +85,22 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             if(grapheneAccount.getAccountId() == null){
                 System.out.println("Importing without accountid");
-                grapheneAccount = this.getAccountInfoByName(grapheneAccount.getName());
+                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
+                if(fetch == null) {
+                    //TODO grapaheneAccount null, error fetching
+                    return null;
+                }
+                grapheneAccount.setAccountId(fetch.getAccountId());
             }else if(grapheneAccount.getName() == null){
                 System.out.println("Importing without accountname");
-                grapheneAccount = this.getAccountInfoById(grapheneAccount.getAccountId());
+                GrapheneAccount fetch = this.getAccountInfoById(grapheneAccount.getAccountId());
+                if(fetch == null) {
+                    //TODO grapaheneAccount null, error fetching
+                    return null;
+                }
+                grapheneAccount.setName(fetch.getName());
             }
-            if(grapheneAccount == null) {
-                //TODO grapaheneAccount null, error fetching
-                return null;
-            }
+
             System.out.println("Importing not null " + ((GrapheneAccount) account).getName() + " " + ((GrapheneAccount) account).getAccountId());
 
             CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
@@ -110,20 +117,36 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
     @Override
     public void loadAccountFromDB(CryptoNetAccount account, Context context) {
+        System.out.println("On loadAccount from db");
         if(account instanceof GrapheneAccount){
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
             CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-            grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(account.getId()));
+            GrapheneAccountInfo info = db.grapheneAccountInfoDao().getByAccountId(account.getId());
+            grapheneAccount.loadInfo(info);
             if(grapheneAccount.getAccountId() == null){
-                grapheneAccount = this.getAccountInfoByName(grapheneAccount.getName());
+                System.out.println("On loadAccount null id");
+                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
+                if(fetch != null){
+                    info.setAccountId(fetch.getAccountId());
+                    grapheneAccount.setAccountId(fetch.getAccountId());
+                    db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
+                }
             }else if(grapheneAccount.getName() == null){
-                grapheneAccount = this.getAccountInfoById(grapheneAccount.getAccountId());
+                System.out.println("On loadAccount null name");
+                GrapheneAccount fetch = this.getAccountInfoById(grapheneAccount.getAccountId());
+                if(fetch != null) {
+                    info.setName(fetch.getName());
+                    grapheneAccount.setName(fetch.getName());
+                    db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
+                }
             }
 
             if(grapheneAccount == null) {
                 //TODO grapaheneAccount null, error fetching
                 return;
             }
+
+            System.out.println("On loadAccount no nulls "  + grapheneAccount.getName() + " " + grapheneAccount.getAccountId());
 
             GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
             this.refreshAccountTransactions(account.getId(),context);
@@ -321,6 +344,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 transaction.setAmount(transfer.getOperation().getAssetAmount().getAmount().longValue());
                 CryptoCurrency currency = db.cryptoCurrencyDao().getByName(transfer.getOperation().getAssetAmount().getAsset().getSymbol());
                 if(currency == null){
+                    System.out.println("CryptoCurrency not in database");
                     //CryptoCurrency not in database
                     Asset asset = transfer.getOperation().getAssetAmount().getAsset();
                     BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
