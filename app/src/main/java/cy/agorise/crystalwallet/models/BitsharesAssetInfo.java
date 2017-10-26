@@ -37,6 +37,7 @@ public class BitsharesAssetInfo {
     }
 
     public BitsharesAssetInfo(BitsharesAsset asset){
+        this.cryptoCurrencyId = asset.getId();
         this.bitsharesId = asset.getBitsharesId();
         this.assetType = asset.getAssetType();
     }
