@@ -23,7 +23,7 @@ public interface BitsharesAssetDao {
     LiveData<BitsharesAssetInfo> getBitsharesAssetInfo(long cryptoCurrencyId);
 
     @Query("SELECT * FROM bitshares_asset WHERE bitshares_id = :bitsharesId")
-    LiveData<BitsharesAssetInfo> getBitsharesAssetInfoById(String bitsharesId);
+    BitsharesAssetInfo getBitsharesAssetInfoById(String bitsharesId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertBitsharesAssetInfo(BitsharesAssetInfo... accounts);
