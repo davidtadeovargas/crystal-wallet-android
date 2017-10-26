@@ -1,5 +1,7 @@
 package cy.agorise.crystalwallet.viewmodels.validators;
 
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+
 /**
  * Created by Henry Varona on 2/10/2017.
  */

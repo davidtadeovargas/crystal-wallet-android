@@ -5,11 +5,13 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+
 /**
  * Created by Henry Varona on 7/10/2017.
  */
 
-abstract class UIValidator {
+public abstract class UIValidator {
     protected Context context;
     protected UIValidatorListener listener;
     protected List<ValidationField> validationFields;

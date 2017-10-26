@@ -1,9 +1,9 @@
-package cy.agorise.crystalwallet.viewmodels.validators;
+package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
-import android.content.Context;
 import android.widget.EditText;
 
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 
 /**
  * Created by Henry Varona on 7/10/2017.

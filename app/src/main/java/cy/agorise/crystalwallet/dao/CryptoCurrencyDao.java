@@ -22,6 +22,9 @@ public interface CryptoCurrencyDao {
     @Query("SELECT * FROM crypto_currency WHERE id = :id")
     CryptoCurrency getById(int id);
 
+    @Query("SELECT * FROM crypto_currency WHERE id IN (:ids)")
+    List<CryptoCurrency> getByIds(List<Long> ids);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertCryptoCurrency(CryptoCurrency... currencies);
 

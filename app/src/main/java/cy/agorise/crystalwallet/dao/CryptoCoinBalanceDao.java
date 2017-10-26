@@ -28,6 +28,9 @@ public interface CryptoCoinBalanceDao {
     @Query("SELECT * FROM crypto_coin_balance WHERE account_id = :accountId")
     LiveData<List<CryptoCoinBalance>> getBalancesFromAccount(long accountId);
 
+    @Query("SELECT * FROM crypto_coin_balance WHERE account_id = :accountId AND crypto_currency_id = :assetId")
+    CryptoCoinBalance getBalanceFromAccount(long accountId, long assetId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertCryptoCoinBalance(CryptoCoinBalance... balances);
 

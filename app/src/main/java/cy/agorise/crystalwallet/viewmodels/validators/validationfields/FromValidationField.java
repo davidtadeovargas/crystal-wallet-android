@@ -1,29 +1,27 @@
-package cy.agorise.crystalwallet.viewmodels.validators;
+package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
-import android.content.Context;
 import android.widget.EditText;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
-import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 
 /**
  * Created by Henry Varona on 7/10/2017.
  */
 
-public class BitsharesAccountNameValidationField extends ValidationField {
+public class FromValidationField extends ValidationField {
 
-    private EditText accountNameField;
+    private EditText fromField;
 
-    public BitsharesAccountNameValidationField(EditText accountNameField){
-        super(accountNameField);
-        this.accountNameField = accountNameField;
+    public FromValidationField(EditText fromField){
+        super(fromField);
+        this.fromField = fromField;
     }
 
     public void validate(){
-        final String newValue = accountNameField.getText().toString();
+        final String newValue = fromField.getText().toString();
         this.setLastValue(newValue);
         this.startValidating();
         final ValidationField field = this;

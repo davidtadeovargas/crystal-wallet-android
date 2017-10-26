@@ -1,6 +1,5 @@
 package cy.agorise.crystalwallet.activities;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,19 +13,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
-import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
 import cy.agorise.crystalwallet.viewmodels.GrapheneAccountInfoViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
-import cy.agorise.crystalwallet.viewmodels.validators.ValidationField;
-import cy.agorise.crystalwallet.views.CryptoNetBalanceListView;
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 
 public class ImportSeedActivity extends AppCompatActivity implements UIValidatorListener {
 
