@@ -20,8 +20,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.enums.SeedType;
@@ -29,6 +31,7 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
 import cy.agorise.crystalwallet.viewmodels.GrapheneAccountInfoViewModel;
@@ -67,6 +70,7 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
 
     private long cryptoNetAccountId;
     private CryptoNetAccount cryptoNetAccount;
+    private GrapheneAccount grapheneAccount;
     private CrystalDatabase db;
 
     @Override
@@ -83,6 +87,14 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
         if (this.cryptoNetAccountId != -1) {
             db = CrystalDatabase.getAppDatabase(this);
             this.cryptoNetAccount = db.cryptoNetAccountDao().getById(this.cryptoNetAccountId);
+
+            /*
+            * this is only for graphene accounts.
+            *
+            **/
+            this.grapheneAccount = new GrapheneAccount(this.cryptoNetAccount);
+            this.grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(this.cryptoNetAccountId));
+
             final LiveData<List<CryptoCoinBalance>> balancesList = db.cryptoCoinBalanceDao().getBalancesFromAccount(cryptoNetAccountId);
             balancesList.observe(this, new Observer<List<CryptoCoinBalance>>() {
                 @Override
@@ -102,7 +114,7 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
                 }
             });
 
-            sendTransactionValidator = new SendTransactionValidator(this.getApplicationContext(), this.cryptoNetAccount, etFrom, etTo, etAmount, etMemo);
+            sendTransactionValidator = new SendTransactionValidator(this.getApplicationContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
             sendTransactionValidator.setListener(this);
         } else {
             this.finish();
@@ -118,6 +130,11 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
     @OnTextChanged(value = R.id.etTo,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterToChanged(Editable editable) {
+        this.sendTransactionValidator.validate();
+    }
+
+    @OnItemSelected(R.id.spAsset)
+    public void afterAssetSelected(Spinner spinner, int position) {
         this.sendTransactionValidator.validate();
     }
 
@@ -140,28 +157,18 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
     }
 
     @OnClick(R.id.btnSend)
-    public void importSeed(){
+    public void importSend(){
         if (this.sendTransactionValidator.isValid()) {
-            AccountSeed seed = new AccountSeed();
-
-            //TODO verify if words are already in the db
-            //TODO check if name has been asigned to other seed
-            seed.setMasterSeed(etSeedWords.getText().toString());
-            seed.setName(etAccountName.getText().toString());
-            seed.setType(SeedType.BRAINKEY);
-
-            accountSeedViewModel.addSeed(seed);
-
-            CryptoNetAccountViewModel cryptoNetAccountViewModel = ViewModelProviders.of(this).get(CryptoNetAccountViewModel.class);
-            GrapheneAccountInfoViewModel grapheneAccountInfoViewModel = ViewModelProviders.of(this).get(GrapheneAccountInfoViewModel.class);
-            CryptoNetAccount cryptoNetAccount = new CryptoNetAccount();
-            cryptoNetAccount.setSeedId(seed.getId());
-            cryptoNetAccount.setAccountIndex(0);
-            cryptoNetAccount.setCryptoNet(CryptoNet.BITSHARES);
-            cryptoNetAccountViewModel.addCryptoNetAccount(cryptoNetAccount);
-            GrapheneAccountInfo grapheneAccountInfo = new GrapheneAccountInfo(cryptoNetAccount.getId());
-            grapheneAccountInfo.setName(etAccountName.getText().toString());
-            grapheneAccountInfoViewModel.addGrapheneAccountInfo(grapheneAccountInfo);
+            ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
+                this.getApplicationContext(),
+                this.grapheneAccount,
+                this.etTo.getText().toString(),
+                this.etAmount,
+                ((CryptoCurrency)spAsset.getSelectedItem()).getName(),
+                feeAmount,
+                feeAsset,
+                etMemo.getText().toString()
+            );
 
             this.finish();
         }
@@ -180,6 +187,8 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
                     tvToError.setText("");
                 } else if (field.getView() == etAmount){
                     tvAmountError.setText("");
+                } else if (field.getView() == spAsset){
+                    tvAssetError.setText("");
                 } else if (field.getView() == etMemo){
                     tvMemoError.setText("");
                 }
@@ -200,6 +209,8 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
             tvFromError.setText(field.getMessage());
         } else if (field.getView() == etTo){
             tvToError.setText(field.getMessage());
+        } else if (field.getView() == spAsset){
+            tvAssetError.setText(field.getMessage());
         } else if (field.getView() == etAmount){
             tvAmountError.setText(field.getMessage());
         } else if (field.getView() == etMemo){
