@@ -136,7 +136,7 @@ public abstract class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountTransaction(String accountGrapheneId, int start, int stop, int limit, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountGrapheneId), stop, limit, start, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountGrapheneId), start, limit, stop, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     WitnessResponse<List<HistoricalTransfer>> resp = response;

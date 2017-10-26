@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
@@ -32,6 +33,7 @@ public class CryptoCoinTransaction {
     /**
      * The account associated with this transaction
      */
+    @Ignore
     protected CryptoNetAccount account;
 
     /**
