@@ -341,32 +341,49 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             for(HistoricalTransfer transfer : transfers) {
                 if (transfer.getOperation() != null){
                     CryptoCoinTransaction transaction = new CryptoCoinTransaction();
-                transaction.setAccountId(account.getId());
-                transaction.setAmount(transfer.getOperation().getAssetAmount().getAmount().longValue());
-                CryptoCurrency currency = db.cryptoCurrencyDao().getByName(transfer.getOperation().getAssetAmount().getAsset().getSymbol());
-                if (currency == null) {
-                    System.out.println("CryptoCurrency not in database");
-                    //CryptoCurrency not in database
-                    Asset asset = transfer.getOperation().getAssetAmount().getAsset();
-                    BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
-                    /*if(asset.getAssetType() == Asset.AssetType.CORE_ASSET){
-                        assetType = BitsharesAsset.Type.CORE;
-                    }else if(asset.getAssetType() == Asset.AssetType.SMART_COIN){
-                        assetType = BitsharesAsset.Type.SMART_COIN;
-                    }else if(asset.getAssetType() == Asset.AssetType.PREDICTION_MARKET){
-                        assetType = BitsharesAsset.Type.PREDICTION_MARKET;
-                    }else if(asset.getAssetType() == Asset.AssetType.UIA){
-                        assetType = BitsharesAsset.Type.UIA;
-                    }*/
-                    currency = new BitsharesAsset(asset.getSymbol(), asset.getPrecision(), asset.getObjectId(), assetType);
-                    long idCryptoCurrency = db.cryptoCurrencyDao().insertCryptoCurrency(currency)[0];
-                    BitsharesAssetInfo info = new BitsharesAssetInfo((BitsharesAsset) currency);
-                    info.setCryptoCurrencyId(idCryptoCurrency);
-                    currency.setId((int)idCryptoCurrency);
-                    db.bitsharesAssetDao().insertBitsharesAssetInfo(info);
+                    transaction.setAccountId(account.getId());
+                    transaction.setAmount(transfer.getOperation().getAssetAmount().getAmount().longValue());
+                    BitsharesAssetInfo info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
 
+                if (info == null) {
+                    System.out.println("CryptoCurrency not in database");
+                    final Object SYNC = new Object();
+                    ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
+                        @Override
+                        public void success(Object answer, int idPetition) {
+                            ArrayList<BitsharesAsset> assets = (ArrayList<BitsharesAsset>) answer;
+                            for(BitsharesAsset asset : assets){
+                                long idCryptoCurrency = db.cryptoCurrencyDao().insertCryptoCurrency(asset)[0];
+                                BitsharesAssetInfo info = new BitsharesAssetInfo(asset);
+                                info.setCryptoCurrencyId(idCryptoCurrency);
+                                asset.setId((int)idCryptoCurrency);
+                                db.bitsharesAssetDao().insertBitsharesAssetInfo(info);
+                            }
+                            synchronized (SYNC){
+                                SYNC.notifyAll();
+                            }
+                        }
+
+                        @Override
+                        public void fail(int idPetition) {
+                            synchronized (SYNC){
+                                SYNC.notifyAll();
+                            }
+                        }
+                    });
+                    ArrayList<String> assets = new ArrayList<>();
+                    assets.add(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
+                    GrapheneApiGenerator.getAssetById(assets,assetRequest);
+
+                    synchronized (SYNC){
+                        try {SYNC.wait(3000);} catch (InterruptedException e) {}
+                    }
+                    info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
                 }
-                transaction.setIdCurrency(currency.getId());
+                if( info == null){
+                    return;
+                }
+                transaction.setIdCurrency((int)info.getCryptoCurrencyId());
                 transaction.setConfirmed(true); //graphene transaction are always confirmed
                 transaction.setFrom(transfer.getOperation().getFrom().getObjectId());
                 transaction.setInput(!transfer.getOperation().getFrom().getObjectId().equals(account.getAccountId()));
