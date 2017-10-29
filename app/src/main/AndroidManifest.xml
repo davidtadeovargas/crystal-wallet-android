@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".activities.ImportSeedActivity" >
         </activity>
+        <activity android:name=".activities.SendTransactionActivity" >
+        </activity>
         <service android:name=".service.CrystalWalletService"
             android:exported="false"/>
     </application>

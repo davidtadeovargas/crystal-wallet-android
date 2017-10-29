@@ -4,10 +4,9 @@
     android:layout_height="match_parent"
     tools:context="cy.agorise.crystalwallet.fragments.TransactionsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <cy.agorise.crystalwallet.views.TransactionListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Transactions Fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/vTransactionListView" />
 
 </FrameLayout>
