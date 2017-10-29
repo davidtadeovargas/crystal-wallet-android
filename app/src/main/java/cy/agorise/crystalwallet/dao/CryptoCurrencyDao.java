@@ -20,7 +20,7 @@ public interface CryptoCurrencyDao {
     List<CryptoCurrency> getAll();
 
     @Query("SELECT * FROM crypto_currency WHERE id = :id")
-    CryptoCurrency getById(int id);
+    CryptoCurrency getById(long id);
 
     @Query("SELECT * FROM crypto_currency WHERE id IN (:ids)")
     List<CryptoCurrency> getByIds(List<Long> ids);
