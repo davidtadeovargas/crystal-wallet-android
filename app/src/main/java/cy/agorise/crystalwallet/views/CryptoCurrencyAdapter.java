@@ -1,8 +1,6 @@
 package cy.agorise.crystalwallet.views;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,11 @@ public class CryptoCurrencyAdapter extends ArrayAdapter<CryptoCurrency> {
     public CryptoCurrencyAdapter(Context context, int resource, List<CryptoCurrency> objects) {
         super(context, resource, objects);
         this.data = objects;
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        return getView(position, convertView, parent);
     }
 
     @Override

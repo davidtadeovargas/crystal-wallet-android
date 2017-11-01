@@ -38,6 +38,7 @@ import cy.agorise.crystalwallet.viewmodels.GrapheneAccountInfoViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
 
 public class SendTransactionActivity extends AppCompatActivity implements UIValidatorListener {
 
@@ -100,16 +101,12 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
                 @Override
                 public void onChanged(@Nullable List<CryptoCoinBalance> cryptoCoinBalances) {
                     ArrayList<Long> assetIds = new ArrayList<Long>();
-                    ArrayList<String> assetLabels = new ArrayList<String>();
                     for (CryptoCoinBalance nextBalance : balancesList.getValue()) {
                         assetIds.add(nextBalance.getCryptoCurrencyId());
                     }
                     List<CryptoCurrency> cryptoCurrencyList = db.cryptoCurrencyDao().getByIds(assetIds);
-                    for (CryptoCurrency nextCurrency : cryptoCurrencyList) {
-                        assetLabels.add(nextCurrency.getName());
-                    }
 
-                    ArrayAdapter<String> assetAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, assetLabels);
+                    CryptoCurrencyAdapter assetAdapter = new CryptoCurrencyAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
                     spAsset.setAdapter(assetAdapter);
                 }
             });

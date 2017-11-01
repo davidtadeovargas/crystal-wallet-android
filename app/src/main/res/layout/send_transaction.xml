@@ -19,7 +19,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvFromError"/>
+        android:id="@+id/tvFromError"
+        android:textColor="@color/red" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +36,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvToError"/>
+        android:id="@+id/tvToError"
+        android:textColor="@color/red" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +53,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvAssetError"/>
+        android:id="@+id/tvAssetError"
+        android:textColor="@color/red" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,7 +70,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvAmountError"/>
+        android:id="@+id/tvAmountError"
+        android:textColor="@color/red" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +87,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvMemoError"/>
+        android:id="@+id/tvMemoError"
+        android:textColor="@color/red" />
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
