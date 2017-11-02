@@ -12,6 +12,7 @@ import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
+import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 
@@ -20,7 +21,16 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
  * Created by Henry Varona on 4/9/2017.
  */
 
-@Database(entities = {AccountSeed.class, CryptoNetAccount.class, CryptoCoinTransaction.class, CryptoCurrency.class, CryptoCoinBalance.class, GrapheneAccountInfo.class, BitsharesAssetInfo.class}, version = 2)
+@Database(entities = {
+        AccountSeed.class,
+        CryptoNetAccount.class,
+        CryptoCoinTransaction.class,
+        CryptoCurrency.class,
+        CryptoCoinBalance.class,
+        GrapheneAccountInfo.class,
+        BitsharesAssetInfo.class,
+        CryptoCurrencyEquivalence.class
+}, version = 2)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
@@ -33,6 +43,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
     public abstract CryptoCoinBalanceDao cryptoCoinBalanceDao();
     public abstract CryptoCurrencyDao cryptoCurrencyDao();
     public abstract BitsharesAssetDao bitsharesAssetDao();
+    public abstract CryptoCurrencyEquivalenceDao cryptoCurrencyEquivalenceDao();
 
     public static CrystalDatabase getAppDatabase(Context context) {
         if (instance == null) {

@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
@@ -17,17 +18,26 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  *
  * Created by Henry Varona on 11/9/2017.
  */
-@Entity(tableName="crypto_coin_transaction",
-        foreignKeys = {@ForeignKey(entity = CryptoNetAccount.class,
-                parentColumns = "id",
-                childColumns = "account_id",
-                onDelete = ForeignKey.CASCADE),
-                @ForeignKey(entity = CryptoCurrency.class,
-                        parentColumns = "id",
-                        childColumns = "id_currency",
-                        onDelete = ForeignKey.CASCADE)
-}
+@Entity(
+    tableName="crypto_coin_transaction",
+    indices={
+        @Index(value={"account_id"}),
+        @Index(value={"id_currency"})
+    },
+    foreignKeys = {
+        @ForeignKey(
+            entity = CryptoNetAccount.class,
+            parentColumns = "id",
+            childColumns = "account_id",
+            onDelete = ForeignKey.CASCADE
+        ),
+        @ForeignKey(entity = CryptoCurrency.class,
+            parentColumns = "id",
+            childColumns = "id_currency",
+            onDelete = ForeignKey.CASCADE
         )
+    }
+)
 public class CryptoCoinTransaction {
 
     /**

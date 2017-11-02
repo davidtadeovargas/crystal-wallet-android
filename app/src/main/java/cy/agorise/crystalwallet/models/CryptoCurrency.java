@@ -23,7 +23,7 @@ public class CryptoCurrency {
      */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int mId;
+    private long mId;
 
     /**
      * The name or tag of this currency
@@ -45,11 +45,11 @@ public class CryptoCurrency {
     @ColumnInfo(name = "precision")
     private int mPrecision;
 
-    public int getId() {
+    public long getId() {
         return mId;
     }
 
-    public void setId(int mId) {
+    public void setId(long mId) {
         this.mId = mId;
     }
 
