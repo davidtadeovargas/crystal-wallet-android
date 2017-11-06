@@ -60,19 +60,23 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
 
-            BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
+            String btsIdAccount = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
                     new Address(grapheneAccount.getOwnerKey(),"BTS").toString(),
                     new Address(grapheneAccount.getActiveKey(),"BTS").toString(),
                     new Address(grapheneAccount.getMemoKey(),"BTS").toString());
+            if(btsIdAccount !=null) {
+                grapheneAccount.setAccountId(btsIdAccount);
 
-            CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-            db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
-            db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
+                CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+                long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount)[0];
+                grapheneAccount.setId(idAccount);
+                db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
 
-            GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-            this.refreshAccountTransactions(account.getId(), context);
-            GrapheneApiGenerator.getAccountBalance(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-            return grapheneAccount;
+                GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
+                this.refreshAccountTransactions(grapheneAccount.getId(), context);
+                GrapheneApiGenerator.getAccountBalance(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
+                return grapheneAccount;
+            }
         }
         return null;
     }
