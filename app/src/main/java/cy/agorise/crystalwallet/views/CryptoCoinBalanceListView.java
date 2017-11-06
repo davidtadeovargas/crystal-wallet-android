@@ -51,7 +51,7 @@ public class CryptoCoinBalanceListView extends RelativeLayout {
 
     public void init(){
         rootView = mInflater.inflate(R.layout.crypto_coin_balance_list, this, true);
-        this.listView = (RecyclerView) rootView.findViewById(R.id.cryptoCoinBalanceListView);
+        this.listView =  (RecyclerView) rootView.findViewById(R.id.cryptoCoinBalanceListView);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         this.listView.setLayoutManager(linearLayoutManager);
