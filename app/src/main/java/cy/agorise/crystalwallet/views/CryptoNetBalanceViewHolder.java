@@ -24,6 +24,7 @@ import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.SendTransactionActivity;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.models.CryptoNetBalance;
 import cy.agorise.crystalwallet.viewmodels.CryptoCoinBalanceListViewModel;
 
@@ -99,6 +100,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
             CryptoCoinBalanceListViewModel cryptoCoinBalanceListViewModel = ViewModelProviders.of(this.fragment).get(CryptoCoinBalanceListViewModel.class);
             cryptoCoinBalanceListViewModel.init(balance.getAccountId());
             LiveData<List<CryptoCoinBalance>> cryptoCoinBalanceData = cryptoCoinBalanceListViewModel.getCryptoCoinBalanceList();
+
             cryptoCoinBalanceListView.setData(null);
 
             cryptoCoinBalanceData.observe((LifecycleOwner)this.itemView.getContext(), new Observer<List<CryptoCoinBalance>>() {

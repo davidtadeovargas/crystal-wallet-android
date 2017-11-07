@@ -27,6 +27,17 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:ems="10"
-            android:text="0.00000000" />
+            android:text="0.00000000"
+            android:textAlignment="textEnd" />
+
+        <TextView
+            android:id="@+id/tvCryptoCoinBalanceEquivalence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tvCryptoCoinBalanceAmount"
+            android:ems="10"
+            android:text=""
+            android:textAlignment="textEnd" />
     </RelativeLayout>
 </LinearLayout>
