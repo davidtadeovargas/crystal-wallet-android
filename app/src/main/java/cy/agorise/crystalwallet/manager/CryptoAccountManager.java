@@ -33,4 +33,6 @@ public interface CryptoAccountManager {
      * @param account The CryptoNetAccount to be loaded
      */
     public void loadAccountFromDB(CryptoNetAccount account, Context context);
+
+
 }

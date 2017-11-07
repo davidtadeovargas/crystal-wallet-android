@@ -19,6 +19,7 @@ import cy.agorise.crystalwallet.apigenerator.ApiRequest;
 import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.BitsharesFaucetApiGenerator;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetEquivalentRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
@@ -166,6 +167,10 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.validateExistAcccount((ValidateExistBitsharesAccountRequest) request);
         } else if (request instanceof ValidateBitsharesSendRequest){
             this.validateSendRequest((ValidateBitsharesSendRequest) request);
+        }else if (request instanceof CryptoNetEquivalentRequest){
+            this.getEquivalentValue((CryptoNetEquivalentRequest) request);
+        }else{
+            //TODO not implemented
         }
     }
 
@@ -305,7 +310,6 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     }
 
     public static void refreshAccountTransactions(long idAccount, Context context){
-        System.out.println("Call refresh Account transactions from " + idAccount);
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         List<CryptoCoinTransaction> transactions = db.transactionDao().getByIdAccount(idAccount);
         CryptoNetAccount account = db.cryptoNetAccountDao().getById(idAccount);
@@ -407,6 +411,27 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         @Override
         public void fail(int idPetition) {
 
+        }
+    }
+
+    private static void getEquivalentValue(final CryptoNetEquivalentRequest request){
+        if(request.getFromCurrency() instanceof  BitsharesAsset && request.getToCurrency() instanceof  BitsharesAsset) {
+            BitsharesAsset fromAsset = (BitsharesAsset) request.getFromCurrency();
+            BitsharesAsset toAsset = (BitsharesAsset) request.getToCurrency();
+            ApiRequest getEquivalentRequest = new ApiRequest(0, new ApiRequestListener() {
+                @Override
+                public void success(Object answer, int idPetition) {
+                    request.setPrice((Long)answer);
+                }
+
+                @Override
+                public void fail(int idPetition) {
+                    //TODO error
+                }
+            });
+            GrapheneApiGenerator.getEquivalentValue(fromAsset.getBitsharesId(),toAsset.getBitsharesId(), getEquivalentRequest);
+        }else{
+            //TODO error
         }
     }
 
