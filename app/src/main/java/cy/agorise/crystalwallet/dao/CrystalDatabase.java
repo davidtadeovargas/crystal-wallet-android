@@ -14,6 +14,7 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 
 /**
@@ -29,7 +30,8 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         CryptoCoinBalance.class,
         GrapheneAccountInfo.class,
         BitsharesAssetInfo.class,
-        CryptoCurrencyEquivalence.class
+        CryptoCurrencyEquivalence.class,
+        GeneralSetting.class
 }, version = 2)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
@@ -44,6 +46,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
     public abstract CryptoCurrencyDao cryptoCurrencyDao();
     public abstract BitsharesAssetDao bitsharesAssetDao();
     public abstract CryptoCurrencyEquivalenceDao cryptoCurrencyEquivalenceDao();
+    public abstract GeneralSettingDao generalSettingDao();
 
     public static CrystalDatabase getAppDatabase(Context context) {
         if (instance == null) {
