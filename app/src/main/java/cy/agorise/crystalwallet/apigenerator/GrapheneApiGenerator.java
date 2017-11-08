@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
+import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
@@ -463,6 +465,9 @@ public abstract class GrapheneApiGenerator {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<LimitOrder> orders = (List<LimitOrder>) response.result;
+                if(orders.size()<= 0){
+                    //TODO indirect equivalent value
+                }
                 for(LimitOrder order : orders){
                     Converter converter = new Converter();
                     double equiValue = converter.getConversionRate(order.getSellPrice(),Converter.BASE_TO_QUOTE);
@@ -477,6 +482,45 @@ public abstract class GrapheneApiGenerator {
             }
         }),url);
         thread.start();
+    }
+
+    public static void getEquivalentValue(BitsharesAsset baseAsset, List<BitsharesAsset> quoteAssets,Context context){
+            for(BitsharesAsset quoteAsset : quoteAssets){
+                WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(), quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,quoteAsset,context)),url);
+                thread.start();
+            }
+    }
+
+    private static class EquivalentValueListener implements WitnessResponseListener{
+        private BitsharesAsset baseAsset;
+        private BitsharesAsset quoteAsset;
+        private Context context;
+
+        public EquivalentValueListener(BitsharesAsset baseAsset, BitsharesAsset quoteAsset, Context context) {
+            this.baseAsset = baseAsset;
+            this.quoteAsset = quoteAsset;
+            this.context = context;
+        }
+
+        @Override
+        public void onSuccess(WitnessResponse response) {
+            List<LimitOrder> orders = (List<LimitOrder>) response.result;
+            if(orders.size()<= 0){
+                //TODO indirect equivalent value
+            }
+            for(LimitOrder order : orders){
+                Converter converter = new Converter();
+                double equiValue = converter.getConversionRate(order.getSellPrice(),Converter.BASE_TO_QUOTE);
+                CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(),quoteAsset.getId(),(int)(Math.pow(10,baseAsset.getPrecision())*equiValue),new Date());
+                CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
+                break;
+            }
+        }
+
+        @Override
+        public void onError(BaseResponse.Error error) {
+
+        }
     }
 
 }
