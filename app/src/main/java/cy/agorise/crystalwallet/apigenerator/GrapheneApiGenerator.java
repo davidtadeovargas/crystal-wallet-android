@@ -1,6 +1,5 @@
 package cy.agorise.crystalwallet.apigenerator;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
 import java.io.Serializable;
@@ -21,6 +20,8 @@ import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
+import cy.agorise.graphenej.Converter;
+import cy.agorise.graphenej.LimitOrder;
 import cy.agorise.graphenej.ObjectType;
 import cy.agorise.graphenej.Transaction;
 import cy.agorise.graphenej.UserAccount;
@@ -29,6 +30,8 @@ import cy.agorise.graphenej.api.GetAccountByName;
 import cy.agorise.graphenej.api.GetAccounts;
 import cy.agorise.graphenej.api.GetBlockHeader;
 import cy.agorise.graphenej.api.GetKeyReferences;
+import cy.agorise.graphenej.api.GetLimitOrders;
+import cy.agorise.graphenej.api.GetMarketHistory;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
 import cy.agorise.graphenej.api.ListAssets;
 import cy.agorise.graphenej.api.LookupAssetSymbols;
@@ -453,6 +456,27 @@ public abstract class GrapheneApiGenerator {
         }),url);
         thread.start();
 
+    }
+
+    public static void getEquivalentValue(String baseId, String quoteId, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseId, quoteId, 100, new WitnessResponseListener() {
+            @Override
+            public void onSuccess(WitnessResponse response) {
+                List<LimitOrder> orders = (List<LimitOrder>) response.result;
+                for(LimitOrder order : orders){
+                    Converter converter = new Converter();
+                    double equiValue = converter.getConversionRate(order.getSellPrice(),Converter.BASE_TO_QUOTE);
+                    request.getListener().success(equiValue,request.getId());
+                    break;
+                }
+            }
+
+            @Override
+            public void onError(BaseResponse.Error error) {
+                request.getListener().fail(request.getId());
+            }
+        }),url);
+        thread.start();
     }
 
 }
