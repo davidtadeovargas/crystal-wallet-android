@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,9 +8,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.ContactsFragment;
@@ -24,6 +27,9 @@ public class BoardActivity  extends AppCompatActivity {
     @BindView(R.id.pager)
     public ViewPager mPager;
 
+    @BindView(R.id.btnGeneralSettings)
+    public ImageButton btnGeneralSettings;
+
     public BoardPagerAdapter boardAdapter;
 
     @Override
@@ -34,6 +40,12 @@ public class BoardActivity  extends AppCompatActivity {
 
         boardAdapter = new BoardPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(boardAdapter);
+    }
+
+    @OnClick(R.id.btnGeneralSettings)
+    public void onBtnGeneralSettingsClick(){
+        Intent intent = new Intent(this, GeneralSettingsActivity.class);
+        startActivity(intent);
     }
 
     private class BoardPagerAdapter extends FragmentStatePagerAdapter {
