@@ -13,12 +13,20 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
+import cy.agorise.crystalwallet.models.BitsharesAsset;
+import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
+import cy.agorise.crystalwallet.models.CryptoCoinBalance;
+import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 
@@ -33,7 +41,9 @@ public class CrystalWalletService extends LifecycleService {
     private ServiceHandler mServiceHandler;
     private BitsharesAccountManager  bitsharesAccountManager;
     private Thread LoadAccountTransactionsThread;
+    private Thread LoadEquivalencesThread;
     private boolean keepLoadingAccountTransactions;
+    private boolean keepLoadingEquivalences;
     private CryptoNetInfoRequests cryptoNetInfoRequests;
 
     // Handler that receives messages from the thread
@@ -50,6 +60,68 @@ public class CrystalWalletService extends LifecycleService {
             }
             stopSelf(msg.arg1);
         }
+    }
+
+    public void loadEquivalentsValues(){
+        this.keepLoadingEquivalences = true;
+        final LifecycleService service = this;
+
+        //getting the preferred currency of the user
+        final LiveData<GeneralSetting> preferredCurrencySetting =
+                CrystalDatabase.getAppDatabase(service).generalSettingDao().getByName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+
+        preferredCurrencySetting.observe(service, new Observer<GeneralSetting>() {
+            @Override
+            public void onChanged(@Nullable GeneralSetting generalSetting) {
+                CryptoCurrency preferredCurrency = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByNameAndCryptoNet("EUR", CryptoNet.BITSHARES.name());
+
+                if (preferredCurrency != null) {
+                    BitsharesAssetInfo preferredCurrencyBitsharesInfo = CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getBitsharesAssetInfoFromCurrencyId(preferredCurrency.getId());
+
+                    if (preferredCurrencyBitsharesInfo != null) {
+                        final BitsharesAsset preferredCurrencyBitshareAsset = new BitsharesAsset(preferredCurrency);
+                        preferredCurrencyBitshareAsset.loadInfo(preferredCurrencyBitsharesInfo);
+
+                        //Loading "from" currencies
+                        final LiveData<List<BitsharesAssetInfo>> bitsharesAssetInfo =
+                                CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getAll();
+
+                        bitsharesAssetInfo.observe(service, new Observer<List<BitsharesAssetInfo>>() {
+                            @Override
+                            public void onChanged(@Nullable List<BitsharesAssetInfo> bitsharesAssetInfos) {
+                                List<BitsharesAsset> bitsharesAssets = new ArrayList<BitsharesAsset>();
+                                List<Long> currenciesIds = new ArrayList<Long>();
+                                for (BitsharesAssetInfo bitsharesAssetInfo : bitsharesAssetInfos) {
+                                    currenciesIds.add(bitsharesAssetInfo.getCryptoCurrencyId());
+                                }
+                                ;
+                                List<CryptoCurrency> bitsharesCurrencies = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByIds(currenciesIds);
+
+                                BitsharesAsset nextAsset;
+                                for (int i = 0; i < bitsharesCurrencies.size(); i++) {
+                                    CryptoCurrency nextCurrency = bitsharesCurrencies.get(i);
+                                    BitsharesAssetInfo nextBitsharesInfo = bitsharesAssetInfos.get(i);
+                                    nextAsset = new BitsharesAsset(nextCurrency);
+                                    nextAsset.loadInfo(nextBitsharesInfo);
+                                    bitsharesAssets.add(nextAsset);
+                                }
+
+                                while (keepLoadingEquivalences) {
+                                    try {
+                                        GrapheneApiGenerator.getEquivalentValue(preferredCurrencyBitshareAsset, bitsharesAssets, service);
+                                        Thread.sleep(60000);
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+
     }
 
     public void loadAccountTransactions(){
@@ -110,6 +182,15 @@ public class CrystalWalletService extends LifecycleService {
                 }
             };
             LoadAccountTransactionsThread.start();
+        }
+
+        if (LoadEquivalencesThread == null) {
+            LoadEquivalencesThread = new Thread() {
+                public void run() {
+                    loadEquivalentsValues();
+                }
+            };
+            LoadEquivalencesThread.start();
         }
 
         // If we get killed, after returning from here, restart

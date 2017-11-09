@@ -22,6 +22,9 @@ public interface BitsharesAssetDao {
     @Query("SELECT * FROM bitshares_asset WHERE crypto_curreny_id = :cryptoCurrencyId")
     LiveData<BitsharesAssetInfo> getBitsharesAssetInfo(long cryptoCurrencyId);
 
+    @Query("SELECT * FROM bitshares_asset WHERE crypto_curreny_id = :cryptoCurrencyId")
+    BitsharesAssetInfo getBitsharesAssetInfoFromCurrencyId(long cryptoCurrencyId);
+
     @Query("SELECT * FROM bitshares_asset WHERE bitshares_id = :bitsharesId")
     BitsharesAssetInfo getBitsharesAssetInfoById(String bitsharesId);
 

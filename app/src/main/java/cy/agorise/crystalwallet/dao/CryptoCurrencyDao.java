@@ -22,6 +22,9 @@ public interface CryptoCurrencyDao {
     @Query("SELECT * FROM crypto_currency WHERE id = :id")
     CryptoCurrency getById(long id);
 
+    @Query("SELECT * FROM crypto_currency WHERE name = :name AND crypto_net = :cryptoNet")
+    CryptoCurrency getByNameAndCryptoNet(String name,String cryptoNet);
+
     @Query("SELECT * FROM crypto_currency WHERE id IN (:ids)")
     List<CryptoCurrency> getByIds(List<Long> ids);
 
