@@ -49,38 +49,34 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
             cryptoCoinBalanceEquivalence.setText("");
         } else {
             LiveData<GeneralSetting> preferedCurrencySetting = CrystalDatabase.getAppDatabase(this.context).generalSettingDao().getByName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+            final CryptoCurrency currencyFrom = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(balance.getCryptoCurrencyId());
+            cryptoCoinName.setText(currencyFrom.getName());
+            cryptoCoinBalance.setText("" + balance.getBalance());
 
             preferedCurrencySetting.observe((LifecycleOwner) this.context, new Observer<GeneralSetting>() {
                 @Override
                 public void onChanged(@Nullable GeneralSetting generalSetting) {
-                    CryptoCurrency currencyFrom = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(balance.getCryptoCurrencyId());
-                    CryptoCurrency currencyTo = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getByName(generalSetting.getValue());
+                    if (generalSetting != null) {
+                        CryptoCurrency currencyTo = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getByName(generalSetting.getValue());
 
-                    LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
-                            .cryptoCurrencyEquivalenceDao().getByFromTo(
-                                    currencyFrom.getId(),
-                                    currencyTo.getId()
-                            );
+                        LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
+                                .cryptoCurrencyEquivalenceDao().getByFromTo(
+                                        currencyFrom.getId(),
+                                        currencyTo.getId()
+                                );
 
-                    cryptoCoinName.setText(currencyFrom.getName());
-                    cryptoCoinBalance.setText(""+balance.getBalance());
-
-                    currencyEquivalenceLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrencyEquivalence>() {
-                        @Override
-                        public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
-                            if (cryptoCurrencyEquivalence != null){
-                                CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getToCurrencyId());
-                                cryptoCoinBalanceEquivalence.setText(cryptoCurrencyEquivalence.getValue()+" "+toCurrency.getName());
+                        currencyEquivalenceLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrencyEquivalence>() {
+                            @Override
+                            public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
+                                if (cryptoCurrencyEquivalence != null) {
+                                    CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getToCurrencyId());
+                                    cryptoCoinBalanceEquivalence.setText(cryptoCurrencyEquivalence.getValue() + " " + toCurrency.getName());
+                                }
                             }
-                        }
-                    });
-
-
+                        });
+                    }
                 }
             });
-
-
-
         }
     }
 }
