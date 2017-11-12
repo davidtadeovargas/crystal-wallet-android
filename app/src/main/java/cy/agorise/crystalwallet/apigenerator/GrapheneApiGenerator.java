@@ -33,9 +33,7 @@ import cy.agorise.graphenej.api.GetAccounts;
 import cy.agorise.graphenej.api.GetBlockHeader;
 import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.api.GetLimitOrders;
-import cy.agorise.graphenej.api.GetMarketHistory;
 import cy.agorise.graphenej.api.GetRelativeAccountHistory;
-import cy.agorise.graphenej.api.ListAssets;
 import cy.agorise.graphenej.api.LookupAssetSymbols;
 import cy.agorise.graphenej.api.SubscriptionMessagesHub;
 import cy.agorise.graphenej.api.TransactionBroadcastSequence;
@@ -58,10 +56,11 @@ import cy.agorise.graphenej.models.WitnessResponse;
 public abstract class GrapheneApiGenerator {
 
     //TODO network connections
-    //TODO make to work with all Graphene stype, not only bitshares
-    private static String url = "http://128.0.69.157:8090";
+    //TODO make to work with all Graphene type, not only bitshares
+    public static String url = "http://128.0.69.157:8090";
+    private static String equivalentUrl = "http://128.0.69.157:8090";
 
-    // The meesage broker for bitshares
+    // The message broker for bitshares
     private static SubscriptionMessagesHub bitsharesSubscriptionHub = new SubscriptionMessagesHub("", "", true, new NodeErrorListener() {
         @Override
         public void onError(BaseResponse.Error error) {
@@ -69,7 +68,13 @@ public abstract class GrapheneApiGenerator {
         }
     });
 
+    /**
+     * The subscription thread for the real time updates
+     */
     private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub,url);
+    /**
+     * This is used for manager each listener in the subscription thread
+     */
     private static HashMap<Long,SubscriptionListener> currentBitsharesListener = new HashMap<>();
 
     /**
@@ -79,7 +84,8 @@ public abstract class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountById(String accountId, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetAccounts(accountId, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccounts(accountId,
+                new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 if (response.result.getClass() == ArrayList.class) {
@@ -88,7 +94,6 @@ public abstract class GrapheneApiGenerator {
                         if (list.get(0).getClass() == AccountProperties.class) {
                             request.getListener().success(list.get(0),request.getId());
                             return;
-                            //TODO answer a crystal model
                         }
                     }
                 }
@@ -110,7 +115,8 @@ public abstract class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountByOwnerOrActiveAddress(Address address, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetKeyReferences(address, true, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetKeyReferences(address, true,
+                new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
                     final List<List<UserAccount>> resp = (List<List<UserAccount>>) response.result;
@@ -140,12 +146,13 @@ public abstract class GrapheneApiGenerator {
      * @param limit the maximun transactions to retrieve
      * @param request The Api request object, to answer this petition
      */
-    public static void getAccountTransaction(String accountGrapheneId, int start, int stop, int limit, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountGrapheneId), start, limit, stop, new WitnessResponseListener() {
+    public static void getAccountTransaction(String accountGrapheneId, int start, int stop,
+                                             int limit, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetRelativeAccountHistory(new UserAccount(accountGrapheneId),
+                start, limit, stop, new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
-                    WitnessResponse<List<HistoricalTransfer>> resp = response;
-                    request.getListener().success(resp.result,request.getId());
+                    request.getListener().success(response.result,request.getId());
                 }
 
                 @Override
@@ -163,10 +170,11 @@ public abstract class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountByName(String accountName, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName,
+                new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
-                AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
+                AccountProperties accountProperties = (AccountProperties)response.result;
                 if(accountProperties == null){
                     request.getListener().fail(request.getId());
                 }else{
@@ -189,10 +197,11 @@ public abstract class GrapheneApiGenerator {
      * @param request The Api request object, to answer this petition
      */
     public static void getAccountIdByName(String accountName, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccountByName(accountName,
+                new WitnessResponseListener() {
                 @Override
                 public void onSuccess(WitnessResponse response) {
-                    AccountProperties accountProperties = ((WitnessResponse<AccountProperties>) response).result;
+                    AccountProperties accountProperties = (AccountProperties)response.result;
                     if(accountProperties == null){
                         request.getListener().success(null,request.getId());
                     }else{
@@ -208,8 +217,17 @@ public abstract class GrapheneApiGenerator {
         thread.start();
     }
 
-    public static void broadcastTransaction(Transaction transaction, Asset feeAsset, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new TransactionBroadcastSequence(transaction, feeAsset, new WitnessResponseListener() {
+    /**
+     * Broadcast a transaction, this is use for sending funds
+     *
+     * @param transaction The graphene transaction
+     * @param feeAsset The feeAseet, this needs only the id of the asset
+     * @param request the api request object, to answer this petition
+     */
+    public static void broadcastTransaction(Transaction transaction, Asset feeAsset,
+                                            final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new TransactionBroadcastSequence(transaction,
+                feeAsset, new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 request.getListener().success(true,request.getId());
@@ -223,16 +241,16 @@ public abstract class GrapheneApiGenerator {
         thread.start();
     }
 
+    /**
+     * This gets the asset information using only the asset name
+     *
+     * @param assetNames The list of the names of the assets to be retrieve
+     * @param request the api request object, to answer this petition
+     */
     public static void getAssetByName(ArrayList<String> assetNames, final ApiRequest request){
-        //TODO the graphenej library needs a way to creates the Asset object only with the symbol
-        ArrayList<Asset> assets = new ArrayList<>();
-        for(String assetName : assetNames){
-            Asset asset = new Asset("",assetName,-1);
-            assets.add(asset);
-        }
-        //TODO the graphenj library needs to add the lookupAssetSymbols to be able to search the asset by symbol
-        // this can be done with the same lookupassetsymbol, but passing only the symbol not the objetcid
-        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets, new WitnessResponseListener() {
+
+        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assetNames,true,
+                new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<Asset> assets = (List<Asset>) response.result;
@@ -241,6 +259,7 @@ public abstract class GrapheneApiGenerator {
                 }else{
                     ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
                     for(Asset asset: assets){
+                        //TODO asset type
                         BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
                         /*if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
                             assetType = BitsharesAsset.Type.CORE;
@@ -251,7 +270,8 @@ public abstract class GrapheneApiGenerator {
                         }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
                             assetType = BitsharesAsset.Type.PREDICTION_MARKET;
                         }*/
-                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),
+                                asset.getPrecision(),asset.getObjectId(),assetType);
                         responseAssets.add(responseAsset);
                     }
                     request.getListener().success(responseAssets,request.getId());
@@ -266,6 +286,11 @@ public abstract class GrapheneApiGenerator {
         thread.start();
     }
 
+    /**
+     * Gets the asset ifnormation using the id of the net
+     * @param assetIds The list of the ids to retrieve
+     * @param request the api request object, to answer this petition
+     */
     public static void getAssetById(ArrayList<String> assetIds, final ApiRequest request){
         ArrayList<Asset> assets = new ArrayList<>();
         for(String assetId : assetIds){
@@ -273,7 +298,7 @@ public abstract class GrapheneApiGenerator {
             assets.add(asset);
         }
 
-        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets, new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new LookupAssetSymbols(assets,true, new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<Asset> assets = (List<Asset>) response.result;
@@ -282,6 +307,7 @@ public abstract class GrapheneApiGenerator {
                 }else{
                     ArrayList<BitsharesAsset> responseAssets = new ArrayList<>();
                     for(Asset asset: assets){
+                        //TODO asset type
                         BitsharesAsset.Type assetType = BitsharesAsset.Type.UIA;
                         /*if(asset.getAssetType().equals(Asset.AssetType.CORE_ASSET)){
                             assetType = BitsharesAsset.Type.CORE;
@@ -292,7 +318,8 @@ public abstract class GrapheneApiGenerator {
                         }else if(asset.getAssetType().equals(Asset.AssetType.PREDICTION_MARKET)){
                             assetType = BitsharesAsset.Type.PREDICTION_MARKET;
                         }*/
-                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),asset.getPrecision(),asset.getObjectId(),assetType);
+                        BitsharesAsset responseAsset = new BitsharesAsset(asset.getSymbol(),
+                                asset.getPrecision(),asset.getObjectId(),assetType);
                         responseAssets.add(responseAsset);
                     }
                     request.getListener().success(responseAssets,request.getId());
@@ -307,7 +334,15 @@ public abstract class GrapheneApiGenerator {
         thread.start();
     }
 
-    public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId, final Context context){
+    /**
+     * Subscribe a bitshares account to receive real time updates
+     *
+     * @param accountId The id opf the database of the account
+     * @param accountBitsharesId  The bitshares id of the account
+     * @param context The android context of this application
+     */
+    public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId,
+                                                 final Context context){
         if(!currentBitsharesListener.containsKey(accountId)){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
@@ -380,17 +415,29 @@ public abstract class GrapheneApiGenerator {
         }
     }
 
-    public static void cancelBitsharesAccountSubcriptions(){
+    /**
+     * Cancels all bitshares account subscriptions
+     */
+    public static void cancelBitsharesAccountSubscriptions(){
         bitsharesSubscriptionHub.cancelSubscriptions();
     }
 
-    public static void getAccountBalance(final long accountId, final String accountGrapheneId, final Context context){
+    /**
+     * Retrieve the account balance of an account
+     *
+     * @param accountId The dataabase id of the account
+     * @param accountGrapheneId The bitshares id of the account
+     * @param context The android context of this application
+     */
+    public static void getAccountBalance(final long accountId, final String accountGrapheneId,
+                                         final Context context){
 
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
         final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
-        WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId), new ArrayList<Asset>(), new WitnessResponseListener() {
+        WebSocketThread thread = new WebSocketThread(new GetAccountBalances(new UserAccount(accountGrapheneId),
+                new ArrayList<Asset>(), new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<AssetAmount> balances = (List<AssetAmount>) response.result;
@@ -440,6 +487,12 @@ public abstract class GrapheneApiGenerator {
 
     }
 
+    /**
+     * Gets the date time of a block header
+     *
+     * @param blockHeader The block header to retrieve the date time
+     * @param request the api request object, to answer this petition
+     */
     public static void getBlockHeaderTime(long blockHeader, final ApiRequest request){
         WebSocketThread thread = new WebSocketThread(new GetBlockHeader(blockHeader, new WitnessResponseListener() {
             @Override
@@ -460,8 +513,16 @@ public abstract class GrapheneApiGenerator {
 
     }
 
-    public static void getEquivalentValue(String baseId, String quoteId, final ApiRequest request){
-        WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseId, quoteId, 100, new WitnessResponseListener() {
+    /**
+     * Gets a single equivalent value
+     *
+     * @param baseId The base asset bistshares id
+     * @param quoteId the quote asset bitshares id
+     * @param request the api request object, to answer this petition
+     */
+    public static void getEquivalentValue(final String baseId, String quoteId, final ApiRequest request){
+        WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseId, quoteId, 10,
+                new WitnessResponseListener() {
             @Override
             public void onSuccess(WitnessResponse response) {
                 List<LimitOrder> orders = (List<LimitOrder>) response.result;
@@ -469,10 +530,13 @@ public abstract class GrapheneApiGenerator {
                     //TODO indirect equivalent value
                 }
                 for(LimitOrder order : orders){
-                    Converter converter = new Converter();
-                    double equiValue = converter.getConversionRate(order.getSellPrice(),Converter.BASE_TO_QUOTE);
-                    request.getListener().success(equiValue,request.getId());
-                    break;
+                    if(order.getSellPrice().base.getAsset().getBitassetId().equals(baseId)) {
+                        Converter converter = new Converter();
+                        double equiValue = converter.getConversionRate(order.getSellPrice(),
+                                Converter.BASE_TO_QUOTE);
+                        request.getListener().success(equiValue, request.getId());
+                        break;
+                    }
                 }
             }
 
@@ -480,20 +544,42 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),equivalentUrl);
         thread.start();
     }
 
-    public static void getEquivalentValue(BitsharesAsset baseAsset, List<BitsharesAsset> quoteAssets,Context context){
+    /**
+     * Gets equivalent value and store it on the database
+     *
+     * @param baseAsset The baset asset as a bitshares asset, it needs the CryptoCurrency and thge BitsharesInfo
+     * @param quoteAssets The list of the qutoe assets as a full bitshares asset object
+     * @param context The android context of this application
+     */
+    public static void getEquivalentValue(BitsharesAsset baseAsset,
+                                          List<BitsharesAsset> quoteAssets,Context context){
             for(BitsharesAsset quoteAsset : quoteAssets){
-                WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(), quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,quoteAsset,context)),url);
+                WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(),
+                        quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,
+                        quoteAsset,context)),equivalentUrl);
                 thread.start();
             }
     }
 
+    /**
+     * Listener of the equivalent value the answer is stored in the database, for use in conjuntion with LiveData
+     */
     private static class EquivalentValueListener implements WitnessResponseListener{
+        /**
+         * The base asset
+         */
         private BitsharesAsset baseAsset;
+        /**
+         * The quote asset
+         */
         private BitsharesAsset quoteAsset;
+        /**
+         * The android context of this application
+         */
         private Context context;
 
         public EquivalentValueListener(BitsharesAsset baseAsset, BitsharesAsset quoteAsset, Context context) {
@@ -509,11 +595,13 @@ public abstract class GrapheneApiGenerator {
                 //TODO indirect equivalent value
             }
             for(LimitOrder order : orders){
-                Converter converter = new Converter();
-                double equiValue = converter.getConversionRate(order.getSellPrice(),Converter.BASE_TO_QUOTE);
-                CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(),quoteAsset.getId(),(int)(Math.pow(10,baseAsset.getPrecision())*equiValue),new Date());
-                CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
-                break;
+                if(order.getSellPrice().base.getAsset().getBitassetId().equals(baseAsset.getBitsharesId())) {
+                    Converter converter = new Converter();
+                    double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.BASE_TO_QUOTE);
+                    CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(), quoteAsset.getId(), (int) (Math.pow(10, baseAsset.getPrecision()) * equiValue), new Date());
+                    CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
+                    break;
+                }
             }
         }
 

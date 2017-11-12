@@ -9,6 +9,8 @@ import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.service.CrystalWalletService;
 
 /**
+ * The main application
+ *
  * Created by Henry Varona on 6/9/2017.
  */
 

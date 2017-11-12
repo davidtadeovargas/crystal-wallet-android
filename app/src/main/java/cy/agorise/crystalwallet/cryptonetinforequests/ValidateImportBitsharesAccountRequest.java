@@ -3,15 +3,31 @@ package cy.agorise.crystalwallet.cryptonetinforequests;
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 
 /**
+ * Imports a bitsahres accounts,
+ *
+ * return true if the account exist, and the mnemonic (brainkey provide is for that account
  * Created by Henry Varona on 1/10/2017.
  */
 
 public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
 
+    /**
+     * The name of the account
+     */
     private String accountName;
+
+    /**
+     * The mnemonic words
+     */
     private String mnemonic;
 
+    /**
+     * Indicates if the account exist
+     */
     private Boolean accountExists;
+    /**
+     * Indicates if the mnemonic provided belongs to that account
+     */
     private Boolean mnemonicIsCorrect;
 
     public ValidateImportBitsharesAccountRequest(String accountName, String mnemonic){

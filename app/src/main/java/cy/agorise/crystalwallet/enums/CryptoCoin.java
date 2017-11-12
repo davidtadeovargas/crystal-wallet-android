@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This represents each supported Crypto Coin
+ *
  * Created by Henry Varona on 12/9/2017.
  */
 

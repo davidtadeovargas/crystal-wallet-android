@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The manager of each request.
+ *
+ * This helps connects the manager of each coin with the rest of application
+ *
  * Created by Henry Varona on 1/10/2017.
  */
 
@@ -12,15 +16,21 @@ public class CryptoNetInfoRequests {
     private List<CryptoNetInfoRequestsListener> listeners;
     private static CryptoNetInfoRequests instance;
 
+    /**
+     * Private constructor for singleton pattern
+     */
     private void CryptoNetInfoRequests(){
-        //Private constructor for singleton pattern
     }
 
+    /**
+     * Gets an instance of this manager
+     * @return the instance to manage the cryptonetinforequest
+     */
     public static CryptoNetInfoRequests getInstance(){
         if (CryptoNetInfoRequests.instance == null){
             CryptoNetInfoRequests.instance = new CryptoNetInfoRequests();
-            CryptoNetInfoRequests.instance.requests = new ArrayList<CryptoNetInfoRequest>();
-            CryptoNetInfoRequests.instance.listeners = new ArrayList<CryptoNetInfoRequestsListener>();
+            CryptoNetInfoRequests.instance.requests = new ArrayList<>();
+            CryptoNetInfoRequests.instance.listeners = new ArrayList<>();
         }
 
         return CryptoNetInfoRequests.instance;

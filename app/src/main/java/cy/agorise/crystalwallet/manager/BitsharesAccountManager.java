@@ -51,10 +51,12 @@ import cy.agorise.graphenej.objects.Memo;
 import cy.agorise.graphenej.operations.TransferOperationBuilder;
 
 /**
+ * The manager for the Bitshare CryptoCoin
+ *
  * Created by henry on 26/9/2017.
  */
-
 public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetInfoRequestsListener {
+
     @Override
     public CryptoNetAccount createAccountFromSeed(CryptoNetAccount account, Context context) {
         if(account instanceof  GrapheneAccount) {
@@ -64,7 +66,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             String btsIdAccount = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
                     new Address(grapheneAccount.getOwnerKey(),"BTS").toString(),
                     new Address(grapheneAccount.getActiveKey(),"BTS").toString(),
-                    new Address(grapheneAccount.getMemoKey(),"BTS").toString());
+                    new Address(grapheneAccount.getMemoKey(),"BTS").toString(),GrapheneApiGenerator.url);
             if(btsIdAccount !=null) {
                 grapheneAccount.setAccountId(btsIdAccount);
 
@@ -159,6 +161,10 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Process the bitshares manager request
+     * @param request The request Object
+     */
     @Override
     public void onNewRequest(CryptoNetInfoRequest request) {
         if (request instanceof ValidateImportBitsharesAccountRequest){
@@ -174,6 +180,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Process the import account request
+     */
     private void validateImportAccount(final ValidateImportBitsharesAccountRequest importRequest){
         ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
             @Override
@@ -215,6 +224,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
     }
 
+    /**
+     * Process the account exist request, it consults the bitshares api for the account name.
+     *
+     * This can be used to know if the name is avaible, or the account to be send fund exists
+     */
     private void validateExistAcccount(final ValidateExistBitsharesAccountRequest validateRequest){
         ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
             @Override
@@ -231,6 +245,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         GrapheneApiGenerator.getAccountIdByName(validateRequest.getAccountName(),checkAccountName);
     }
 
+    /**
+     * Broadcast a transaction request
+     */
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
         Asset feeAsset = new Asset(sendRequest.getAsset());
         UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
@@ -265,6 +282,10 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
     }
 
+    /**
+     * Returns the account info from a graphene id
+     * @param grapheneId The graphene id of the account
+     */
     private GrapheneAccount getAccountInfoById(String grapheneId){
         final Object SYNC = new Object();
         long timeout = 60000;
@@ -309,6 +330,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         return listener.account;
     }
 
+    /**
+     * Refresh the transactions of an account, important to notice, it return nothing, to get the changes tuse the LiveData
+     * @param idAccount database id of the account
+     * @param context The android context of this application
+     */
     public static void refreshAccountTransactions(long idAccount, Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         List<CryptoCoinTransaction> transactions = db.transactionDao().getByIdAccount(idAccount);
@@ -327,15 +353,36 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Class that handles the transactions request
+     */
     private static class TransactionRequestListener implements ApiRequestListener{
 
+        /**
+         * Start index
+         */
         int start;
+        /**
+         * End index
+         */
         int stop;
+        /**
+         * Limit of transasction to fetch
+         */
         int limit;
+        /**
+         * The grapheneaccount with all data CryptoCurrnecy + info
+         */
         GrapheneAccount account;
+        /**
+         * The database
+         */
         CrystalDatabase db;
 
-        public TransactionRequestListener(int start, int stop, int limit, GrapheneAccount account, CrystalDatabase db) {
+        /**
+         * Basic consturctor
+         */
+        TransactionRequestListener(int start, int stop, int limit, GrapheneAccount account, CrystalDatabase db) {
             this.start = start;
             this.stop = stop;
             this.limit = limit;
@@ -343,6 +390,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.db = db;
         }
 
+        /**
+         * Handles the succes request of the transaction, if the amount of transaction is equal to the limit, ask for more transaction
+         * @param answer The answer, this object depends on the kind of request is made to the api
+         * @param idPetition the id of the ApiRequest petition
+         */
         @Override
         public void success(Object answer, int idPetition) {
             List<HistoricalTransfer> transfers = (List<HistoricalTransfer>) answer ;
@@ -354,8 +406,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                     BitsharesAssetInfo info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
 
                 if (info == null) {
+                    //The cryptoCurrency is not in the database, queringfor its data
                     System.out.println("CryptoCurrency not in database");
-                    final Object SYNC = new Object();
+                    final Object SYNC = new Object(); //Object to syn the answer
                     ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
                         @Override
                         public void success(Object answer, int idPetition) {
@@ -389,6 +442,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                     info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
                 }
                 if( info == null){
+                    //We couldn't retrieve the cryptocurrency
                     return;
                 }
                 transaction.setIdCurrency((int)info.getCryptoCurrencyId());
@@ -401,6 +455,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             }
             }
             if(transfers.size()>= limit){
+                // The amount of transaction in the answer is equal to the limit, we need to query to see if there is more transactions
                 int newStart= start + limit;
                 int newStop= stop + limit;
                 ApiRequest transactionRequest = new ApiRequest(newStart/limit, new TransactionRequestListener(newStart,newStop,limit,account,db));
@@ -414,6 +469,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Gets the current change from two assets
+     */
     private static void getEquivalentValue(final CryptoNetEquivalentRequest request){
         if(request.getFromCurrency() instanceof  BitsharesAsset && request.getToCurrency() instanceof  BitsharesAsset) {
             BitsharesAsset fromAsset = (BitsharesAsset) request.getFromCurrency();
@@ -435,6 +493,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Class to retrieve the account id or the account name, if one of those is missing
+     */
     private class AccountIdOrNameListener implements ApiRequestListener{
         Object SYNC;
         boolean ready = false;
@@ -469,8 +530,17 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Class to retrieve the transaction date
+     */
     private static class GetTransactionDate implements ApiRequestListener{
+        /**
+         * The transaction to retrieve
+         */
         private CryptoCoinTransaction transaction;
+        /**
+         * The DAO to insert or update the transaction
+         */
         TransactionDao transactionDao;
 
         public GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {

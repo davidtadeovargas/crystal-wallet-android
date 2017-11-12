@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.models;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 
 /**
+ * Represents an Bitshares Assets, the assets extends the CryptoCurrency
  * Created by henry on 8/10/2017.
  */
 
