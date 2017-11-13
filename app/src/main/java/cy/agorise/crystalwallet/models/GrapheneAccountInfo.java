@@ -6,6 +6,8 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 
 /**
+ * This represents the additional info of a bitshares account
+ *
  * Created by henry on 24/9/2017.
  */
 
@@ -16,19 +18,36 @@ import android.arch.persistence.room.Index;
         childColumns = "crypto_net_account_id"))
 public class GrapheneAccountInfo {
 
+    /**
+     * The database id of the cryptonetAccount
+     */
     @ColumnInfo(name = "crypto_net_account_id")
     protected long cryptoNetAccountId;
 
+    /**
+     * The account name
+     */
     @ColumnInfo(name = "account_name")
     protected String name;
 
+    /**
+     * The bitshares id of this account
+     */
     @ColumnInfo(name = "account_id")
     protected String accountId;
 
+    /**
+     * Baisc constructor
+     * @param cryptoNetAccountId The database ud of the CryptoNetAccount
+     */
     public GrapheneAccountInfo(long cryptoNetAccountId) {
         this.cryptoNetAccountId = cryptoNetAccountId;
     }
 
+    /**
+     * Constructor used to save in the database
+     * @param account a complete graphene account with its info
+     */
     public GrapheneAccountInfo(GrapheneAccount account) {
         this.cryptoNetAccountId = account.getId();
         this.name = account.getName();
