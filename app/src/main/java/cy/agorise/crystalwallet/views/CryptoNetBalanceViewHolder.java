@@ -30,35 +30,57 @@ import cy.agorise.crystalwallet.viewmodels.CryptoCoinBalanceListViewModel;
 
 /**
  * Created by Henry Varona on 17/9/2017.
+ *
+ * Represents an element view from a Crypto Net Balance List
  */
 
 public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
-    //@BindView(R.id.ivCryptoNetIcon)
+    /*
+     * the view holding the icon of the crypto net
+     */
     ImageView cryptoNetIcon;
 
-    //@BindView(R.id.tvCryptoNetName)
+    /*
+     * the view holding the name of the crypto net
+     */
     TextView cryptoNetName;
 
-    //@BindView(R.id.cryptoCoinBalancesListView)
+    /*
+     * The list view of the crypto coins balances of this crypto net balance
+     */
     CryptoCoinBalanceListView cryptoCoinBalanceListView;
 
+    /*
+     * The button for sending transactions from this crypto net balance account
+     */
     @BindView(R.id.btnSendFromThisAccount)
     Button btnSendFromThisAccount;
 
     Context context;
 
+    /*
+     * the id of the account of this crypto net balance. It will be loaded
+     * when the element is bounded.
+     */
     long cryptoNetAccountId;
 
+    /*
+     * A LifecycleOwner fragment. It will be used to call the ViewModelProviders
+     */
     private Fragment fragment;
 
     public CryptoNetBalanceViewHolder(View itemView, Fragment fragment) {
         super(itemView);
+        //-1 represents a crypto net account not loaded yet
         this.cryptoNetAccountId = -1;
 
+        //TODO: use ButterKnife to load the views
         cryptoNetIcon = (ImageView) itemView.findViewById(R.id.ivCryptoNetIcon);
         cryptoNetName = (TextView) itemView.findViewById(R.id.tvCryptoNetName);
         cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalancesListView);
         btnSendFromThisAccount = (Button) itemView.findViewById(R.id.btnSendFromThisAccount);
+
+        //Setting the send button
         btnSendFromThisAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,15 +95,16 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         cryptoNetName.setText("loading...");
     }
 
-    //@OnClick(R.id.btnSendFromThisAccount)
+    /*
+     * dispatch the user to the send activity using this account
+     */
     public void sendFromThisAccount(){
+        //if the crypto net account was loaded
         if (this.cryptoNetAccountId >= 0) {
-            //Intent intent = new Intent(this.context, SendTransactionActivity.class);
-            //this.context.startActivity(intent);
-
             Intent startActivity = new Intent();
             startActivity.setClass(context, SendTransactionActivity.class);
             startActivity.setAction(SendTransactionActivity.class.getName());
+            //Pass the account id as an extra parameter to the send activity
             startActivity.putExtra("CRYPTO_NET_ACCOUNT_ID", this.cryptoNetAccountId);
             startActivity.setFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK
@@ -90,6 +113,9 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    /*
+     * Binds this view with the data of an element of the list
+     */
     public void bindTo(final CryptoNetBalance balance) {
         if (balance == null){
             cryptoNetName.setText("loading...");
@@ -97,12 +123,14 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
             this.cryptoNetAccountId = balance.getAccountId();
             cryptoNetName.setText(balance.getCryptoNet().getLabel());
 
+            //Loads the crypto coin balance list of this account using a ViewModel and retrieving a LiveData List
             CryptoCoinBalanceListViewModel cryptoCoinBalanceListViewModel = ViewModelProviders.of(this.fragment).get(CryptoCoinBalanceListViewModel.class);
             cryptoCoinBalanceListViewModel.init(balance.getAccountId());
             LiveData<List<CryptoCoinBalance>> cryptoCoinBalanceData = cryptoCoinBalanceListViewModel.getCryptoCoinBalanceList();
 
             cryptoCoinBalanceListView.setData(null);
 
+            //Observes the livedata, so any of its changes on the database will be reloaded here
             cryptoCoinBalanceData.observe((LifecycleOwner)this.itemView.getContext(), new Observer<List<CryptoCoinBalance>>() {
                 @Override
                 public void onChanged(List<CryptoCoinBalance> cryptoCoinBalances) {

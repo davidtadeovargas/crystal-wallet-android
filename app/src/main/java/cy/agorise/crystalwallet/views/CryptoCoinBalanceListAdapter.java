@@ -11,6 +11,8 @@ import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 
 /**
  * Created by Henry Varona on 11/9/2017.
+ *
+ * An adapter to show the elements of a list of crypto coin balances
  */
 
 public class CryptoCoinBalanceListAdapter extends ListAdapter<CryptoCoinBalance, CryptoCoinBalanceViewHolder> {

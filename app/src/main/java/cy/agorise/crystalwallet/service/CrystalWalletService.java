@@ -109,7 +109,7 @@ public class CrystalWalletService extends LifecycleService {
                                 while (keepLoadingEquivalences) {
                                     try {
                                         GrapheneApiGenerator.getEquivalentValue(preferredCurrencyBitshareAsset, bitsharesAssets, service);
-                                        Thread.sleep(60000);
+                                        Thread.sleep(/*60000*/500);
                                     } catch (InterruptedException e) {
                                         Thread.currentThread().interrupt();
                                     }

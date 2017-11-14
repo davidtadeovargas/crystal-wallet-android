@@ -21,6 +21,11 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 
 /**
  * Created by Henry Varona on 11/9/2017.
+ *
+ * An adapter to show the elements of a list of crypto net account transactions.
+ *
+ * Extends from a paged list, so not all transactions will be loaded immediately, but only a segment
+ * that will be extended with the scroll of the user
  */
 
 public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransaction, TransactionViewHolder> {
