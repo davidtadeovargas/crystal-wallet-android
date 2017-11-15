@@ -180,7 +180,8 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                             //TODO change the way to compare keys
 
                             BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
-                            for(PublicKey activeKey : prop.active.getKeyAuthList()){
+                            System.out.println(bk.getPublicAddress("BTS").toString());
+                            for(PublicKey activeKey : prop.owner.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
                                     importRequest.setMnemonicIsCorrect(true);
                                     return;
@@ -245,7 +246,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
             //TODO memo
         }
-        ArrayList<BaseOperation> operationList = new ArrayList();
+        ArrayList<BaseOperation> operationList = new ArrayList<>();
         operationList.add(builder.build());
 
         ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
@@ -425,7 +426,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                     GrapheneApiGenerator.getAssetById(assets,assetRequest);
 
                     synchronized (SYNC){
-                        try {SYNC.wait(3000);} catch (InterruptedException ignore) {}
+                        try {SYNC.wait(60000);} catch (InterruptedException ignore) {}
                     }
                     info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
                 }
@@ -485,7 +486,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Class to retrieve the account id or the account name, if one of those is missing
      */
     private class AccountIdOrNameListener implements ApiRequestListener{
-        Object SYNC;
+        final Object SYNC;
         boolean ready = false;
 
         GrapheneAccount account;
@@ -531,7 +532,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
          */
         TransactionDao transactionDao;
 
-        public GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
+        GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
             this.transaction = transaction;
             this.transactionDao = transactionDao;
         }
