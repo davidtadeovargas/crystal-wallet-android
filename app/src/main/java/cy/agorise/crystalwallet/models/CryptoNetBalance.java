@@ -16,9 +16,9 @@ import cy.agorise.crystalwallet.enums.CryptoNet;
 import static android.arch.persistence.room.ColumnInfo.INTEGER;
 
 /**
- * Represents a generic CryptoNet Account Balance
- *
  * Created by Henry Varona on 6/9/2017.
+ *
+ * Represents a generic Account Balance from a specific CryptoNet
  */
 
 @Entity
@@ -31,7 +31,7 @@ public class CryptoNetBalance {
     private long mAccountId;
 
     /**
-     * The cryptonet of the account
+     * The crypto net of the account
      */
     @ColumnInfo(name = "crypto_net")
     private CryptoNet mCryptoNet;

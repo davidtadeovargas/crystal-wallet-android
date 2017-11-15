@@ -14,6 +14,8 @@ import cy.agorise.crystalwallet.models.CryptoCurrency;
 
 /**
  * Created by Henry Varona on 25/10/2017.
+ *
+ * The adapter to show a list of crypto currencies in a spinner.
  */
 
 public class CryptoCurrencyAdapter extends ArrayAdapter<CryptoCurrency> {
@@ -29,6 +31,9 @@ public class CryptoCurrencyAdapter extends ArrayAdapter<CryptoCurrency> {
         return getView(position, convertView, parent);
     }
 
+    /*
+     * Creates the view for every element of the spinner
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater)this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

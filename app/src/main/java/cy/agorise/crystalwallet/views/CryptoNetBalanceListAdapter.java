@@ -13,10 +13,15 @@ import cy.agorise.crystalwallet.viewmodels.CryptoCoinBalanceListViewModel;
 
 /**
  * Created by Henry Varona on 11/9/2017.
+ *
+ * An adapter to show the elements of a list of crypto net balances
  */
 
 public class CryptoNetBalanceListAdapter extends ListAdapter<CryptoNetBalance, CryptoNetBalanceViewHolder> {
 
+    /*
+     * A LifecycleOwner fragment that will be used to call the ViewModelProviders
+     */
     Fragment fragment;
 
     public CryptoNetBalanceListAdapter(Fragment fragment) {
@@ -27,7 +32,6 @@ public class CryptoNetBalanceListAdapter extends ListAdapter<CryptoNetBalance, C
     @Override
     public CryptoNetBalanceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.balance_list_item,parent,false);
-
 
         return new CryptoNetBalanceViewHolder(v, fragment);
     }

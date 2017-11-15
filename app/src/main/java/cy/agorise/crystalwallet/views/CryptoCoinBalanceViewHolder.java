@@ -19,16 +19,29 @@ import cy.agorise.crystalwallet.models.GeneralSetting;
 
 /**
  * Created by Henry Varona on 17/9/2017.
+ *
+ * Represents an element view from a Crypto Coin Balance List
  */
 
 public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
+    /*
+     * the view holding the crypto coin name
+     */
     private TextView cryptoCoinName;
+    /*
+     * the view holding the crypto coin balance amount
+     */
     private TextView cryptoCoinBalance;
+    /*
+     * the view holding the crypto coin balance equivalent value
+     */
     private TextView cryptoCoinBalanceEquivalence;
+
     private Context context;
 
     public CryptoCoinBalanceViewHolder(View itemView) {
         super(itemView);
+        //TODO: use ButterKnife to load this
         cryptoCoinName = (TextView) itemView.findViewById(R.id.tvCryptoCoinName);
         cryptoCoinBalance = (TextView) itemView.findViewById(R.id.tvCryptoCoinBalanceAmount);
         cryptoCoinBalanceEquivalence = (TextView) itemView.findViewById(R.id.tvCryptoCoinBalanceEquivalence);
@@ -36,35 +49,46 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
 
     }
 
+    /*
+     * Clears the information in this element view
+     */
     public void clear(){
         cryptoCoinName.setText("loading...");
         cryptoCoinBalance.setText("");
         cryptoCoinBalanceEquivalence.setText("");
     }
 
+    /*
+     * Binds this view with the data of an element of the list
+     */
     public void bindTo(final CryptoCoinBalance balance/*, final OnTransactionClickListener listener*/) {
         if (balance == null){
-            cryptoCoinName.setText("loading...");
-            cryptoCoinBalance.setText("");
-            cryptoCoinBalanceEquivalence.setText("");
+            this.clear();
         } else {
+            //Retrieves the preferred currency selected by the user
             LiveData<GeneralSetting> preferedCurrencySetting = CrystalDatabase.getAppDatabase(this.context).generalSettingDao().getByName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+            //Retrieves the currency of this balance
             final CryptoCurrency currencyFrom = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(balance.getCryptoCurrencyId());
+            //Sets the name and amount of the balance in the view
             cryptoCoinName.setText(currencyFrom.getName());
             cryptoCoinBalance.setText("" + balance.getBalance());
 
+            //Observes the preferred currency of the user. If the user changes it, this will change the equivalent value
             preferedCurrencySetting.observe((LifecycleOwner) this.context, new Observer<GeneralSetting>() {
                 @Override
                 public void onChanged(@Nullable GeneralSetting generalSetting) {
                     if (generalSetting != null) {
+                        //Gets the currency object of the preferred currency
                         CryptoCurrency currencyTo = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getByName(generalSetting.getValue());
 
+                        //Retrieves the equivalent value of this balance using the "From" currency and the "To" currency
                         LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
                                 .cryptoCurrencyEquivalenceDao().getByFromTo(
                                         currencyFrom.getId(),
                                         currencyTo.getId()
                                 );
 
+                        //Observes the equivalent value. If the equivalent value changes, this will keep the value showed correct
                         currencyEquivalenceLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrencyEquivalence>() {
                             @Override
                             public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
