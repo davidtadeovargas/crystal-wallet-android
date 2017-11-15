@@ -41,7 +41,7 @@ public class CrystalWalletService extends LifecycleService {
     private ServiceHandler mServiceHandler;
     private BitsharesAccountManager  bitsharesAccountManager;
     private Thread LoadAccountTransactionsThread;
-    private Thread LoadEquivalencesThread;
+    private EquivalencesThread LoadEquivalencesThread;
     private boolean keepLoadingAccountTransactions;
     private boolean keepLoadingEquivalences;
     private CryptoNetInfoRequests cryptoNetInfoRequests;
@@ -106,22 +106,15 @@ public class CrystalWalletService extends LifecycleService {
                                     bitsharesAssets.add(nextAsset);
                                 }
 
-                                while (keepLoadingEquivalences) {
-                                    try {
-                                        GrapheneApiGenerator.getEquivalentValue(preferredCurrencyBitshareAsset, bitsharesAssets, service);
-                                        Thread.sleep(/*60000*/500);
-                                    } catch (InterruptedException e) {
-                                        Thread.currentThread().interrupt();
-                                    }
-                                }
+                                if (LoadEquivalencesThread != null){LoadEquivalencesThread.stopLoadingEquivalences();};
+                                LoadEquivalencesThread = new EquivalencesThread(service, preferredCurrencyBitshareAsset, bitsharesAssets);
+                                LoadEquivalencesThread.start();
                             }
                         });
                     }
                 }
             }
         });
-
-
     }
 
     public void loadAccountTransactions(){
@@ -177,6 +170,7 @@ public class CrystalWalletService extends LifecycleService {
 
         if (LoadAccountTransactionsThread == null) {
             LoadAccountTransactionsThread = new Thread() {
+                @Override
                 public void run() {
                     loadAccountTransactions();
                 }
@@ -184,14 +178,15 @@ public class CrystalWalletService extends LifecycleService {
             LoadAccountTransactionsThread.start();
         }
 
-        if (LoadEquivalencesThread == null) {
-            LoadEquivalencesThread = new Thread() {
-                public void run() {
+        //if (LoadEquivalencesThread == null) {
+        //    LoadEquivalencesThread = new Thread() {
+        //        @Override
+        //        public void run() {
                     loadEquivalentsValues();
-                }
-            };
-            LoadEquivalencesThread.start();
-        }
+        //        }
+        //    };
+        //    LoadEquivalencesThread.start();
+        //}
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
