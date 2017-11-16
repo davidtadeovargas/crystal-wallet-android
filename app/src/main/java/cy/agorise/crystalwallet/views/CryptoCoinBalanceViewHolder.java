@@ -70,8 +70,9 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
             //Retrieves the currency of this balance
             final CryptoCurrency currencyFrom = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(balance.getCryptoCurrencyId());
             //Sets the name and amount of the balance in the view
+            String balanceString = String.format("%.2f",balance.getBalance()/Math.pow(10,currencyFrom.getPrecision()));
             cryptoCoinName.setText(currencyFrom.getName());
-            cryptoCoinBalance.setText("" + balance.getBalance());
+            cryptoCoinBalance.setText(balanceString);
 
             //Observes the preferred currency of the user. If the user changes it, this will change the equivalent value
             preferedCurrencySetting.observe((LifecycleOwner) this.context, new Observer<GeneralSetting>() {
@@ -84,8 +85,9 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
                         //Retrieves the equivalent value of this balance using the "From" currency and the "To" currency
                         LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
                                 .cryptoCurrencyEquivalenceDao().getByFromTo(
-                                        currencyFrom.getId(),
-                                        currencyTo.getId()
+                                        currencyTo.getId(),
+                                        currencyFrom.getId()
+
                                 );
 
                         //Observes the equivalent value. If the equivalent value changes, this will keep the value showed correct
@@ -93,8 +95,15 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
                             @Override
                             public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
                                 if (cryptoCurrencyEquivalence != null) {
-                                    CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getToCurrencyId());
-                                    cryptoCoinBalanceEquivalence.setText(cryptoCurrencyEquivalence.getValue() + " " + toCurrency.getName());
+                                    CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getFromCurrencyId());
+                                    String equivalenceString = String.format(
+                                            "%.2f",
+                                            (balance.getBalance()/Math.pow(10,currencyFrom.getPrecision()))/
+                                            (cryptoCurrencyEquivalence.getValue()/Math.pow(10,toCurrency.getPrecision()))
+                                    );
+
+                                    cryptoCoinBalanceEquivalence.setText(
+                                            equivalenceString + " " + toCurrency.getName());
                                 }
                             }
                         });

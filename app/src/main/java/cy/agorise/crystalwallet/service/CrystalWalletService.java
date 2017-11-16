@@ -72,45 +72,50 @@ public class CrystalWalletService extends LifecycleService {
 
         preferredCurrencySetting.observe(service, new Observer<GeneralSetting>() {
             @Override
-            public void onChanged(@Nullable GeneralSetting generalSetting) {
-                CryptoCurrency preferredCurrency = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByNameAndCryptoNet("EUR", CryptoNet.BITSHARES.name());
+            public void onChanged(final @Nullable GeneralSetting generalSetting) {
+                if (generalSetting != null) {
+                    CryptoCurrency preferredCurrency = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByNameAndCryptoNet("EUR", CryptoNet.BITSHARES.name());
 
-                if (preferredCurrency != null) {
-                    BitsharesAssetInfo preferredCurrencyBitsharesInfo = CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getBitsharesAssetInfoFromCurrencyId(preferredCurrency.getId());
+                    if (preferredCurrency != null) {
+                        BitsharesAssetInfo preferredCurrencyBitsharesInfo = CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getBitsharesAssetInfoFromCurrencyId(preferredCurrency.getId());
 
-                    if (preferredCurrencyBitsharesInfo != null) {
-                        final BitsharesAsset preferredCurrencyBitshareAsset = new BitsharesAsset(preferredCurrency);
-                        preferredCurrencyBitshareAsset.loadInfo(preferredCurrencyBitsharesInfo);
+                        if (preferredCurrencyBitsharesInfo != null) {
+                            final BitsharesAsset preferredCurrencyBitshareAsset = new BitsharesAsset(preferredCurrency);
+                            preferredCurrencyBitshareAsset.loadInfo(preferredCurrencyBitsharesInfo);
 
-                        //Loading "from" currencies
-                        final LiveData<List<BitsharesAssetInfo>> bitsharesAssetInfo =
-                                CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getAll();
+                            //Loading "from" currencies
+                            final LiveData<List<BitsharesAssetInfo>> bitsharesAssetInfo =
+                                    CrystalDatabase.getAppDatabase(service).bitsharesAssetDao().getAll();
 
-                        bitsharesAssetInfo.observe(service, new Observer<List<BitsharesAssetInfo>>() {
-                            @Override
-                            public void onChanged(@Nullable List<BitsharesAssetInfo> bitsharesAssetInfos) {
-                                List<BitsharesAsset> bitsharesAssets = new ArrayList<BitsharesAsset>();
-                                List<Long> currenciesIds = new ArrayList<Long>();
-                                for (BitsharesAssetInfo bitsharesAssetInfo : bitsharesAssetInfos) {
-                                    currenciesIds.add(bitsharesAssetInfo.getCryptoCurrencyId());
+                            bitsharesAssetInfo.observe(service, new Observer<List<BitsharesAssetInfo>>() {
+                                @Override
+                                public void onChanged(@Nullable List<BitsharesAssetInfo> bitsharesAssetInfos) {
+                                    List<BitsharesAsset> bitsharesAssets = new ArrayList<BitsharesAsset>();
+                                    List<Long> currenciesIds = new ArrayList<Long>();
+                                    for (BitsharesAssetInfo bitsharesAssetInfo : bitsharesAssetInfos) {
+                                        currenciesIds.add(bitsharesAssetInfo.getCryptoCurrencyId());
+                                    }
+                                    ;
+                                    List<CryptoCurrency> bitsharesCurrencies = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByIds(currenciesIds);
+
+                                    BitsharesAsset nextAsset;
+                                    for (int i = 0; i < bitsharesCurrencies.size(); i++) {
+                                        CryptoCurrency nextCurrency = bitsharesCurrencies.get(i);
+                                        BitsharesAssetInfo nextBitsharesInfo = bitsharesAssetInfos.get(i);
+                                        nextAsset = new BitsharesAsset(nextCurrency);
+                                        nextAsset.loadInfo(nextBitsharesInfo);
+                                        bitsharesAssets.add(nextAsset);
+                                    }
+
+                                    if (LoadEquivalencesThread != null) {
+                                        LoadEquivalencesThread.stopLoadingEquivalences();
+                                    }
+                                    ;
+                                    LoadEquivalencesThread = new EquivalencesThread(service, generalSetting.getValue(), bitsharesAssets);
+                                    LoadEquivalencesThread.start();
                                 }
-                                ;
-                                List<CryptoCurrency> bitsharesCurrencies = CrystalDatabase.getAppDatabase(service).cryptoCurrencyDao().getByIds(currenciesIds);
-
-                                BitsharesAsset nextAsset;
-                                for (int i = 0; i < bitsharesCurrencies.size(); i++) {
-                                    CryptoCurrency nextCurrency = bitsharesCurrencies.get(i);
-                                    BitsharesAssetInfo nextBitsharesInfo = bitsharesAssetInfos.get(i);
-                                    nextAsset = new BitsharesAsset(nextCurrency);
-                                    nextAsset.loadInfo(nextBitsharesInfo);
-                                    bitsharesAssets.add(nextAsset);
-                                }
-
-                                if (LoadEquivalencesThread != null){LoadEquivalencesThread.stopLoadingEquivalences();};
-                                LoadEquivalencesThread = new EquivalencesThread(service, preferredCurrencyBitshareAsset, bitsharesAssets);
-                                LoadEquivalencesThread.start();
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }

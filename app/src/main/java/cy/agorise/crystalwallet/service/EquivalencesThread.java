@@ -15,10 +15,10 @@ import cy.agorise.crystalwallet.models.BitsharesAsset;
 public class EquivalencesThread extends Thread{
     private boolean keepLoadingEquivalences = true;
     private LifecycleService service;
-    private BitsharesAsset fromAsset;
+    private String fromAsset;
     private List<BitsharesAsset> bitsharesAssets;
 
-    public EquivalencesThread(LifecycleService service, BitsharesAsset fromAsset, List<BitsharesAsset> bitsharesAssets){
+    public EquivalencesThread(LifecycleService service, String fromAsset, List<BitsharesAsset> bitsharesAssets){
         this.service = service;
         this.fromAsset = fromAsset;
         this.bitsharesAssets = bitsharesAssets;
@@ -30,7 +30,7 @@ public class EquivalencesThread extends Thread{
 
         while(this.keepLoadingEquivalences){
             try {
-                GrapheneApiGenerator.getEquivalentValue(fromAsset, bitsharesAssets, this.service);
+                GrapheneApiGenerator.getEquivalenValue(fromAsset, bitsharesAssets, this.service);
                 Log.i("Equivalences Thread", "In loop");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
