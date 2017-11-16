@@ -559,13 +559,53 @@ public abstract class GrapheneApiGenerator {
      * @param context The android context of this application
      */
     public static void getEquivalentValue(BitsharesAsset baseAsset,
-                                          List<BitsharesAsset> quoteAssets,Context context){
+                                          final List<BitsharesAsset> quoteAssets, final Context context){
             for(BitsharesAsset quoteAsset : quoteAssets){
                 WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(),
                         quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,
                         quoteAsset,context)),equivalentUrl);
                 thread.start();
             }
+    }
+
+    public static void getEquivalenValue(String baseAssetName, final  List<BitsharesAsset> quoteAssets, final Context context){
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+        final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
+        final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
+        CryptoCurrency baseCurrency = cryptoCurrencyDao.getByName(baseAssetName);
+        BitsharesAssetInfo info = null;
+        if(baseCurrency != null){
+            info = db.bitsharesAssetDao().getBitsharesAssetInfo(baseCurrency.getId());
+        }
+        if(baseCurrency == null || info == null){
+            ApiRequest getAssetRequest = new ApiRequest(1, new ApiRequestListener() {
+                @Override
+                public void success(Object answer, int idPetition) {
+                    if(answer instanceof  BitsharesAsset){
+                        BitsharesAssetInfo info = new BitsharesAssetInfo((BitsharesAsset) answer);
+                        long cryptoCurrencyId = cryptoCurrencyDao.insertCryptoCurrency((CryptoCurrency)answer )[0];
+                        info.setCryptoCurrencyId(cryptoCurrencyId);
+                        bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                        GrapheneApiGenerator.getEquivalentValue((BitsharesAsset) answer, quoteAssets, context);
+                    }
+                }
+
+                @Override
+                public void fail(int idPetition) {
+                //TODO fail asset petition, the base asset is not an asset in bitshares, or there is no connection to the server
+                }
+            });
+            ArrayList<String> names = new ArrayList<>();
+            names.add(baseAssetName);
+            GrapheneApiGenerator.getAssetByName(names,getAssetRequest);
+
+        }else {
+            BitsharesAsset baseAsset = new BitsharesAsset(baseCurrency);
+            baseAsset.loadInfo(info);
+            getEquivalentValue(baseAsset,quoteAssets,context);
+        }
+
+
     }
 
     /**

@@ -20,7 +20,7 @@ public interface BitsharesAssetDao {
     LiveData<List<BitsharesAssetInfo>> getAll();
 
     @Query("SELECT * FROM bitshares_asset WHERE crypto_curreny_id = :cryptoCurrencyId")
-    LiveData<BitsharesAssetInfo> getBitsharesAssetInfo(long cryptoCurrencyId);
+    BitsharesAssetInfo getBitsharesAssetInfo(long cryptoCurrencyId);
 
     @Query("SELECT * FROM bitshares_asset WHERE crypto_curreny_id = :cryptoCurrencyId")
     BitsharesAssetInfo getBitsharesAssetInfoFromCurrencyId(long cryptoCurrencyId);
