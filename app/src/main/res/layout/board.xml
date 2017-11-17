@@ -68,14 +68,21 @@
 
     <android.support.design.widget.FloatingActionButton
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Added bottom buttons to balance, transactions and contacts
         android:id="@+id/fabReceive"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="start|bottom"
         android:layout_marginBottom="-125dp"
         android:layout_marginStart="-125dp"
+<<<<<<< HEAD
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/receive_icon" />
+=======
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+>>>>>>> Added bottom buttons to balance, transactions and contacts
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSend"
@@ -88,9 +95,12 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddContact"
+<<<<<<< HEAD
 =======
         android:id="@+id/fab"
 >>>>>>> Added custom toolbar and tab labels to board activity
+=======
+>>>>>>> Added bottom buttons to balance, transactions and contacts
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

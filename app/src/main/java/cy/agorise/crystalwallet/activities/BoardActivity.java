@@ -11,7 +11,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.widget.ImageButton;
 
 import butterknife.BindView;
@@ -69,7 +68,7 @@ public class BoardActivity  extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-
+        
         // Hide Add Contact fab, it won't hide until first page changed...
         fabAddContact.hide();
 
