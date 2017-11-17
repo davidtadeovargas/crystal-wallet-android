@@ -2,12 +2,14 @@ package cy.agorise.crystalwallet.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.ImageButton;
 
 import butterknife.BindView;
@@ -38,8 +40,16 @@ public class BoardActivity  extends AppCompatActivity {
         setContentView(R.layout.board);
         ButterKnife.bind(this);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         boardAdapter = new BoardPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(boardAdapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+
+        mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
     }
 
     @OnClick(R.id.btnGeneralSettings)
