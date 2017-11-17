@@ -71,9 +71,10 @@ public class BoardActivity  extends AppCompatActivity {
             }
         });*/
 
-        //
+        // Hide Add Contact fab, it won't hide until first page changed...
         fabAddContact.hide();
 
+        // Hide and show respective fabs when convenient
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
