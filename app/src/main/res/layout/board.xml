@@ -5,10 +5,6 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
-    app:theme="@style/AppTheme.NoActionBar"
-=======
->>>>>>> Added custom toolbar and tab labels to board activity
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -26,11 +22,7 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-<<<<<<< HEAD
             app:title="Client Logo">
-=======
-            app:title="@string/app_name">
->>>>>>> Added custom toolbar and tab labels to board activity
 
         </android.support.v7.widget.Toolbar>
 
@@ -67,22 +59,14 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Added bottom buttons to balance, transactions and contacts
         android:id="@+id/fabReceive"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_gravity="start|bottom"
         android:layout_marginBottom="-125dp"
         android:layout_marginStart="-125dp"
-<<<<<<< HEAD
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/receive_icon" />
-=======
-        app:srcCompat="@android:drawable/ic_dialog_email" />
->>>>>>> Added bottom buttons to balance, transactions and contacts
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSend"
@@ -95,12 +79,6 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAddContact"
-<<<<<<< HEAD
-=======
-        android:id="@+id/fab"
->>>>>>> Added custom toolbar and tab labels to board activity
-=======
->>>>>>> Added bottom buttons to balance, transactions and contacts
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

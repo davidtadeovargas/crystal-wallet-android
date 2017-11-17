@@ -68,7 +68,7 @@ public class BoardActivity  extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-        
+
         // Hide Add Contact fab, it won't hide until first page changed...
         fabAddContact.hide();
 
