@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.BoardActivity"
-            android:theme="@style/AppTheme.NoActionBar" > <!-- Dirty trick to avoid toolbar error on balance -->
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity android:name=".activities.AccountSeedsManagementActivity" >
         </activity>
