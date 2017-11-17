@@ -59,7 +59,25 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabReceive"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="start|bottom"
+        android:layout_marginBottom="-125dp"
+        android:layout_marginStart="-125dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSend"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="-125dp"
+        android:layout_marginEnd="-125dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -71,14 +89,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
         android:background="@color/white">
 
         <ImageButton
             android:id="@+id/btnGeneralSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/icon_setting" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
