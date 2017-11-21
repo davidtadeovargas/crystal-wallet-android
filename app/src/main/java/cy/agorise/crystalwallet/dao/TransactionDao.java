@@ -20,13 +20,13 @@ public interface TransactionDao {
     @Query("SELECT * FROM crypto_coin_transaction")
     LiveData<List<CryptoCoinTransaction>> getAll();
 
-    @Query("SELECT * FROM crypto_coin_transaction ORDER BY date ASC")
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY date DESC")
     LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByDate();
 
-    @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date ASC")
+    @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date DESC")
     LiveData<List<CryptoCoinTransaction>> getByIdAccountLiveData(long idAccount);
 
-    @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date ASC")
+    @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date DESC")
     List<CryptoCoinTransaction> getByIdAccount(long idAccount);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

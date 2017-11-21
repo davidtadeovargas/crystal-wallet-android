@@ -1,11 +1,16 @@
 package cy.agorise.crystalwallet.views;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCurrency;
+import cy.agorise.crystalwallet.viewmodels.CryptoCurrencyViewModel;
 
 /**
  * Created by Henry Varona on 17/9/2017.
@@ -27,14 +32,18 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
      */
     private TextView transactionAmount;
 
+    private TextView tvTransactionDate;
 
-    public TransactionViewHolder(View itemView) {
+    private Fragment fragment;
+
+    public TransactionViewHolder(View itemView, Fragment fragment) {
         super(itemView);
         //TODO: use ButterKnife to load this
         transactionFrom = (TextView) itemView.findViewById(R.id.fromText);
         transactionTo = (TextView) itemView.findViewById(R.id.toText);
         transactionAmount = (TextView) itemView.findViewById(R.id.amountText);
-
+        tvTransactionDate = (TextView) itemView.findViewById(R.id.tvTransactionDate);
+        this.fragment = fragment;
     }
 
     /*
@@ -55,9 +64,23 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
             transactionTo.setText("");
             transactionAmount.setText("");
         } else {
+            CryptoCurrencyViewModel cryptoCurrencyViewModel = ViewModelProviders.of(this.fragment).get(CryptoCurrencyViewModel.class);
+            CryptoCurrency cryptoCurrency = cryptoCurrencyViewModel.getCryptoCurrencyById(transaction.getIdCurrency());
+            String amountString = String.format("%.2f",transaction.getAmount()/Math.pow(10,cryptoCurrency.getPrecision()));
+
+            tvTransactionDate.setText(transaction.getDate().toString());
             transactionFrom.setText(transaction.getFrom());
             transactionTo.setText(transaction.getTo());
-            transactionAmount.setText("" + transaction.getAmount());
+
+            if (transaction.getInput()) {
+                transactionAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.green));
+            } else {
+                transactionAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.red));
+            }
+            transactionAmount.setText(
+                    amountString
+                    + " "
+                    + cryptoCurrency.getName());
             //This will load the transaction receipt when the user clicks this view
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
