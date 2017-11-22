@@ -29,6 +29,8 @@
         </activity>
         <activity android:name=".activities.GeneralSettingsActivity" >
         </activity>
+        <activity android:name=".activities.CryptoCoinTransactionReceiptActivity" >
+        </activity>
         <service android:name=".service.CrystalWalletService"
             android:exported="false"/>
     </application>

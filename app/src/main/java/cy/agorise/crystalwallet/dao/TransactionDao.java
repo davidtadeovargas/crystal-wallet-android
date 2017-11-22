@@ -29,6 +29,9 @@ public interface TransactionDao {
     @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date DESC")
     List<CryptoCoinTransaction> getByIdAccount(long idAccount);
 
+    @Query("SELECT * FROM crypto_coin_transaction WHERE id = :id")
+    LiveData<CryptoCoinTransaction> getById(long id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertTransaction(CryptoCoinTransaction... transactions);
 
