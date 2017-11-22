@@ -84,7 +84,7 @@ public class CryptoNetBalanceListView extends RelativeLayout {
         this.listView.setNestedScrollingEnabled(false);
     }
 
-    /*
+    /*main_content
      * Sets the data for the list of balances.
      *
      * @param data the list of crypto net balances that will be show to the user
