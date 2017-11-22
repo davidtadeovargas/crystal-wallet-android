@@ -5,6 +5,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:theme="@style/AppTheme.NoActionBar"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -65,7 +66,8 @@
         android:layout_gravity="start|bottom"
         android:layout_marginBottom="-125dp"
         android:layout_marginStart="-125dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="@color/white"
+        app:srcCompat="@drawable/receive_icon" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSend"
