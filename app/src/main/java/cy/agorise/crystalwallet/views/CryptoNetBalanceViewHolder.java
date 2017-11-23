@@ -9,6 +9,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.SendTransactionActivity;
+import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
@@ -99,6 +101,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
      * dispatch the user to the send activity using this account
      */
     public void sendFromThisAccount(){
+        /*
         //if the crypto net account was loaded
         if (this.cryptoNetAccountId >= 0) {
             Intent startActivity = new Intent();
@@ -110,7 +113,18 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
                     Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             context.startActivity(startActivity);
+        }*/
+
+        FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+        Fragment prev = fragment.getFragmentManager().findFragmentByTag("SendDialog");
+        if (prev != null) {
+            ft.remove(prev);
         }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        SendTransactionFragment newFragment = SendTransactionFragment.newInstance(this.cryptoNetAccountId);
+        newFragment.show(ft, "SendDialog");
     }
 
     /*

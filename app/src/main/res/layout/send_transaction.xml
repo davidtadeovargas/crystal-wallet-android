@@ -9,12 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/from_capital"
+        android:inputType="textFilter"
         android:textSize="15sp" />
     <EditText
         android:id="@+id/etFrom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
+        android:inputType="textFilter"
         android:textColor="@color/white" />
     <TextView
         android:layout_width="match_parent"
