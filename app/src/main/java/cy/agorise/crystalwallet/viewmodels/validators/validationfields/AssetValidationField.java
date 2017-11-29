@@ -27,9 +27,13 @@ public class AssetValidationField extends ValidationField {
         if (cryptoCurrencySelected != null) {
             final String newValue = "" + cryptoCurrencySelected.getId();
             this.setLastValue(newValue);
+            setValidForValue(newValue, true);
             validator.validationSucceeded(this);
         } else {
+            final String newValue = ""+-1;
             setMessage("Select a currency");
+            this.setLastValue(newValue);
+            setValidForValue(newValue, false);
             validator.validationFailed(this);
         }
     }

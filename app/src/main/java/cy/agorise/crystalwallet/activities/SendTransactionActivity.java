@@ -64,9 +64,9 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
     EditText etMemo;
     @BindView(R.id.tvMemoError)
     TextView tvMemoError;
-    @BindView(R.id.btnSend)
+    //@BindView(R.id.btnSend)
     Button btnSend;
-    @BindView(R.id.btnCancel)
+    //@BindView(R.id.btnCancel)
     Button btnCancel;
 
     private long cryptoNetAccountId;
@@ -153,7 +153,7 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
         this.finish();
     }
 
-    @OnClick(R.id.btnSend)
+    //@OnClick(R.id.btnSend)
     public void importSend(){
         if (this.sendTransactionValidator.isValid()) {
             //TODO convert the amount to long type using the precision of the currency

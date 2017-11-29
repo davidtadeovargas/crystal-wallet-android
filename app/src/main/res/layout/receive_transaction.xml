@@ -5,8 +5,29 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <TextView
+    <EditText
+        android:id="@+id/etAmount"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/tvAmountError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Spinner
+        android:id="@+id/spAsset"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvReceiveAddress"/>
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:textColor="@color/white" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAssetError"
+        android:textColor="@color/red" />
+    <ImageView
+        android:id="@+id/ivQrCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"/>
 </LinearLayout>

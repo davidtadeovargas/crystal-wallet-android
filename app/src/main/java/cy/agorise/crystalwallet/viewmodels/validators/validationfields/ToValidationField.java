@@ -17,7 +17,7 @@ public class ToValidationField extends ValidationField {
     private EditText toField;
 
     public ToValidationField(EditText fromField, EditText toField){
-        super(fromField);
+        super(toField);
         this.fromField = fromField;
         this.toField = toField;
     }
@@ -25,24 +25,32 @@ public class ToValidationField extends ValidationField {
     public void validate(){
         final String fromNewValue = fromField.getText().toString();
         final String toNewValue = toField.getText().toString();
-        this.setLastValue(toNewValue);
+        final String mixedValue = fromNewValue+"_"+toNewValue;
+        this.setLastValue(mixedValue);
         this.startValidating();
         final ValidationField field = this;
 
-        final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(toNewValue);
-        request.setListener(new CryptoNetInfoRequestListener() {
-            @Override
-            public void onCarryOut() {
-                if (!request.getAccountExists()){
-                    setValidForValue(toNewValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
-                    validator.validationFailed(field);
-                } else {
-                    setValidForValue(toNewValue, true);
-                    validator.validationSucceeded(field);
+        if (fromNewValue.equals(toNewValue)){
+            setValidForValue(mixedValue, false);
+            setMessage(validator.getContext().getResources().getString(R.string.warning_msg_same_account));
+            validator.validationFailed(field);
+        } else {
+
+            final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(toNewValue);
+            request.setListener(new CryptoNetInfoRequestListener() {
+                @Override
+                public void onCarryOut() {
+                    if (!request.getAccountExists()) {
+                        setValidForValue(mixedValue, false);
+                        setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
+                        validator.validationFailed(field);
+                    } else {
+                        setValidForValue(mixedValue, true);
+                        validator.validationSucceeded(field);
+                    }
                 }
-            }
-        });
-        CryptoNetInfoRequests.getInstance().addRequest(request);
+            });
+            CryptoNetInfoRequests.getInstance().addRequest(request);
+        }
     }
 }

@@ -33,7 +33,7 @@ import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
 
 public class ReceiveTransactionActivity extends AppCompatActivity {
 
-    @BindView(R.id.tvReceiveAddress)
+    //@BindView(R.id.tvReceiveAddress)
     TextView tvReceiveAddress;
 
     private long cryptoNetAccountId;

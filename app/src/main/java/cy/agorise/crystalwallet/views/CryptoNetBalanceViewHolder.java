@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.SendTransactionActivity;
+import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
@@ -58,6 +59,12 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.btnSendFromThisAccount)
     Button btnSendFromThisAccount;
 
+    /*
+     * The button for receiving transactions to this crypto net balance account
+     */
+    @BindView(R.id.btnReceiveWithThisAccount)
+    Button btnReceiveToThisAccount;
+
     Context context;
 
     /*
@@ -81,12 +88,19 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         cryptoNetName = (TextView) itemView.findViewById(R.id.tvCryptoNetName);
         cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalancesListView);
         btnSendFromThisAccount = (Button) itemView.findViewById(R.id.btnSendFromThisAccount);
+        btnReceiveToThisAccount = (Button) itemView.findViewById(R.id.btnReceiveWithThisAccount);
 
         //Setting the send button
         btnSendFromThisAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendFromThisAccount();
+            }
+        });
+        btnReceiveToThisAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                receiveToThisAccount();
             }
         });
         this.fragment = fragment;
@@ -125,6 +139,22 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         // Create and show the dialog.
         SendTransactionFragment newFragment = SendTransactionFragment.newInstance(this.cryptoNetAccountId);
         newFragment.show(ft, "SendDialog");
+    }
+
+    /*
+     * dispatch the user to the receive activity using this account
+     */
+    public void receiveToThisAccount(){
+        FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+        Fragment prev = fragment.getFragmentManager().findFragmentByTag("ReceiveDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        ReceiveTransactionFragment newFragment = ReceiveTransactionFragment.newInstance(this.cryptoNetAccountId);
+        newFragment.show(ft, "ReceiveDialog");
     }
 
     /*
