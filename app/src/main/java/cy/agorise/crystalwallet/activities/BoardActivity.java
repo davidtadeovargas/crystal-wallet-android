@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
 
 import butterknife.BindView;
@@ -71,7 +73,10 @@ public class BoardActivity  extends AppCompatActivity {
         });*/
 
         // Hide Add Contact fab, it won't hide until first page changed...
-        fabAddContact.hide();
+        // Convert 72dp to pixels (fab is 56dp in diameter + 16dp margin)
+        final int fabDistanceToHide = (int) (72 * Resources.getSystem().getDisplayMetrics().density);;
+        fabAddContact.animate().translationY(fabDistanceToHide)
+                .setInterpolator(new LinearInterpolator()).start();
 
         // Hide and show respective fabs when convenient
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -86,19 +91,22 @@ public class BoardActivity  extends AppCompatActivity {
                     case 0:
                         fabReceive.show();
                         fabSend.show();
-                        fabAddContact.hide();
+                        fabAddContact.animate().translationY(fabDistanceToHide)
+                                .setInterpolator(new LinearInterpolator()).start();
                         break;
 
                     case 1:
                         fabReceive.show();
                         fabSend.show();
-                        fabAddContact.hide();
+                        fabAddContact.animate().translationY(fabDistanceToHide)
+                                .setInterpolator(new LinearInterpolator()).start();
                         break;
 
                     default:
                         fabReceive.hide();
                         fabSend.hide();
-                        fabAddContact.show();
+                        fabAddContact.animate().translationY(0)
+                                .setInterpolator(new LinearInterpolator()).start();
                         break;
                 }
             }

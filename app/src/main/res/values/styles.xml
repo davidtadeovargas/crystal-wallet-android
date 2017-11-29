@@ -1,6 +1,5 @@
 <resources>
 
-
     <style name="stylishDialog" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@color/whiteColor</item>
         <item name="android:textColor">@color/black</item>
@@ -12,7 +11,6 @@
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
 
     </style>
-
 
     <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
@@ -34,15 +32,15 @@
         <item name="android:colorButtonNormal">@color/white</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" >
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 
     <style name="splashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
