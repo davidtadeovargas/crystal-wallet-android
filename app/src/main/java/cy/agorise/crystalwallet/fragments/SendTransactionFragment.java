@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.zxing.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +42,9 @@ import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class SendTransactionFragment extends DialogFragment implements UIValidatorListener {
+public class SendTransactionFragment extends DialogFragment implements UIValidatorListener, ZXingScannerView.ResultHandler {
 
     SendTransactionValidator sendTransactionValidator;
 
@@ -68,6 +72,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     Button btnSend;
     //@BindView(R.id.btnCancel)
     Button btnCancel;
+
+    Button btnScanQrCode;
 
     private long cryptoNetAccountId;
     private CryptoNetAccount cryptoNetAccount;
@@ -147,6 +153,12 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                 dialog.dismiss();
             }
         });
+        builder.setNeutralButton("Scan QR Code", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                beginScanQrCode();
+            }
+        });
 
         AlertDialog dialog = builder.create();
 
@@ -155,7 +167,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             public void onShow(DialogInterface dialog) {
                 btnSend = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
                 btnCancel = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-
+                btnScanQrCode = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
                 btnSend.setEnabled(false);
             }
         });
@@ -254,6 +266,12 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         }
     }
 
+    public void beginScanQrCode(){
+        ZXingScannerView mScannerView = new ZXingScannerView(getContext());
+        mScannerView.setResultHandler(this);
+        mScannerView.startCamera();
+    }
+
     @Override
     public void onValidationSucceeded(final ValidationField field) {
         final SendTransactionFragment fragment = this;
@@ -293,5 +311,10 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         } else if (field.getView() == etMemo){
             tvMemoError.setText(field.getMessage());
         }
+    }
+
+    @Override
+    public void handleResult(Result result) {
+        Log.i("SendFragment",result.getText());
     }
 }
