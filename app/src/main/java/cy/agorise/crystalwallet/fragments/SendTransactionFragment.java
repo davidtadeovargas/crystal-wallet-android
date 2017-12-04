@@ -93,7 +93,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
         builder.setTitle("Send");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
