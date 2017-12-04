@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.ContactsFragment;
+import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
 
 /**
@@ -47,11 +49,20 @@ public class BoardActivity  extends AppCompatActivity {
 
     public BoardPagerAdapter boardAdapter;
 
+    /*
+     * the id of the account of this crypto net balance. It will be loaded
+     * when the element is bounded.
+     */
+    long cryptoNetAccountId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board);
         ButterKnife.bind(this);
+
+        //-1 represents a crypto net account not loaded yet
+        this.cryptoNetAccountId = -1;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,13 +75,12 @@ public class BoardActivity  extends AppCompatActivity {
         mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
 
-        /*fabSend.setOnClickListener(new View.OnClickListener() {
+        fabSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                sendFromThisAccount();
             }
-        });*/
+        });
 
         // Hide Add Contact fab, it won't hide until first page changed...
         // Convert 72dp to pixels (fab is 56dp in diameter + 16dp margin)
@@ -116,6 +126,19 @@ public class BoardActivity  extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void sendFromThisAccount(){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("SendDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        SendTransactionFragment newFragment = SendTransactionFragment.newInstance(this.cryptoNetAccountId);
+        newFragment.show(ft, "SendDialog");
     }
 
     @OnClick(R.id.btnGeneralSettings)

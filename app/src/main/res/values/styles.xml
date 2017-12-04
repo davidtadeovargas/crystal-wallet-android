@@ -52,6 +52,6 @@
     </style>
 
     <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>
