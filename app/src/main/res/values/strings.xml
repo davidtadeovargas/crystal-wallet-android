@@ -454,4 +454,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="scan_capital">Scan a QR or NFC signal</string>
     <string name="cancel_capital">CANCEL</string>
+    <string name="title_capital">Send Assets</string>
 </resources>

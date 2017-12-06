@@ -39,4 +39,6 @@
     <color name="color_preloader_end">#ff56a9c7</color>
     <color name="QRCodeBlackColor">#000000</color>
     <color name="QRCodeWhiteColor">#ffffff</color>
+    <color name="send_strong_orange">#FF7063</color>
+    <color name="send_light_orange">#FF9269</color>
 </resources>

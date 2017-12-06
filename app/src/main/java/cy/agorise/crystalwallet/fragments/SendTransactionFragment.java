@@ -150,7 +150,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
         AlertDialog dialog = builder.create();
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        /*dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 btnSend = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
@@ -158,7 +158,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
                 btnSend.setEnabled(false);
             }
-        });
+        });*/
 
         return dialog;
     }
