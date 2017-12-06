@@ -44,8 +44,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     SendTransactionValidator sendTransactionValidator;
 
-    @BindView(R.id.etFrom)
-    EditText etFrom;
+    @BindView(R.id.spFrom)
+    Spinner spFrom;
     @BindView(R.id.tvFromError)
     TextView tvFromError;
     @BindView(R.id.etTo)
@@ -66,8 +66,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     TextView tvMemoError;
     //@BindView(R.id.btnSend)
     Button btnSend;
-    //@BindView(R.id.btnCancel)
-    Button btnCancel;
+    @BindView(R.id.btnCancel)
+    TextView btnCancel;
 
     private long cryptoNetAccountId;
     private CryptoNetAccount cryptoNetAccount;
@@ -94,7 +94,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
-        builder.setTitle("Send");
+        //builder.setTitle("Send");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.send_transaction, null);
@@ -127,15 +127,15 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                     spAsset.setAdapter(assetAdapter);
                 }
             });
-
-            sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
+            // TODO SendTransactionValidator to accept spFrom
+            //sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, spFrom, etTo, spAsset, etAmount, etMemo);
             sendTransactionValidator.setListener(this);
-            etFrom.setText(this.grapheneAccount.getName());
+            // etFrom.setText(this.grapheneAccount.getName());
         }
 
         builder.setView(view);
 
-        builder.setPositiveButton("Send",  new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton("Send",  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendTransaction();
@@ -146,7 +146,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        });
+        });*/
 
         AlertDialog dialog = builder.create();
 
@@ -202,9 +202,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         return view;
     }*/
 
-    @OnTextChanged(value = R.id.etFrom,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterFromChanged(Editable editable) {
+    @OnItemSelected(R.id.spFrom)
+    public void afterFromSelected(Spinner spinner, int position) {
         this.sendTransactionValidator.validate();
     }
 
@@ -232,10 +231,10 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         this.sendTransactionValidator.validate();
     }
 
-    //@OnClick(R.id.btnCancel)
-    //public void cancel(){
-    //    this.finish();
-    //}
+    @OnClick(R.id.btnCancel)
+    public void cancel(){
+        this.dismiss();
+    }
 
     //@OnClick(R.id.btnSend)
     public void sendTransaction(){
@@ -259,7 +258,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         final SendTransactionFragment fragment = this;
 
 
-        if (field.getView() == etFrom) {
+        if (field.getView() == spFrom) {
             tvFromError.setText("");
         } else if (field.getView() == etTo){
             tvToError.setText("");
@@ -282,7 +281,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     @Override
     public void onValidationFailed(ValidationField field) {
-        if (field.getView() == etFrom) {
+        if (field.getView() == spFrom) {
             tvFromError.setText(field.getMessage());
         } else if (field.getView() == etTo){
             tvToError.setText(field.getMessage());

@@ -98,7 +98,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimaryDark"
-        app:srcCompat="@drawable/add_contact_fab" />
+        app:srcCompat="@drawable/ic_person_add" />
 
     <!-- Place settings button correctly -->
 
