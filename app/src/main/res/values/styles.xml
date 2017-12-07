@@ -61,6 +61,15 @@
 
     <style name="SendTransactionAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/send_transaction_in</item>
-        --<item name="android:windowExitAnimation">@anim/send_transaction_out</item>
+        <item name="android:windowExitAnimation">@anim/send_transaction_out</item>
+    </style>
+
+    <style name="ReceiveTransactionTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowAnimationStyle">@style/ReceiveTransactionAnimation.Window</item>
+    </style>
+
+    <style name="ReceiveTransactionAnimation.Window" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/receive_transaction_in</item>
+        <item name="android:windowExitAnimation">@anim/receive_transaction_out</item>
     </style>
 </resources>
