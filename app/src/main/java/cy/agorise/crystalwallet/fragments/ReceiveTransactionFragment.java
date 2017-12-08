@@ -26,6 +26,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import butterknife.OnClick;
 import cy.agorise.graphenej.Invoice;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     TextView tvAssetError;
     @BindView(R.id.ivQrCode)
     ImageView ivQrCode;
+    @BindView(R.id.tvCancel)
+    TextView tvCancel;
 
     private Button btnShareQrCode;
     private Button btnClose;
@@ -97,8 +100,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Receive Assets");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.ReceiveTransactionTheme);
+        //builder.setTitle("Receive Assets");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.receive_transaction, null);
@@ -138,18 +141,18 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
 
         builder.setView(view);
 
-        builder.setPositiveButton("Share this QR",  new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton("Share this QR",  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 shareQrCode();
             }
-        });
-        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+        });*/
+        /*builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        });
+        });*/
 
         AlertDialog dialog = builder.create();
 
@@ -182,6 +185,11 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         if (this.receiveTransactionValidator.isValid()) {
             //Share Qr Code
         }
+    }
+
+    @OnClick(R.id.tvCancel)
+    public void cancel(){
+        this.dismiss();
     }
 
     @Override

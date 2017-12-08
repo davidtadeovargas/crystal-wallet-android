@@ -23,6 +23,7 @@ import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.ContactsFragment;
+import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
 
@@ -75,6 +76,12 @@ public class BoardActivity  extends AppCompatActivity {
         mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
 
+        fabReceive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                receiveToThisAccount();
+            }
+        });
         fabSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,6 +135,25 @@ public class BoardActivity  extends AppCompatActivity {
         });
     }
 
+    /*
+     * dispatch the user to the receive fragment using this account
+     */
+    public void receiveToThisAccount(){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("ReceiveDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        ReceiveTransactionFragment newFragment = ReceiveTransactionFragment.newInstance(this.cryptoNetAccountId);
+        newFragment.show(ft, "ReceiveDialog");
+    }
+
+    /*
+     * dispatch the user to the send fragment using this account
+     */
     public void sendFromThisAccount(){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("SendDialog");

@@ -4,9 +4,12 @@
     android:interpolator="@android:anim/overshoot_interpolator" >
     <translate
         android:fromXDelta="-150%"
-        android:fromYDelta="-150%"
         android:toXDelta="0%"
+        android:startOffset="0"
+        android:duration="350" />
+    <translate
+        android:fromYDelta="150%"
         android:toYDelta="0%"
         android:startOffset="0"
-        android:duration="300" />
+        android:duration="420" />
 </set>
