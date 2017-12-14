@@ -2,7 +2,10 @@ package cy.agorise.crystalwallet.activities;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,6 +16,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
@@ -36,8 +42,8 @@ public class BoardActivity  extends AppCompatActivity {
     @BindView(R.id.pager)
     public ViewPager mPager;
 
-    @BindView(R.id.btnGeneralSettings)
-    public ImageButton btnGeneralSettings;
+    //@BindView(R.id.btnGeneralSettings)
+    //public ImageButton btnGeneralSettings;
 
     @BindView(R.id.fabSend)
     public FloatingActionButton fabSend;
@@ -56,6 +62,8 @@ public class BoardActivity  extends AppCompatActivity {
      */
     long cryptoNetAccountId;
 
+    private SurfaceView mSurfaceView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +75,29 @@ public class BoardActivity  extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Appbar animation
+        mSurfaceView = findViewById(R.id.surface_view);
+        mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                //Log.d(TAG,"surfaceCreated");
+                MediaPlayer mediaPlayer = MediaPlayer.create(BoardActivity.this, R.raw.appbar_background);
+                mediaPlayer.setDisplay(mSurfaceView.getHolder());
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+                //Log.d(TAG,"surfaceChanged");
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+                //Log.d(TAG,"surfaceDestroyed");
+            }
+        });
 
         boardAdapter = new BoardPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(boardAdapter);
@@ -167,7 +198,7 @@ public class BoardActivity  extends AppCompatActivity {
         newFragment.show(ft, "SendDialog");
     }
 
-    @OnClick(R.id.btnGeneralSettings)
+    //@OnClick(R.id.btnGeneralSettings)
     public void onBtnGeneralSettingsClick(){
         Intent intent = new Intent(this, GeneralSettingsActivity.class);
         startActivity(intent);
