@@ -44,17 +44,14 @@
                 app:layout_collapseMode="none"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    android:text="Client Logo"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/crystal_logo"/>
+
 
                 <cy.agorise.crystalwallet.util.CircularImageView
-                    android:id="@+id/toolbar_logo"
+                    android:id="@+id/toolbar_user_img"
                     android:layout_width="?attr/actionBarSize"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="end"
