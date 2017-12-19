@@ -69,6 +69,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="30dp"
+                        app:srcCompat="@drawable/ic_lightning_24dp"
+                        app:layout_constraintStart_toStartOf="@id/toolbar_user_img"
+                        app:layout_constraintBottom_toBottomOf="@id/toolbar_user_img"/>
+
+                    <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         app:srcCompat="@drawable/ic_arrow_24dp"
