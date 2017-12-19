@@ -30,6 +30,8 @@
         <item name="android:homeAsUpIndicator">@drawable/back_button_image</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
         <item name="android:colorButtonNormal">@color/white</item>
+        <item name="android:fontFamily">@font/opensans</item>
+        <item name="fontFamily">@font/opensans</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
