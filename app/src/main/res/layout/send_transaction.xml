@@ -2,10 +2,8 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minWidth="350dp">
+    android:layout_height="wrap_content">
 
     <View
         android:id="@+id/topView"
@@ -81,7 +79,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="5dp"
-        android:src="@drawable/ic_people"
+        app:srcCompat="@drawable/ic_people"
         android:layout_marginBottom="15dp"
         app:layout_constraintEnd_toEndOf="@id/etTo"
         app:layout_constraintBottom_toBottomOf="@id/etTo"/>
@@ -203,7 +201,7 @@
         android:layout_marginBottom="165dp"
         android:layout_marginStart="165dp"
         app:backgroundTint="@color/send_strong_orange"
-        android:src="@drawable/ic_close"
+        app:srcCompat="@drawable/ic_close"
         app:layout_constraintBottom_toBottomOf="@+id/ivCamera"
         app:layout_constraintStart_toStartOf="@+id/ivCamera" />
 
@@ -222,7 +220,7 @@
         android:layout_height="90dp"
         android:layout_marginTop="24dp"
         app:backgroundTint="@color/send_strong_orange"
-        android:src="@drawable/ic_arrow_forward"
+        app:srcCompat="@drawable/ic_arrow_forward"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/viewSend" />
 

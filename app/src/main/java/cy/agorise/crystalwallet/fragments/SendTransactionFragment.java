@@ -165,6 +165,14 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         return dialog;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Force dialog fragment to use the full width of the screen
+        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
     /*public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.send_transaction, container, false);
