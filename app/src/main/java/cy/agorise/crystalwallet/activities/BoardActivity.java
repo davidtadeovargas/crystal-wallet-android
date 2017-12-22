@@ -22,11 +22,14 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.fragments.AccountsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.ContactsFragment;
 import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
@@ -62,7 +65,11 @@ public class BoardActivity  extends AppCompatActivity {
      */
     long cryptoNetAccountId;
 
-    private SurfaceView mSurfaceView;
+    @BindView(R.id.surface_view)
+    public SurfaceView mSurfaceView;
+
+    @BindView(R.id.toolbar_user_img)
+    public ImageView userImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +84,6 @@ public class BoardActivity  extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Appbar animation
-        mSurfaceView = findViewById(R.id.surface_view);
         mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -164,6 +170,23 @@ public class BoardActivity  extends AppCompatActivity {
 
             }
         });
+    }
+
+    /*
+     * dispatch the user to the accounts fragment
+     */
+    @OnClick(R.id.toolbar_user_img)
+    public void accounts() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("AccountsDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        AccountsFragment newFragment = AccountsFragment.newInstance(this.cryptoNetAccountId);
+        newFragment.show(ft, "AccountsDialog");
     }
 
     /*

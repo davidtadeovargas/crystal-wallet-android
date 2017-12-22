@@ -457,5 +457,9 @@
     <string name="title_capital">Send Assets</string>
     <string name="receive_assets">Receive Assets</string>
     <string name="share_this_qr">Share this QR</string>
-    <string name="receive_close">CLOSE</string>
+    <string name="close">CLOSE</string>
+    <string name="user_name_placeholder">user_name</string>
+    <string name="my_accounts">My Accounts</string>
+    <string name="dont_have_multiple_accounts">You don\'t have multiple accounts at the moment</string>
+    <string name="settings">SETTINGS</string>
 </resources>

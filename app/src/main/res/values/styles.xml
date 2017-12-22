@@ -74,4 +74,8 @@
         <item name="android:windowEnterAnimation">@anim/receive_transaction_in</item>
         <item name="android:windowExitAnimation">@anim/receive_transaction_out</item>
     </style>
+
+    <style name="AccountsTheme" parent="Theme.AppCompat.DayNight.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 </resources>
