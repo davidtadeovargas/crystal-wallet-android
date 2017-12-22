@@ -135,34 +135,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             // etFrom.setText(this.grapheneAccount.getName());
         }
 
-        builder.setView(view);
-
-        /*builder.setPositiveButton("Send",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sendTransaction();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });*/
-
-        AlertDialog dialog = builder.create();
-
-        /*dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                btnSend = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                btnCancel = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                btnSend.setEnabled(false);
-            }
-        });*/
-
-        return dialog;
+        return builder.setView(view).create();
     }
 
     @Override
@@ -172,45 +145,6 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         // Force dialog fragment to use the full width of the screen
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
-
-    /*public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.send_transaction, container, false);
-        ButterKnife.bind(this, view);
-
-        btnSend.setEnabled(false);
-
-        this.cryptoNetAccountId  = getArguments().getLong("CRYPTO_NET_ACCOUNT_ID",-1);
-
-        if (this.cryptoNetAccountId != -1) {
-            db = CrystalDatabase.getAppDatabase(this.getContext());
-            this.cryptoNetAccount = db.cryptoNetAccountDao().getById(this.cryptoNetAccountId);
-
-            this.grapheneAccount = new GrapheneAccount(this.cryptoNetAccount);
-            this.grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(this.cryptoNetAccountId));
-
-            final LiveData<List<CryptoCoinBalance>> balancesList = db.cryptoCoinBalanceDao().getBalancesFromAccount(cryptoNetAccountId);
-            balancesList.observe(this, new Observer<List<CryptoCoinBalance>>() {
-                @Override
-                public void onChanged(@Nullable List<CryptoCoinBalance> cryptoCoinBalances) {
-                    ArrayList<Long> assetIds = new ArrayList<Long>();
-                    for (CryptoCoinBalance nextBalance : balancesList.getValue()) {
-                        assetIds.add(nextBalance.getCryptoCurrencyId());
-                    }
-                    List<CryptoCurrency> cryptoCurrencyList = db.cryptoCurrencyDao().getByIds(assetIds);
-
-                    CryptoCurrencyAdapter assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
-                    spAsset.setAdapter(assetAdapter);
-                }
-            });
-
-            sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
-            sendTransactionValidator.setListener(this);
-            etFrom.setText(this.grapheneAccount.getName());
-        }
-
-        return view;
-    }*/
 
     @OnItemSelected(R.id.spFrom)
     public void afterFromSelected(Spinner spinner, int position) {
