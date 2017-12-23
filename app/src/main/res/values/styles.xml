@@ -77,5 +77,10 @@
 
     <style name="AccountsTheme" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/AccountsAnimation.Window</item>
+    </style>
+
+    <style name="AccountsAnimation.Window" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/accounts_in</item>
     </style>
 </resources>
