@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -75,6 +76,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     private CryptoNetAccount cryptoNetAccount;
     private GrapheneAccount grapheneAccount;
     private CrystalDatabase db;
+    private FloatingActionButton fabSend;
 
     public static SendTransactionFragment newInstance(long cryptoNetAccountId) {
         SendTransactionFragment f = new SendTransactionFragment();
@@ -95,6 +97,9 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        fabSend = getActivity().findViewById(R.id.fabSend);
+        fabSend.hide();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
         //builder.setTitle("Send");
 
@@ -144,6 +149,18 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
         // Force dialog fragment to use the full width of the screen
         getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fabSend.show();
+            }
+        }, 400);
     }
 
     @OnItemSelected(R.id.spFrom)
