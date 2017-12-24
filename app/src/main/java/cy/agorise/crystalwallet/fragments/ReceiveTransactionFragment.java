@@ -17,6 +17,8 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -173,6 +175,16 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         });
 
         return dialog;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Force dialog fragment to use the full width of the screen
+        Window dialogWindow = getDialog().getWindow();
+        assert dialogWindow != null;
+        dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @Override
