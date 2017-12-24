@@ -152,8 +152,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

@@ -7,8 +7,10 @@ import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -78,6 +80,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     private Invoice invoice;
     private ArrayList<LineItem> invoiceItems;
 
+    private FloatingActionButton fabReceive;
+
     public static ReceiveTransactionFragment newInstance(long cryptoNetAccountId) {
         ReceiveTransactionFragment f = new ReceiveTransactionFragment();
 
@@ -100,6 +104,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        fabReceive = getActivity().findViewById(R.id.fabReceive);
+        fabReceive.hide();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.ReceiveTransactionTheme);
         //builder.setTitle("Receive Assets");
 
@@ -167,6 +173,18 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         });
 
         return dialog;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fabReceive.show();
+            }
+        }, 400);
     }
 
     @OnTextChanged(value = R.id.etAmount,
