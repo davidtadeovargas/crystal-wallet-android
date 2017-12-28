@@ -82,5 +82,6 @@
 
     <style name="AccountsAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/accounts_in</item>
+        <item name="android:windowExitAnimation">@anim/accounts_out</item>
     </style>
 </resources>
