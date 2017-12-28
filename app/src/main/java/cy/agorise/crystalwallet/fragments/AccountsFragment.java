@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.fragments;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,14 +11,20 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.activities.GeneralSettingsActivity;
 
 public class AccountsFragment extends DialogFragment {
+
+    @BindView(R.id.tvGeneralSettings)
+    TextView tvGeneralSettings;
 
     @BindView(R.id.tvClose)
     TextView tvClose;
@@ -51,11 +58,7 @@ public class AccountsFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_accounts, null);
         ButterKnife.bind(this, view);
 
-        builder.setView(view);
-        Dialog dialog = builder.create();
-
-        return dialog;
-
+        return builder.setView(view).create();
     }
 
     @Override
@@ -63,7 +66,16 @@ public class AccountsFragment extends DialogFragment {
         super.onResume();
 
         // Force dialog fragment to use the full width of the screen
-        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Window dialogWindow = getDialog().getWindow();
+        assert dialogWindow != null;
+        dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    @OnClick(R.id.tvGeneralSettings)
+    public void onBtnGeneralSettingsClick(){
+        dismiss();
+        Intent intent = new Intent(getActivity(), GeneralSettingsActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.tvClose)
