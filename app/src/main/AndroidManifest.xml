@@ -8,7 +8,7 @@
         android:name="cy.agorise.crystalwallet.application.CrystalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label=""
+        android:label="Crystal"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
