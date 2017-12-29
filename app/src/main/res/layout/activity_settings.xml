@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
+        android:layout_height="120dp"
         android:fitsSystemWindows="true"
         android:background="@color/colorPrimary"
         app:theme="@style/AppTheme.AppBarOverlay">
@@ -49,8 +49,38 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:id="@+id/ivGoBack"
                         android:layout_width="30dp"
-                        android:layout_height="30dp" />
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/go_back_arrow" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/settings2"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/ivGoBack" />
+
+                    <ImageView
+                        android:id="@+id/ivInfo"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="24dp"
+                        app:srcCompat="@drawable/ic_info_outline"
+                        android:contentDescription="@string/info_icon"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </android.support.constraint.ConstraintLayout>
 

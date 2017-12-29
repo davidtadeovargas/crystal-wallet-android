@@ -470,4 +470,7 @@
     <string name="security">Security</string>
     <string name="backups">Backups</string>
     <string name="accounts">Accounts</string>
+    <string name="go_back_arrow">Go back arrow</string>
+    <string name="settings2">Settings</string>
+    <string name="info_icon">Info icon</string>
 </resources>
