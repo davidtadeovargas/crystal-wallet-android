@@ -463,4 +463,11 @@
     <string name="dont_have_multiple_accounts">You don\'t have multiple accounts at the moment</string>
     <string name="settings">SETTINGS</string>
     <string name="qr_code">QR code</string>
+    <string name="crystal_logo">Crystal Logo</string>
+    <string name="lightning_icon">Lightning icon</string>
+    <string name="small_triangle_icon">Small triangle icon</string>
+    <string name="general">General</string>
+    <string name="security">Security</string>
+    <string name="backups">Backups</string>
+    <string name="accounts">Accounts</string>
 </resources>

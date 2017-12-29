@@ -221,12 +221,6 @@ public class BoardActivity  extends AppCompatActivity {
         newFragment.show(ft, "SendDialog");
     }
 
-    //@OnClick(R.id.btnGeneralSettings)
-    public void onBtnGeneralSettingsClick(){
-        Intent intent = new Intent(this, GeneralSettingsActivity.class);
-        startActivity(intent);
-    }
-
     private class BoardPagerAdapter extends FragmentStatePagerAdapter {
         public BoardPagerAdapter(FragmentManager fm) {
             super(fm);

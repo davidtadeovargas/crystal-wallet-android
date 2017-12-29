@@ -110,7 +110,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageView
-        android:id="@+id/ivGeneralSettings"
+        android:id="@+id/ivSettings"
         android:layout_width="20dp"
         android:layout_height="20dp"
         app:srcCompat="@drawable/ic_settings_24dp"
@@ -120,13 +120,13 @@
         app:layout_constraintStart_toStartOf="@id/forthView"/>
 
     <TextView
-        android:id="@+id/tvGeneralSettings"
+        android:id="@+id/tvSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settings"
         android:textStyle="bold"
         android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/ivGeneralSettings"
+        app:layout_constraintStart_toEndOf="@id/ivSettings"
         app:layout_constraintTop_toTopOf="@id/forthView"
         app:layout_constraintBottom_toBottomOf="@id/forthView"/>
 

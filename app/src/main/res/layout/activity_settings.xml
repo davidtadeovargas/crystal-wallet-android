@@ -6,7 +6,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.BoardActivity">
+    tools:context=".activities.SettingsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -49,41 +49,8 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="16dp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/crystal_logo"
-                        android:contentDescription="@string/crystal_logo"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <cy.agorise.crystalwallet.util.CircularImageView
-                        android:id="@+id/toolbar_user_img"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
-                        android:layout_marginEnd="32dp"
-                        android:src="@drawable/ken_code_gravatar"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="30dp"
-                        app:srcCompat="@drawable/ic_lightning_24dp"
-                        android:contentDescription="@string/lightning_icon"
-                        app:layout_constraintStart_toStartOf="@id/toolbar_user_img"
-                        app:layout_constraintBottom_toBottomOf="@id/toolbar_user_img"/>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        app:srcCompat="@drawable/ic_arrow_24dp"
-                        android:contentDescription="@string/small_triangle_icon"
-                        app:layout_constraintEnd_toEndOf="@id/toolbar_user_img"
-                        app:layout_constraintBottom_toBottomOf="@id/toolbar_user_img"/>
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
 
                 </android.support.constraint.ConstraintLayout>
 
@@ -102,19 +69,25 @@
                     android:id="@+id/tabItem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/balances" />
+                    android:text="@string/general" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/transactions" />
+                    android:text="@string/security" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/contacts" />
+                    android:text="@string/backups" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabItem4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accounts" />
 
             </android.support.design.widget.TabLayout>
 
@@ -127,36 +100,6 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabReceive"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="start|bottom"
-        android:layout_marginBottom="-125dp"
-        android:layout_marginStart="-125dp"
-        app:backgroundTint="@color/white"
-        app:srcCompat="@drawable/receive_icon" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabSend"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="-125dp"
-        android:layout_marginEnd="-125dp"
-        app:backgroundTint="@color/white"
-        app:srcCompat="@drawable/send_icon" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabAddContact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/colorPrimaryDark"
-        app:srcCompat="@drawable/ic_person_add" />
 
 </android.support.design.widget.CoordinatorLayout>

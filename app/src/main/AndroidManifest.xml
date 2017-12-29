@@ -32,6 +32,10 @@
         </activity>
         <activity android:name=".activities.CryptoCoinTransactionReceiptActivity" >
         </activity>
+        <activity android:name=".activities.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <service android:name=".service.CrystalWalletService"
             android:exported="false"/>
     </application>

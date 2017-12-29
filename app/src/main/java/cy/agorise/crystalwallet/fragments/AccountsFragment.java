@@ -20,11 +20,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.GeneralSettingsActivity;
+import cy.agorise.crystalwallet.activities.SettingsActivity;
 
 public class AccountsFragment extends DialogFragment {
 
-    @BindView(R.id.tvGeneralSettings)
-    TextView tvGeneralSettings;
+    @BindView(R.id.tvSettings)
+    TextView tvSettings;
 
     @BindView(R.id.tvClose)
     TextView tvClose;
@@ -71,10 +72,10 @@ public class AccountsFragment extends DialogFragment {
         dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    @OnClick(R.id.tvGeneralSettings)
-    public void onBtnGeneralSettingsClick(){
+    @OnClick(R.id.tvSettings)
+    public void onTvSettingsClick(){
         dismiss();
-        Intent intent = new Intent(getActivity(), GeneralSettingsActivity.class);
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
         startActivity(intent);
     }
 
