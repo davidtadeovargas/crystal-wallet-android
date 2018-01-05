@@ -57,10 +57,11 @@ public abstract class GrapheneApiGenerator {
 
     //TODO network connections
     //TODO make to work with all Graphene type, not only bitshares
-    //public static String url = "http://128.0.69.157:8090";
-    //private static String equivalentUrl = "http://128.0.69.157:8090";
-    public static String url = "wss://bitshares.openledger.info/ws";
-    private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
+    public static String url = "http://185.208.208.147:11012";
+    public static String faucetUrl = "http://185.208.208.147:5010";
+    private static String equivalentUrl = "http://185.208.208.147:8090";
+    //public static String url = "wss://bitshares.openledger.info/ws";
+    //private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
 
 
     // The message broker for bitshares
