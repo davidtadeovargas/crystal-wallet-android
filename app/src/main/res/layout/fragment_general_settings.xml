@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvBackupAsset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Backup Asset"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spBackupAsset"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvBackupAsset"
+        app:layout_constraintTop_toBottomOf="@id/tvBackupAsset" />
+
+    <View
+        android:id="@+id/vBackupAsset"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spBackupAsset" />
+
+    <TextView
+        android:id="@+id/tvTaxableCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Taxable Country"
+        app:layout_constraintTop_toBottomOf="@id/vBackupAsset"
+        app:layout_constraintStart_toStartOf="@id/tvBackupAsset"/>
+
+    <Spinner
+        android:id="@+id/spTaxableCountry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvTaxableCountry"
+        app:layout_constraintStart_toStartOf="@id/spBackupAsset"
+        app:layout_constraintEnd_toEndOf="@id/spBackupAsset"/>
+
+    <View
+        android:id="@+id/vTaxableCountry"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/spTaxableCountry"
+        app:layout_constraintStart_toStartOf="@id/vBackupAsset"
+        app:layout_constraintEnd_toEndOf="@id/vBackupAsset"/>
+
+    <TextView
+        android:id="@+id/tvPreferredLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Preferred Language"
+        app:layout_constraintStart_toStartOf="@id/tvTaxableCountry"
+        app:layout_constraintTop_toBottomOf="@id/vTaxableCountry"/>
+
+    <Spinner
+        android:id="@+id/spPreferredLanguage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPreferredLanguage"
+        app:layout_constraintStart_toStartOf="@id/spTaxableCountry"
+        app:layout_constraintEnd_toEndOf="@id/spTaxableCountry"/>
+
+    <View
+        android:id="@+id/vPreferredLanguage"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/spPreferredLanguage"
+        app:layout_constraintStart_toStartOf="@id/vTaxableCountry"
+        app:layout_constraintEnd_toEndOf="@id/vTaxableCountry"/>
+
+    <TextView
+        android:id="@+id/tvDisplayDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Display Dates and Times as"
+        app:layout_constraintTop_toBottomOf="@id/vPreferredLanguage"
+        app:layout_constraintStart_toStartOf="@id/tvPreferredLanguage"/>
+
+    <Spinner
+        android:id="@+id/spDisplayDateTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvDisplayDateTime"
+        app:layout_constraintStart_toStartOf="@id/spPreferredLanguage"
+        app:layout_constraintEnd_toEndOf="@id/spPreferredLanguage"/>
+
+    <View
+        android:id="@+id/vDisplayDateTime"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/spDisplayDateTime"
+        app:layout_constraintStart_toStartOf="@id/vPreferredLanguage"
+        app:layout_constraintEnd_toEndOf="@id/vPreferredLanguage"/>
+
+    <TextView
+        android:id="@+id/tvSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Funds Received Sound"
+        app:layout_constraintTop_toBottomOf="@id/vDisplayDateTime"
+        app:layout_constraintStart_toStartOf="@id/tvDisplayDateTime" />
+
+    <Spinner
+        android:id="@+id/spSound"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvSound"
+        app:layout_constraintStart_toStartOf="@id/spDisplayDateTime"
+        app:layout_constraintEnd_toEndOf="@id/spDisplayDateTime"/>
+
+    <View
+        android:id="@+id/vSound"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/spSound"
+        app:layout_constraintStart_toStartOf="@id/vDisplayDateTime"
+        app:layout_constraintEnd_toEndOf="@id/vDisplayDateTime"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -7,14 +7,18 @@ import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +30,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import butterknife.OnClick;
 import cy.agorise.graphenej.Invoice;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +67,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     TextView tvAssetError;
     @BindView(R.id.ivQrCode)
     ImageView ivQrCode;
+    @BindView(R.id.tvCancel)
+    TextView tvCancel;
 
     private Button btnShareQrCode;
     private Button btnClose;
@@ -74,6 +81,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
 
     private Invoice invoice;
     private ArrayList<LineItem> invoiceItems;
+
+    private FloatingActionButton fabReceive;
 
     public static ReceiveTransactionFragment newInstance(long cryptoNetAccountId) {
         ReceiveTransactionFragment f = new ReceiveTransactionFragment();
@@ -97,8 +106,10 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Receive Assets");
+        fabReceive = getActivity().findViewById(R.id.fabReceive);
+        fabReceive.hide();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.ReceiveTransactionTheme);
+        //builder.setTitle("Receive Assets");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.receive_transaction, null);
@@ -138,18 +149,18 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
 
         builder.setView(view);
 
-        builder.setPositiveButton("Share this QR",  new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton("Share this QR",  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 shareQrCode();
             }
-        });
-        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+        });*/
+        /*builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-        });
+        });*/
 
         AlertDialog dialog = builder.create();
 
@@ -164,6 +175,28 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         });
 
         return dialog;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Force dialog fragment to use the full width of the screen
+        Window dialogWindow = getDialog().getWindow();
+        assert dialogWindow != null;
+        dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fabReceive.show();
+            }
+        }, 400);
     }
 
     @OnTextChanged(value = R.id.etAmount,
@@ -182,6 +215,11 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         if (this.receiveTransactionValidator.isValid()) {
             //Share Qr Code
         }
+    }
+
+    @OnClick(R.id.tvCancel)
+    public void cancel(){
+        this.dismiss();
     }
 
     @Override

@@ -8,10 +8,10 @@
         android:name="cy.agorise.crystalwallet.application.CrystalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Crystal"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat">
+        android:theme="@style/AppTheme">
         <activity android:name=".activities.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.BoardActivity" >
+        <activity android:name=".activities.BoardActivity"
+            android:theme="@style/AppTheme.NoActionBar" > <!-- Dirty trick to avoid toolbar error on balance -->
         </activity>
         <activity android:name=".activities.AccountSeedsManagementActivity" >
         </activity>
@@ -31,6 +32,10 @@
         </activity>
         <activity android:name=".activities.CryptoCoinTransactionReceiptActivity" >
         </activity>
+        <activity android:name=".activities.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <service android:name=".service.CrystalWalletService"
             android:exported="false"/>
     </application>

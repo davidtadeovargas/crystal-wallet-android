@@ -452,4 +452,25 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="scan_capital">Scan a QR or NFC signal</string>
+    <string name="cancel_capital">CANCEL</string>
+    <string name="title_capital">Send Assets</string>
+    <string name="receive_assets">Receive Assets</string>
+    <string name="share_this_qr">Share this QR</string>
+    <string name="close">CLOSE</string>
+    <string name="user_name_placeholder">user_name</string>
+    <string name="my_accounts">My Accounts</string>
+    <string name="dont_have_multiple_accounts">You don\'t have multiple accounts at the moment</string>
+    <string name="settings">SETTINGS</string>
+    <string name="qr_code">QR code</string>
+    <string name="crystal_logo">Crystal Logo</string>
+    <string name="lightning_icon">Lightning icon</string>
+    <string name="small_triangle_icon">Small triangle icon</string>
+    <string name="general">General</string>
+    <string name="security">Security</string>
+    <string name="backups">Backups</string>
+    <string name="accounts">Accounts</string>
+    <string name="go_back_arrow">Go back arrow</string>
+    <string name="settings2">Settings</string>
+    <string name="info_icon">Info icon</string>
 </resources>
