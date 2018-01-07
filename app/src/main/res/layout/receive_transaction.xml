@@ -1,33 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:layout_height="wrap_content" >
+
+    <View
+        android:id="@+id/topView"
+        android:layout_width="match_parent"
+        android:background="@drawable/receive_transaction_top_view"
+        android:layout_height="120dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/receive_assets"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <cy.agorise.crystalwallet.util.CircularImageView
+        android:id="@+id/gravatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ken_code_gravatar"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="90dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spTo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gravatar"
+        app:layout_constraintTop_toTopOf="@id/gravatar" />
+
+    <TextView
+        android:id="@+id/tvFromError"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintEnd_toEndOf="@+id/spTo"
+        app:layout_constraintStart_toStartOf="@+id/spTo"
+        app:layout_constraintTop_toBottomOf="@+id/topView" />
 
     <EditText
         android:id="@+id/etAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:inputType="textMultiLine"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:hint="@string/amount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gravatar" />
+
     <TextView
         android:id="@+id/tvAmountError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintEnd_toEndOf="@+id/etAmount"
+        app:layout_constraintStart_toStartOf="@+id/etAmount"
+        app:layout_constraintTop_toBottomOf="@+id/etAmount" />
+
     <Spinner
         android:id="@+id/spAsset"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="8dp"
         android:gravity="top"
         android:inputType="textMultiLine"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etAmount" />
+
+    <View
+        android:id="@+id/viewSpinner"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="@+id/spAsset"
+        app:layout_constraintStart_toStartOf="@+id/spAsset"
+        app:layout_constraintTop_toBottomOf="@id/spAsset" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/tvAssetError"
-        android:textColor="@color/red" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAmountError"
+        app:layout_constraintEnd_toEndOf="@+id/spAsset"
+        app:layout_constraintStart_toStartOf="@+id/spAsset" />
+
     <ImageView
         android:id="@+id/ivQrCode"
         android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/qr_code"
+        android:src="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAmountError" />
+
+    <TextView
+        android:id="@+id/tvShare"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:adjustViewBounds="true"/>
-</LinearLayout>
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/share_this_qr"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivQrCode" />
+
+    <TextView
+        android:id="@+id/tvCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/close"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

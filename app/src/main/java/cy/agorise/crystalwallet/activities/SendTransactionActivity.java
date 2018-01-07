@@ -44,8 +44,8 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
 
     SendTransactionValidator sendTransactionValidator;
 
-    @BindView(R.id.etFrom)
-    EditText etFrom;
+    /*@BindView(R.id.etFrom)
+    EditText etFrom;*/
     @BindView(R.id.tvFromError)
     TextView tvFromError;
     @BindView(R.id.etTo)
@@ -111,18 +111,18 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
                 }
             });
 
-            sendTransactionValidator = new SendTransactionValidator(this.getApplicationContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
+            //sendTransactionValidator = new SendTransactionValidator(this.getApplicationContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
             sendTransactionValidator.setListener(this);
         } else {
             this.finish();
         }
     }
 
-    @OnTextChanged(value = R.id.etFrom,
+    /*@OnTextChanged(value = R.id.etFrom,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterFromChanged(Editable editable) {
         this.sendTransactionValidator.validate();
-    }
+    }*/
 
     @OnTextChanged(value = R.id.etTo,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -177,9 +177,9 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
         activity.runOnUiThread(new Runnable() {
             public void run() {
 
-                if (field.getView() == etFrom) {
+                /*if (field.getView() == etFrom) {
                     tvFromError.setText("");
-                } else if (field.getView() == etTo){
+                } else*/ if (field.getView() == etTo){
                     tvToError.setText("");
                 } else if (field.getView() == etAmount){
                     tvAmountError.setText("");
@@ -201,9 +201,9 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
 
     @Override
     public void onValidationFailed(ValidationField field) {
-        if (field.getView() == etFrom) {
+        /*if (field.getView() == etFrom) {
             tvFromError.setText(field.getMessage());
-        } else if (field.getView() == etTo){
+        } else*/ if (field.getView() == etTo){
             tvToError.setText(field.getMessage());
         } else if (field.getView() == spAsset){
             tvAssetError.setText(field.getMessage());

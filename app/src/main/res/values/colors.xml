@@ -5,8 +5,11 @@
     <color name="colorAccent">#669900</color>
     <color name="gray">#d3d3d3</color>
     <color name="darkGray">#686767</color>
+    <color name="lightGray">#E3E3E3</color>
     <color name="white">#ffffff</color>
     <color name="pink">#f0006b</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="colorPrimaryTransparent">#330099d6</color>
 
     <color name="green">#147b00</color>
 
@@ -38,4 +41,8 @@
     <color name="color_preloader_end">#ff56a9c7</color>
     <color name="QRCodeBlackColor">#000000</color>
     <color name="QRCodeWhiteColor">#ffffff</color>
+    <color name="send_strong_orange">#FF7063</color>
+    <color name="send_light_orange">#FF9269</color>
+    <color name="receive_light_green">#52CE84</color>
+    <color name="receive_strong_green">#4EBB7F</color>
 </resources>

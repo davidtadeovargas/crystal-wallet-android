@@ -5,8 +5,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -48,8 +52,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     SendTransactionValidator sendTransactionValidator;
 
-    @BindView(R.id.etFrom)
-    EditText etFrom;
+    @BindView(R.id.spFrom)
+    Spinner spFrom;
     @BindView(R.id.tvFromError)
     TextView tvFromError;
     @BindView(R.id.etTo)
@@ -68,10 +72,10 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     EditText etMemo;
     @BindView(R.id.tvMemoError)
     TextView tvMemoError;
-    //@BindView(R.id.btnSend)
-    Button btnSend;
-    //@BindView(R.id.btnCancel)
-    Button btnCancel;
+    @BindView(R.id.btnSend)
+    FloatingActionButton btnSend;
+    @BindView(R.id.btnCancel)
+    TextView btnCancel;
 
     Button btnScanQrCode;
 
@@ -79,6 +83,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     private CryptoNetAccount cryptoNetAccount;
     private GrapheneAccount grapheneAccount;
     private CrystalDatabase db;
+    private FloatingActionButton fabSend;
 
     public static SendTransactionFragment newInstance(long cryptoNetAccountId) {
         SendTransactionFragment f = new SendTransactionFragment();
@@ -99,8 +104,11 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Send");
+        fabSend = getActivity().findViewById(R.id.fabSend);
+        fabSend.hide();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
+        //builder.setTitle("Send");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.send_transaction, null);
@@ -133,26 +141,18 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                     spAsset.setAdapter(assetAdapter);
                 }
             });
-
-            sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
+            // TODO SendTransactionValidator to accept spFrom
+            //sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, spFrom, etTo, spAsset, etAmount, etMemo);
             sendTransactionValidator.setListener(this);
-            etFrom.setText(this.grapheneAccount.getName());
+            // etFrom.setText(this.grapheneAccount.getName());
         }
 
-        builder.setView(view);
+        return builder.setView(view).create();
+    }
 
-        builder.setPositiveButton("Send",  new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sendTransaction();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
         builder.setNeutralButton("Scan QR Code", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -160,63 +160,26 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             }
         });
 
-        AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                btnSend = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                btnCancel = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                btnScanQrCode = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-                btnSend.setEnabled(false);
-            }
-        });
-
-        return dialog;
+        // Force dialog fragment to use the full width of the screen
+        Window dialogWindow = getDialog().getWindow();
+        assert dialogWindow != null;
+        dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    /*public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.send_transaction, container, false);
-        ButterKnife.bind(this, view);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+                btnScanQrCode = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fabSend.show();
+            }
+        }, 400);
+    }
 
-        btnSend.setEnabled(false);
-
-        this.cryptoNetAccountId  = getArguments().getLong("CRYPTO_NET_ACCOUNT_ID",-1);
-
-        if (this.cryptoNetAccountId != -1) {
-            db = CrystalDatabase.getAppDatabase(this.getContext());
-            this.cryptoNetAccount = db.cryptoNetAccountDao().getById(this.cryptoNetAccountId);
-
-            this.grapheneAccount = new GrapheneAccount(this.cryptoNetAccount);
-            this.grapheneAccount.loadInfo(db.grapheneAccountInfoDao().getByAccountId(this.cryptoNetAccountId));
-
-            final LiveData<List<CryptoCoinBalance>> balancesList = db.cryptoCoinBalanceDao().getBalancesFromAccount(cryptoNetAccountId);
-            balancesList.observe(this, new Observer<List<CryptoCoinBalance>>() {
-                @Override
-                public void onChanged(@Nullable List<CryptoCoinBalance> cryptoCoinBalances) {
-                    ArrayList<Long> assetIds = new ArrayList<Long>();
-                    for (CryptoCoinBalance nextBalance : balancesList.getValue()) {
-                        assetIds.add(nextBalance.getCryptoCurrencyId());
-                    }
-                    List<CryptoCurrency> cryptoCurrencyList = db.cryptoCurrencyDao().getByIds(assetIds);
-
-                    CryptoCurrencyAdapter assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
-                    spAsset.setAdapter(assetAdapter);
-                }
-            });
-
-            sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, etFrom, etTo, spAsset, etAmount, etMemo);
-            sendTransactionValidator.setListener(this);
-            etFrom.setText(this.grapheneAccount.getName());
-        }
-
-        return view;
-    }*/
-
-    @OnTextChanged(value = R.id.etFrom,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterFromChanged(Editable editable) {
+    @OnItemSelected(R.id.spFrom)
+    public void afterFromSelected(Spinner spinner, int position) {
         this.sendTransactionValidator.validate();
     }
 
@@ -244,10 +207,10 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         this.sendTransactionValidator.validate();
     }
 
-    //@OnClick(R.id.btnCancel)
-    //public void cancel(){
-    //    this.finish();
-    //}
+    @OnClick(R.id.btnCancel)
+    public void cancel(){
+        this.dismiss();
+    }
 
     //@OnClick(R.id.btnSend)
     public void sendTransaction(){
@@ -277,7 +240,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         final SendTransactionFragment fragment = this;
 
 
-        if (field.getView() == etFrom) {
+        if (field.getView() == spFrom) {
             tvFromError.setText("");
         } else if (field.getView() == etTo){
             tvToError.setText("");
@@ -300,7 +263,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     @Override
     public void onValidationFailed(ValidationField field) {
-        if (field.getView() == etFrom) {
+        if (field.getView() == spFrom) {
             tvFromError.setText(field.getMessage());
         } else if (field.getView() == etTo){
             tvToError.setText(field.getMessage());
