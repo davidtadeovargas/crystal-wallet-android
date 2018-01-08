@@ -20,11 +20,14 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetEquivalentRequest
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestsListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateImportBitsharesAccountRequest;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.dao.TransactionDao;
 import cy.agorise.crystalwallet.enums.CryptoNet;
+import cy.agorise.crystalwallet.enums.SeedType;
+import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
@@ -159,6 +162,8 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.validateSendRequest((ValidateBitsharesSendRequest) request);
         }else if (request instanceof CryptoNetEquivalentRequest){
             this.getEquivalentValue((CryptoNetEquivalentRequest) request);
+        }else if (request instanceof ValidateCreateBitsharesAccountRequest){
+            this.validateCreateAccount((ValidateCreateBitsharesAccountRequest) request);
         }else{
             //TODO not implemented
         }
@@ -207,6 +212,25 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         });
 
         GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
+    }
+
+    private void validateCreateAccount(ValidateCreateBitsharesAccountRequest createRequest){
+        // Generate seed or find key
+        Context context = createRequest.getContext();
+        AccountSeed seed = AccountSeed.getAccountSeed(SeedType.BIP39, context);
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+        long idSeed = db.accountSeedDao().insertAccountSeed(seed);
+        seed.setId(idSeed);
+        GrapheneAccount account = new GrapheneAccount();
+        account.setName(createRequest.getAccountName());
+        account.setSeedId(idSeed);
+        account.setAccountIndex(0);
+        account.setCryptoNet(CryptoNet.BITSHARES);
+        if (this.createAccountFromSeed(account,context) != null){
+            createRequest.setAccountExists(false);
+            createRequest.setCreationComple(true);
+        }
+
     }
 
     /**
