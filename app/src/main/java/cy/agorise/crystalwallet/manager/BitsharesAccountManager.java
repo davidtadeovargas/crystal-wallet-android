@@ -226,10 +226,12 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         account.setSeedId(idSeed);
         account.setAccountIndex(0);
         account.setCryptoNet(CryptoNet.BITSHARES);
-        if (this.createAccountFromSeed(account,context) != null){
+        GrapheneAccount answer =(GrapheneAccount) this.createAccountFromSeed(account,context);
+        if (answer != null){
             createRequest.setAccountExists(false);
-            createRequest.setCreationComple(true);
+            createRequest.setAccount(answer);;
         }
+        createRequest.setAccountExists(false);
 
     }
 

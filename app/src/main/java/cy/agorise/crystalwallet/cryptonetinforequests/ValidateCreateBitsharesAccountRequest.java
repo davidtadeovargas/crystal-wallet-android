@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.cryptonetinforequests;
 import android.content.Context;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 
 /**
  * Imports a bitsahres accounts,
@@ -23,7 +24,7 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
      */
     private Boolean accountExists;
 
-    private Boolean creationComplete;
+    private GrapheneAccount account;
 
     private Context context;
 
@@ -38,8 +39,8 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
         this.validate();
     }
 
-    public void setCreationComple(boolean value){
-        this.creationComplete = value;
+    public void setAccount(GrapheneAccount account){
+        this.account = account;
         this.validate();
     }
 
@@ -47,12 +48,12 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
         return this.accountExists;
     }
 
-    public Boolean getCreationComplete() {
-        return creationComplete;
+    public GrapheneAccount getAccount() {
+        return account;
     }
 
     public void validate(){
-        if ((this.accountExists != null) && (this.creationComplete != null)){
+        if ((this.accountExists != null) && (this.account != null)){
             this._fireOnCarryOutEvent();
         }
     }
