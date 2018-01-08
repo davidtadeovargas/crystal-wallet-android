@@ -3,6 +3,9 @@ package cy.agorise.crystalwallet.models;
 import android.content.Context;
 
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.SeedType;
@@ -55,10 +58,20 @@ public class GrapheneAccount extends CryptoNetAccount {
         if(seed == null)
         return null;
         if(seed.getType().equals(SeedType.BRAINKEY)){
-            return new BrainKey(seed.getMasterSeed(),0).getPrivateKey();
+            return seed.getPrivateKey();
         }else{
-            //TODO implement slip48
-            return null;
+            DeterministicKey masterKey = (DeterministicKey) seed.getPrivateKey();
+            DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
+                    new ChildNumber(48, true));
+            DeterministicKey networkKey = HDKeyDerivation.deriveChildKey(purposeKey,
+                    new ChildNumber(1, true));
+            DeterministicKey accountIndexKey = HDKeyDerivation.deriveChildKey(networkKey,
+                    new ChildNumber(0, true));
+            DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
+                    new ChildNumber(0, true));
+            DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
+                    new ChildNumber(0, true));
+            return address;
         }
     }
 
@@ -72,8 +85,17 @@ public class GrapheneAccount extends CryptoNetAccount {
         if(seed.getType().equals(SeedType.BRAINKEY)){
             return new BrainKey(seed.getMasterSeed(),0).getPrivateKey();
         }else{
-            //TODO implement slip48
-            return null;
+            DeterministicKey masterKey = (DeterministicKey) seed.getPrivateKey();
+            DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
+                    new ChildNumber(48, true));
+            DeterministicKey networkKey = HDKeyDerivation.deriveChildKey(purposeKey,
+                    new ChildNumber(1, true));
+            DeterministicKey accountIndexKey = HDKeyDerivation.deriveChildKey(networkKey,
+                    new ChildNumber(0, true));
+            DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
+                    new ChildNumber(1, true));
+            return HDKeyDerivation.deriveChildKey(permission,
+                    new ChildNumber(0, true));  //TODO implement multiple Address and accounts
         }
     }
 
@@ -87,8 +109,17 @@ public class GrapheneAccount extends CryptoNetAccount {
         if(seed.getType().equals(SeedType.BRAINKEY)){
             return new BrainKey(seed.getMasterSeed(),0).getPrivateKey();
         }else{
-            //TODO implement slip48
-            return null;
+            DeterministicKey masterKey = (DeterministicKey) seed.getPrivateKey();
+            DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
+                    new ChildNumber(48, true));
+            DeterministicKey networkKey = HDKeyDerivation.deriveChildKey(purposeKey,
+                    new ChildNumber(1, true));
+            DeterministicKey accountIndexKey = HDKeyDerivation.deriveChildKey(networkKey,
+                    new ChildNumber(0, true));
+            DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
+                    new ChildNumber(3, true));
+            return HDKeyDerivation.deriveChildKey(permission,
+                    new ChildNumber(0, true));  //TODO implement multiple Address and accounts
         }
     }
 }
