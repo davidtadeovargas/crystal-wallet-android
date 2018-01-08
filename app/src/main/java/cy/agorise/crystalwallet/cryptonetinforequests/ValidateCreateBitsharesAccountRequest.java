@@ -27,7 +27,7 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
 
     private Context context;
 
-    public ValidateCreateBitsharesAccountRequest(String accountName, String mnemonic, Context context){
+    public ValidateCreateBitsharesAccountRequest(String accountName, Context context){
         super(CryptoCoin.BITSHARES);
         this.accountName = accountName;
         this.context = context;
