@@ -79,36 +79,6 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="10dp"
-        android:text="@string/seed_words"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvSeedWords"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:background="@drawable/edittext_bg"
-        android:gravity="top"
-        android:inputType="textMultiLine"
-        android:textColor="@color/black" />
-
-    <TextView
-        android:id="@+id/tvSeedWordsError"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/red"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="10dp"
         android:text="@string/txt_account_name"
         android:textStyle="bold" />
 

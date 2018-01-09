@@ -2,6 +2,7 @@ package cy.agorise.crystalwallet.viewmodels.validators;
 
 import android.content.Context;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.BitsharesAccountMnemonicValidationField;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.BitsharesAccountNameDoesntExistsValidationField;
@@ -15,11 +16,10 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinValida
 
 public class CreateSeedValidator extends UIValidator {
 
-    public CreateSeedValidator(Context context, EditText pinEdit, EditText pinConfirmationEdit, EditText bitsharesAccountNameEdit, TextView mnemonicTextView){
+    public CreateSeedValidator(Context context, EditText pinEdit, EditText pinConfirmationEdit, EditText bitsharesAccountNameEdit){
         super(context);
         this.addField(new PinValidationField(pinEdit));
         this.addField(new PinConfirmationValidationField(pinEdit,pinConfirmationEdit));
         this.addField(new BitsharesAccountNameDoesntExistsValidationField(bitsharesAccountNameEdit));
-        this.addField(new BitsharesAccountMnemonicValidationField(mnemonicTextView));
     }
 }

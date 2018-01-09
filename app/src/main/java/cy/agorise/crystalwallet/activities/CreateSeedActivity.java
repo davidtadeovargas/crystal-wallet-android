@@ -13,6 +13,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.cryptonetinforequests.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
@@ -24,6 +27,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+
+import static cy.agorise.crystalwallet.enums.SeedType.BIP39;
 
 public class CreateSeedActivity extends AppCompatActivity implements UIValidatorListener {
 
@@ -40,8 +45,8 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     @BindView(R.id.tvPinConfirmationError)
     TextView tvPinConfirmationError;
 
-    @BindView(R.id.tvSeedWords)
-    TextView tvSeedWords;
+    //@BindView(R.id.tvSeedWords)
+    //TextView tvSeedWords;
 
     @BindView (R.id.etAccountName)
     EditText etAccountName;
@@ -58,12 +63,11 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_seed);
-
         ButterKnife.bind(this);
 
         btnCreate.setEnabled(false);
         accountSeedViewModel = ViewModelProviders.of(this).get(AccountSeedViewModel.class);
-        createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),etPin,etPinConfirmation,etAccountName,tvSeedWords);
+        createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),etPin,etPinConfirmation,etAccountName);
         createSeedValidator.setListener(this);
     }
 
@@ -79,12 +83,12 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         this.createSeedValidator.validate();
     }
 
-    @OnTextChanged(value = R.id.etSeedWords,
+    /*@OnTextChanged(value = R.id.etSeedWords,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterSeedWordsChanged(Editable editable) {
         this.createSeedValidator.validate();
     }
-
+*/
 
     @OnTextChanged(value = R.id.etAccountName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -97,31 +101,26 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         this.finish();
     }
 
-    @OnClick(R.id.btnImport)
+    @OnClick(R.id.btnCreate)
     public void createSeed(){
         if (this.createSeedValidator.isValid()) {
-            AccountSeed seed = new AccountSeed();
+            // Make request to create a bitshare account
+            final ValidateCreateBitsharesAccountRequest request =
+                    new ValidateCreateBitsharesAccountRequest(etAccountName.getText().toString(), getApplicationContext());
 
-            //TODO verify if words are already in the db
-            //TODO check if name has been asigned to other seed
-            seed.setMasterSeed(tvSeedWords.getText().toString());
-            seed.setName(etAccountName.getText().toString());
-            seed.setType(SeedType.BIP39);
+            request.setListener(new CryptoNetInfoRequestListener() {
+                @Override
+                public void onCarryOut() {
+                    if (request.getAccount() != null){
+                        finish();
+                    } else {
+                        createSeedValidator.validate();
+                    }
+                }
+            });
+            CryptoNetInfoRequests.getInstance().addRequest(request);
 
-            accountSeedViewModel.addSeed(seed);
-
-            CryptoNetAccountViewModel cryptoNetAccountViewModel = ViewModelProviders.of(this).get(CryptoNetAccountViewModel.class);
-            GrapheneAccountInfoViewModel grapheneAccountInfoViewModel = ViewModelProviders.of(this).get(GrapheneAccountInfoViewModel.class);
-            CryptoNetAccount cryptoNetAccount = new CryptoNetAccount();
-            cryptoNetAccount.setSeedId(seed.getId());
-            cryptoNetAccount.setAccountIndex(0);
-            cryptoNetAccount.setCryptoNet(cy.agorise.crystalwallet.enums.CryptoNet.BITSHARES);
-            cryptoNetAccountViewModel.addCryptoNetAccount(cryptoNetAccount);
-            GrapheneAccountInfo grapheneAccountInfo = new GrapheneAccountInfo(cryptoNetAccount.getId());
-            grapheneAccountInfo.setName(etAccountName.getText().toString());
-            grapheneAccountInfoViewModel.addGrapheneAccountInfo(grapheneAccountInfo);
-
-            this.finish();
+            //this.finish();
         }
     }
 
@@ -138,14 +137,14 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                     tvPinConfirmationError.setText("");
                 } else if (field.getView() == etAccountName){
                     tvAccountNameError.setText("");
-                } else if (field.getView() == etSeedWords){
-                    tvSeedWordsError.setText("");
-                }
+                } //else if (field.getView() == etSeedWords){
+                //    tvSeedWordsError.setText("");
+                //}
 
-                if (activity.importSeedValidator.isValid()){
-                    btnImport.setEnabled(true);
+                if (activity.createSeedValidator.isValid()){
+                    btnCreate.setEnabled(true);
                 } else {
-                    btnImport.setEnabled(false);
+                    btnCreate.setEnabled(false);
                 }
 
             }
@@ -160,8 +159,8 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
             tvPinConfirmationError.setText(field.getMessage());
         } else if (field.getView() == etAccountName){
             tvAccountNameError.setText(field.getMessage());
-        } else if (field.getView() == etSeedWords){
-            tvSeedWordsError.setText(field.getMessage());
-        }
+        } //else if (field.getView() == etSeedWords){
+        //    tvSeedWordsError.setText(field.getMessage());
+        //}
     }
 }

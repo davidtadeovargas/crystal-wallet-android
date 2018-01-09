@@ -24,22 +24,30 @@ public class BitsharesAccountNameDoesntExistsValidationField extends ValidationF
         final String newValue = accountNameField.getText().toString();
         this.setLastValue(newValue);
         this.startValidating();
-        final ValidationField field = this;
 
-        final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(newValue);
-        request.setListener(new CryptoNetInfoRequestListener() {
-            @Override
-            public void onCarryOut() {
-                if (request.getAccountExists()){
-                    setValidForValue(newValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.account_name_already_exist));
-                    validator.validationFailed(field);
-                } else {
-                    setValidForValue(newValue, true);
-                    validator.validationSucceeded(field);
+        if (newValue.equals("")){
+            setValidForValue("", false);
+            setMessage("");
+            validator.validationFailed(this);
+        } else {
+
+            final ValidationField field = this;
+
+            final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(newValue);
+            request.setListener(new CryptoNetInfoRequestListener() {
+                @Override
+                public void onCarryOut() {
+                    if (request.getAccountExists()) {
+                        setValidForValue(newValue, false);
+                        setMessage(validator.getContext().getResources().getString(R.string.account_name_already_exist,"'"+newValue+"'"));
+                        validator.validationFailed(field);
+                    } else {
+                        setValidForValue(newValue, true);
+                        validator.validationSucceeded(field);
+                    }
                 }
-            }
-        });
-        CryptoNetInfoRequests.getInstance().addRequest(request);
+            });
+            CryptoNetInfoRequests.getInstance().addRequest(request);
+        }
     }
 }

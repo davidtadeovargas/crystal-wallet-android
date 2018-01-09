@@ -84,6 +84,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     private GrapheneAccount grapheneAccount;
     private CrystalDatabase db;
     private FloatingActionButton fabSend;
+    private AlertDialog.Builder builder;
 
     public static SendTransactionFragment newInstance(long cryptoNetAccountId) {
         SendTransactionFragment f = new SendTransactionFragment();
@@ -107,7 +108,8 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         fabSend = getActivity().findViewById(R.id.fabSend);
         fabSend.hide();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
+        //AlertDialog.Builder
+        builder = new AlertDialog.Builder(getActivity(), R.style.SendTransactionTheme);
         //builder.setTitle("Send");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -169,7 +171,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @Override
     public void onDestroy() {
         super.onDestroy();
-                btnScanQrCode = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+        //        btnScanQrCode = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {

@@ -51,6 +51,7 @@ public class IntroActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ImportSeedActivity.class);
             startActivity(intent);
         } else {
+            //Intent intent = new Intent(this, CreateSeedActivity.class);
             Intent intent = new Intent(this, BoardActivity.class);
             startActivity(intent);
         }

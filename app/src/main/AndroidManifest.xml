@@ -26,6 +26,8 @@
         </activity>
         <activity android:name=".activities.ImportSeedActivity" >
         </activity>
+        <activity android:name=".activities.CreateSeedActivity" >
+        </activity>
         <activity android:name=".activities.SendTransactionActivity" >
         </activity>
         <activity android:name=".activities.GeneralSettingsActivity" >
