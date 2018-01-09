@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.activities;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
@@ -177,7 +178,7 @@ public class BoardActivity  extends AppCompatActivity {
      */
     @OnClick(R.id.toolbar_user_img)
     public void accounts() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("AccountsDialog");
         if (prev != null) {
             ft.remove(prev);
@@ -186,7 +187,13 @@ public class BoardActivity  extends AppCompatActivity {
 
         // Create and show the dialog.
         AccountsFragment newFragment = AccountsFragment.newInstance(this.cryptoNetAccountId);
-        newFragment.show(ft, "AccountsDialog");
+        newFragment.show(ft, "AccountsDialog");*/
+        Intent intent = new Intent(new Intent(this, AccountsActivity.class));
+
+        ActivityOptions options = ActivityOptions
+                .makeSceneTransitionAnimation(this, userImage, "gravatarTransition");
+        startActivity(intent, options.toBundle());
+        //startActivity(intent);
     }
 
     /*
