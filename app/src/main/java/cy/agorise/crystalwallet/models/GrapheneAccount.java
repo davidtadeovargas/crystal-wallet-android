@@ -55,11 +55,15 @@ public class GrapheneAccount extends CryptoNetAccount {
      */
     public ECKey getOwnerKey(Context context){
         AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId()).getValue();
-        if(seed == null)
-        return null;
+        if(seed == null){
+            System.out.println("Error: Seed null " + this.getSeedId());
+            return null;
+        }
         if(seed.getType().equals(SeedType.BRAINKEY)){
+            System.out.println("Seed type barinkey");
             return seed.getPrivateKey();
         }else{
+            System.out.println("Seed type bip39");
             DeterministicKey masterKey = (DeterministicKey) seed.getPrivateKey();
             DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
                     new ChildNumber(48, true));
@@ -70,7 +74,7 @@ public class GrapheneAccount extends CryptoNetAccount {
             DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
                     new ChildNumber(0, true));
             DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
-                    new ChildNumber(0, true));
+                    new ChildNumber(0, false));
             return address;
         }
     }

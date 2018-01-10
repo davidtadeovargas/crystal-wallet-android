@@ -59,22 +59,23 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         if(account instanceof  GrapheneAccount) {
 
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
-            String btsIdAccount = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
+            boolean created = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
                     new Address(grapheneAccount.getOwnerKey(context),"BTS").toString(),
                     new Address(grapheneAccount.getActiveKey(context),"BTS").toString(),
                     new Address(grapheneAccount.getMemoKey(context),"BTS").toString(),GrapheneApiGenerator.faucetUrl);
-            if(btsIdAccount !=null) {
-                grapheneAccount.setAccountId(btsIdAccount);
+
+            if(created) {
+                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
 
                 CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-                long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount)[0];
-                grapheneAccount.setId(idAccount);
-                db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
+                long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(fetch)[0];
+                fetch.setId(idAccount);
+                db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(fetch));
 
-                GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-                BitsharesAccountManager.refreshAccountTransactions(grapheneAccount.getId(), context);
-                GrapheneApiGenerator.getAccountBalance(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-                return grapheneAccount;
+                GrapheneApiGenerator.subscribeBitsharesAccount(fetch.getId(), fetch.getAccountId(), context);
+                BitsharesAccountManager.refreshAccountTransactions(fetch.getId(), context);
+                GrapheneApiGenerator.getAccountBalance(fetch.getId(), fetch.getAccountId(), context);
+                return fetch;
             }
         }
         return null;

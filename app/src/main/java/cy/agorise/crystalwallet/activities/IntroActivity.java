@@ -48,7 +48,8 @@ public class IntroActivity extends AppCompatActivity {
             //If the user doesn't have any seeds created, then
             //send the user to create/import an account
             //Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
-            Intent intent = new Intent(this, ImportSeedActivity.class);
+            //Intent intent = new Intent(this, ImportSeedActivity.class);
+            Intent intent = new Intent(this, CreateSeedActivity.class);
             startActivity(intent);
         } else {
             //Intent intent = new Intent(this, CreateSeedActivity.class);
