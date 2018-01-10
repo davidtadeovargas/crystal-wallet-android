@@ -30,7 +30,7 @@ public class AccountSeedViewModel extends AndroidViewModel {
     }
 
     public void loadSeed(int seedId){
-        this.accountSeed = this.db.accountSeedDao().findById(seedId);
+        this.accountSeed = this.db.accountSeedDao().findByIdLiveData(seedId);
     }
 
     public void addSeed(AccountSeed seed){

@@ -54,7 +54,7 @@ public class GrapheneAccount extends CryptoNetAccount {
      * Return the owner key, generates from the seed if it has not been generated. null if it can't be generated
      */
     public ECKey getOwnerKey(Context context){
-        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId()).getValue();
+        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId());
         if(seed == null){
             System.out.println("Error: Seed null " + this.getSeedId());
             return null;
@@ -83,7 +83,7 @@ public class GrapheneAccount extends CryptoNetAccount {
      * Return the active key, generates from the seed if it has not been generated. null if it can't be generated
      */
     public ECKey getActiveKey(Context context){
-        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId()).getValue();
+        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId());
         if(seed == null)
             return null;
         if(seed.getType().equals(SeedType.BRAINKEY)){
@@ -107,7 +107,7 @@ public class GrapheneAccount extends CryptoNetAccount {
      * Return the memo key, generates from the seed if it has not been generated. null if it can't be generated
      */
     public ECKey getMemoKey(Context context){
-        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId()).getValue();
+        AccountSeed seed = CrystalDatabase.getAppDatabase(context).accountSeedDao().findById(this.getSeedId());
         if(seed == null)
             return null;
         if(seed.getType().equals(SeedType.BRAINKEY)){
