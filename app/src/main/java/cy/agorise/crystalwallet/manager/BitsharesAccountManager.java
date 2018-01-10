@@ -60,9 +60,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
             boolean created = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
-                    new Address(grapheneAccount.getOwnerKey(context),"BTS").toString(),
-                    new Address(grapheneAccount.getActiveKey(context),"BTS").toString(),
-                    new Address(grapheneAccount.getMemoKey(context),"BTS").toString(),GrapheneApiGenerator.faucetUrl);
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getOwnerKey(context).getPubKey()),"BTS").toString(),
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getActiveKey(context).getPubKey()),"BTS").toString(),
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getMemoKey(context).getPubKey()),"BTS").toString(),GrapheneApiGenerator.faucetUrl);
 
             if(created) {
                 GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());

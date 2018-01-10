@@ -75,7 +75,7 @@ public class GrapheneAccount extends CryptoNetAccount {
                     new ChildNumber(0, true));
             DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
                     new ChildNumber(0, false));
-            return address;
+            return ECKey.fromPrivate(address.getPrivKeyBytes());
         }
     }
 
@@ -98,8 +98,9 @@ public class GrapheneAccount extends CryptoNetAccount {
                     new ChildNumber(0, true));
             DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
                     new ChildNumber(1, true));
-            return HDKeyDerivation.deriveChildKey(permission,
-                    new ChildNumber(0, true));  //TODO implement multiple Address and accounts
+            DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
+                    new ChildNumber(0, false));  //TODO implement multiple Address and accounts
+            return ECKey.fromPrivate(address.getPrivKeyBytes());
         }
     }
 
@@ -122,8 +123,9 @@ public class GrapheneAccount extends CryptoNetAccount {
                     new ChildNumber(0, true));
             DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
                     new ChildNumber(3, true));
-            return HDKeyDerivation.deriveChildKey(permission,
-                    new ChildNumber(0, true));  //TODO implement multiple Address and accounts
+            DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
+                    new ChildNumber(0, false));  //TODO implement multiple Address and accounts
+            return ECKey.fromPrivate(address.getPrivKeyBytes());
         }
     }
 }
