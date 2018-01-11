@@ -1,9 +1,5 @@
 package cy.agorise.crystalwallet.apigenerator;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -77,6 +73,7 @@ public abstract class BitsharesFaucetApiGenerator {
                 @Override
                 public void onResponse(Call<RegisterAccountResponse> call, Response<RegisterAccountResponse> response) {
                     if (response.isSuccessful()) {
+                        System.out.println("faucet answer " + response);
                         RegisterAccountResponse resp = response.body();
                         if (resp.account != null) {
                             try {
@@ -86,6 +83,7 @@ public abstract class BitsharesFaucetApiGenerator {
                                         SYNC.notifyAll();
                                     }
                                 }else{
+                                    System.out.println("ERROR account name different" + resp.account.name);
                                    //ERROR
                                     synchronized (SYNC) {
                                         SYNC.notifyAll();
@@ -98,6 +96,7 @@ public abstract class BitsharesFaucetApiGenerator {
                                 }
                             }
                         }else{
+                            System.out.println("ERROR response doesn't have account " + response.message());
                             //ERROR
                             synchronized (SYNC) {
                                 SYNC.notifyAll();
@@ -105,6 +104,7 @@ public abstract class BitsharesFaucetApiGenerator {
 
                         }
                     }else{
+                        System.out.println("ERROR fetching info");
                         //ERROR
                         synchronized (SYNC) {
                             SYNC.notifyAll();
