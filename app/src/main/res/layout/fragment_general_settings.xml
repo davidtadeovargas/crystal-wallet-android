@@ -150,4 +150,44 @@
         app:layout_constraintStart_toStartOf="@id/vDisplayDateTime"
         app:layout_constraintEnd_toEndOf="@id/vDisplayDateTime"/>
 
+    <TextView
+        android:id="@+id/tvCloseWalletTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Close wallet after 3 min. of inactivity"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/vSound"
+        app:layout_constraintStart_toStartOf="@id/spSound" />
+
+    <Switch
+        android:id="@+id/sCloseWalletTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/tvCloseWalletTimer"
+        app:layout_constraintEnd_toEndOf="@id/vSound" />
+
+    <TextView
+        android:id="@+id/tvBugsErrors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Bugs or Errors? Let us know"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/tvCloseWalletTimer"
+        app:layout_constraintTop_toBottomOf="@id/tvCloseWalletTimer"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="CONTACT"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/tvCloseWalletTimer"
+        app:layout_constraintEnd_toEndOf="@id/sCloseWalletTimer" />
+
 </android.support.constraint.ConstraintLayout>
