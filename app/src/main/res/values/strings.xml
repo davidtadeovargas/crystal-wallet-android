@@ -473,4 +473,7 @@
     <string name="go_back_arrow">Go back arrow</string>
     <string name="settings2">Settings</string>
     <string name="info_icon">Info icon</string>
+    <string name="bin_file_description">Bin file. Always save your backup .bin file to a secret MicroSD card or USB Stick.</string>
+    <string name="brainkey_description">Brainkey. Account recovery words that can be captured or copied, but not edited.</string>
+    <string name="wif_key_description">WIF Key (Advanced). A long string of cryptic text that can be used with other Wallets.</string>
 </resources>
