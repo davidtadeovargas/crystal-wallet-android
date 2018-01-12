@@ -2,8 +2,10 @@ package cy.agorise.crystalwallet.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -108,9 +110,26 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
             final ValidateCreateBitsharesAccountRequest request =
                     new ValidateCreateBitsharesAccountRequest(etAccountName.getText().toString(), getApplicationContext());
 
+
+            //Makes dialog to tell the user that the account is been created
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CreateSeedActivity.this,R.style.AppTheme);
+            alertBuilder.setView(R.layout.progress_creating_account);
+            //alertBuilder.setTitle("Processing");
+            //alertBuilder.setMessage("Creating Bitshares Account");
+            final AlertDialog processDialog = alertBuilder.create();
+            CreateSeedActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    processDialog.show();
+                    processDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            });
+
             request.setListener(new CryptoNetInfoRequestListener() {
                 @Override
                 public void onCarryOut() {
+                    processDialog.dismiss();
+
                     if (request.getAccount() != null){
                         finish();
                     } else {
@@ -118,7 +137,17 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                     }
                 }
             });
-            CryptoNetInfoRequests.getInstance().addRequest(request);
+
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    CryptoNetInfoRequests.getInstance().addRequest(request);
+                }
+            };
+
+            thread.start();
+
+
 
             //this.finish();
         }

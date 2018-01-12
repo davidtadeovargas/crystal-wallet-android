@@ -53,7 +53,7 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
     }
 
     public void validate(){
-        if ((this.accountExists != null) && (this.account != null)){
+        if ((this.accountExists != null)){// && (this.account != null)){
             this._fireOnCarryOutEvent();
         }
     }
