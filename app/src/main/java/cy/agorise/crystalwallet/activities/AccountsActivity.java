@@ -16,7 +16,7 @@ import cy.agorise.crystalwallet.R;
  *
  */
 
-public class AccountsActivity extends Activity{
+public class AccountsActivity extends Activity {
 
     @BindView(R.id.tvSettings)
     TextView tvSettings;
@@ -29,7 +29,6 @@ public class AccountsActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
         ButterKnife.bind(this);
-
     }
 
     @OnClick(R.id.tvSettings)

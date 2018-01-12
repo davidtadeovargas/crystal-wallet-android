@@ -32,12 +32,22 @@
         <item name="android:colorButtonNormal">@color/white</item>
         <item name="android:fontFamily">@font/opensans</item>
         <item name="fontFamily">@font/opensans</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
+        <!-- enable window content transitions -->
+        <item name="android:windowContentTransitions">true</item>
+
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/change_image_transform</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/change_image_transform</item>
+
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>

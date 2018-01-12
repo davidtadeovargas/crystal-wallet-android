@@ -3,42 +3,40 @@ package cy.agorise.crystalwallet.activities;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.fragments.AccountsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.ContactsFragment;
 import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
+import cy.agorise.crystalwallet.util.CircularImageView;
 
 /**
  * Created by Henry Varona on 7/10/2017.
+ *
  */
 
 public class BoardActivity  extends AppCompatActivity {
@@ -70,7 +68,10 @@ public class BoardActivity  extends AppCompatActivity {
     public SurfaceView mSurfaceView;
 
     @BindView(R.id.toolbar_user_img)
-    public ImageView userImage;
+    public CircularImageView userImage;
+
+    @BindView(R.id.lightning)
+    public ImageView lightning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +130,7 @@ public class BoardActivity  extends AppCompatActivity {
 
         // Hide Add Contact fab, it won't hide until first page changed...
         // Convert 72dp to pixels (fab is 56dp in diameter + 16dp margin)
-        final int fabDistanceToHide = (int) (72 * Resources.getSystem().getDisplayMetrics().density);;
+        final int fabDistanceToHide = (int) (72 * Resources.getSystem().getDisplayMetrics().density);
         fabAddContact.animate().translationY(fabDistanceToHide)
                 .setInterpolator(new LinearInterpolator()).start();
 
@@ -188,18 +189,21 @@ public class BoardActivity  extends AppCompatActivity {
         // Create and show the dialog.
         AccountsFragment newFragment = AccountsFragment.newInstance(this.cryptoNetAccountId);
         newFragment.show(ft, "AccountsDialog");*/
-        Intent intent = new Intent(new Intent(this, AccountsActivity.class));
+        Intent intent = new Intent(this, AccountsActivity.class);
 
-        ActivityOptions options = ActivityOptions
+        Pair p1 = Pair.create(userImage, "gravatarTransition");
+        Pair p2 = Pair.create(lightning, "lightningTransition");
+
+        ActivityOptionsCompat options = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(this, userImage, "gravatarTransition");
-        startActivity(intent, options.toBundle());
-        //startActivity(intent);
+        //ActivityCompat.startActivity(this, intent, options.toBundle());
+        startActivity(intent);
     }
 
     /*
      * dispatch the user to the receive fragment using this account
      */
-    public void receiveToThisAccount(){
+    public void receiveToThisAccount() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("ReceiveDialog");
         if (prev != null) {
@@ -215,7 +219,7 @@ public class BoardActivity  extends AppCompatActivity {
     /*
      * dispatch the user to the send fragment using this account
      */
-    public void sendFromThisAccount(){
+    public void sendFromThisAccount() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment prev = getSupportFragmentManager().findFragmentByTag("SendDialog");
         if (prev != null) {
@@ -229,7 +233,7 @@ public class BoardActivity  extends AppCompatActivity {
     }
 
     private class BoardPagerAdapter extends FragmentStatePagerAdapter {
-        public BoardPagerAdapter(FragmentManager fm) {
+        BoardPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
