@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import cy.agorise.crystalwallet.cryptonetinforequests.ValidateCreateBitsharesAcc
 import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
@@ -120,6 +122,7 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
             CreateSeedActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    processDialog.setCancelable(false);
                     processDialog.show();
                     processDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 }
@@ -131,10 +134,15 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                     processDialog.dismiss();
 
                     if (request.getAccount() != null){
-                        finish();
+                        GrapheneAccount accountSeed = request.getAccount();
+                        Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
+                        intent.putExtra("SEED_ID",accountSeed.getId());
+                        startActivity(intent);
                     } else {
                         createSeedValidator.validate();
                     }
+
+
                 }
             });
 
