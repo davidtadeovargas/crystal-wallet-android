@@ -189,15 +189,21 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     }
 
     @Override
-    public void onValidationFailed(ValidationField field) {
-        if (field.getView() == etPin) {
-            tvPinError.setText(field.getMessage());
-        } else if (field.getView() == etPinConfirmation){
-            tvPinConfirmationError.setText(field.getMessage());
-        } else if (field.getView() == etAccountName){
-            tvAccountNameError.setText(field.getMessage());
-        } //else if (field.getView() == etSeedWords){
-        //    tvSeedWordsError.setText(field.getMessage());
-        //}
+    public void onValidationFailed(final ValidationField field) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (field.getView() == etPin) {
+                    tvPinError.setText(field.getMessage());
+                } else if (field.getView() == etPinConfirmation){
+                    tvPinConfirmationError.setText(field.getMessage());
+                } else if (field.getView() == etAccountName){
+                    tvAccountNameError.setText(field.getMessage());
+                } //else if (field.getView() == etSeedWords){
+                //    tvSeedWordsError.setText(field.getMessage());
+                //}
+            }
+        });
     }
 }

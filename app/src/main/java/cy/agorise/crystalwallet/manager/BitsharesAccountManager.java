@@ -245,7 +245,11 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
             @Override
             public void success(Object answer, int idPetition) {
-                validateRequest.setAccountExists(true);
+                if (answer != null) {
+                    validateRequest.setAccountExists(true);
+                } else {
+                    validateRequest.setAccountExists(false);
+                }
             }
 
             @Override
