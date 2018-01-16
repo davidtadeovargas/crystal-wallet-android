@@ -36,7 +36,7 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity android:name=".activities.AccountsActivity"
-            android:theme="@style/AppTheme.Transparent"
+            android:theme="@style/ActivityDialog"
             android:parentActivityName=".activities.BoardActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

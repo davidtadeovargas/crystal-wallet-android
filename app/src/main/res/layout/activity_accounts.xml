@@ -40,6 +40,7 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="45dp"
+            android:transitionName="lightningTransition"
             app:layout_constraintBottom_toBottomOf="@id/user_img"
             app:layout_constraintStart_toStartOf="@id/user_img"
             app:srcCompat="@drawable/ic_lightning_24dp" />

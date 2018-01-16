@@ -7,16 +7,14 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -72,6 +70,9 @@ public class BoardActivity  extends AppCompatActivity {
 
     @BindView(R.id.lightning)
     public ImageView lightning;
+
+    @BindView(R.id.triangle)
+    public ImageView triangle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,25 +180,21 @@ public class BoardActivity  extends AppCompatActivity {
      */
     @OnClick(R.id.toolbar_user_img)
     public void accounts() {
-        /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("AccountsDialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        // Create and show the dialog.
-        AccountsFragment newFragment = AccountsFragment.newInstance(this.cryptoNetAccountId);
-        newFragment.show(ft, "AccountsDialog");*/
         Intent intent = new Intent(this, AccountsActivity.class);
 
-        Pair p1 = Pair.create(userImage, "gravatarTransition");
-        Pair p2 = Pair.create(lightning, "lightningTransition");
+        // SharedElementTransition is only available from API level 21
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Pair p1 = Pair.create(userImage, "gravatarTransition");
+            Pair p2 = Pair.create(lightning, "lightningTransition");
+            Pair p3 = Pair.create(triangle, "triangleTransition");
 
-        ActivityOptionsCompat options = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(this, userImage, "gravatarTransition");
-        //ActivityCompat.startActivity(this, intent, options.toBundle());
-        startActivity(intent);
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, p1, p2, p3);
+
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 
     /*
