@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.GeneralSettingsFragment;
@@ -93,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity{
                 case 2:
                     return new BackupsSettingsFragment();
                 case 3:
-                    return new BalanceFragment();
+                    return new AccountsSettingsFragment();
             }
 
 

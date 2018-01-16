@@ -478,4 +478,12 @@
     <string name="wif_key_description">WIF Key (Advanced). A long string of cryptic text that can be used with other Wallets.</string>
     <string name="create_a_backup">CREATE A BACKUP</string>
     <string name="view_and_copy"><![CDATA[View & Copy]]></string>
+    <string name="upgrade_description">Upgrade to LifeTime Membership (LTM). Bitshares\' LTM accounts pay near-zero fees, get 80% cashback and bonuses for referrals.</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="import_description">Import Accounts. Import multiple accounts from blockchains such as Bitshares, Bitcoin, Steem, Dash and more.</string>
+    <string name="import_">Import</string>
+    <string name="refresh_description">Refresh keys. Ony for bithsares accounts.</string>
+    <string name="refresh">Refresh</string>
+    <string name="remove_description">Remove an account from this Wallet. The account removed will still reside on the blockchain.</string>
+    <string name="remove">Remove</string>
 </resources>
