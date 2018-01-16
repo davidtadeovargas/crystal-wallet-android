@@ -35,19 +35,18 @@
         <!-- enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
 
-        <!-- specify shared element transitions -->
+        <!-- specify shared element transitions
         <item name="android:windowSharedElementEnterTransition">
             @transition/change_image_transform</item>
         <item name="android:windowSharedElementExitTransition">
-            @transition/change_image_transform</item>
+            @transition/change_image_transform</item> -->
 
     </style>
 
-    <style name="AppTheme.Transparent" parent="AppTheme">
+    <style name="ActivityDialog" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
@@ -91,11 +90,6 @@
     <style name="ReceiveTransactionAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/receive_transaction_in</item>
         <item name="android:windowExitAnimation">@anim/receive_transaction_out</item>
-    </style>
-
-    <style name="AccountsTheme" parent="Theme.AppCompat.DayNight.Dialog">
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/AccountsAnimation.Window</item>
     </style>
 
     <style name="AccountsAnimation.Window" parent="@android:style/Animation.Activity">
