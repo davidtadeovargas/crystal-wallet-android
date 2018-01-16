@@ -66,6 +66,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             if(created) {
                 GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
+                fetch.setSeedId(grapheneAccount.getSeedId());
+                fetch.setCryptoNet(grapheneAccount.getCryptoNet());
+                fetch.setAccountIndex(grapheneAccount.getAccountIndex());
 
                 CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
                 long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(fetch)[0];
