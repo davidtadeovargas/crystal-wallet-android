@@ -31,6 +31,7 @@ import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
 import cy.agorise.crystalwallet.util.CircularImageView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Henry Varona on 7/10/2017.
@@ -66,7 +67,7 @@ public class BoardActivity  extends AppCompatActivity {
     public SurfaceView mSurfaceView;
 
     @BindView(R.id.toolbar_user_img)
-    public CircularImageView userImage;
+    public CircleImageView userImage;
 
     @BindView(R.id.lightning)
     public ImageView lightning;

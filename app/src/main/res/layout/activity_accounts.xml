@@ -27,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <cy.agorise.crystalwallet.util.CircularImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_img"
             android:layout_width="90dp"
             android:layout_height="90dp"
