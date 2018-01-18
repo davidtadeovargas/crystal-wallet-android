@@ -21,6 +21,7 @@ import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.GeneralSettingsFragment;
+import cy.agorise.crystalwallet.fragments.SecuritySettingsFragment;
 
 /**
  * Created by seven on 12/28/17.
@@ -91,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity{
                 case 0:
                     return new GeneralSettingsFragment();
                 case 1:
+                    return new SecuritySettingsFragment();
                 case 2:
                     return new BackupsSettingsFragment();
                 case 3:

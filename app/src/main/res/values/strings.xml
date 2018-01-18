@@ -482,7 +482,7 @@
     <string name="upgrade">Upgrade</string>
     <string name="import_description">Import Accounts. Import multiple accounts from blockchains such as Bitshares, Bitcoin, Steem, Dash and more.</string>
     <string name="import_">Import</string>
-    <string name="refresh_description">Refresh keys. Ony for bithsares accounts.</string>
+    <string name="refresh_description">Refresh keys. Ony for bitshares accounts.</string>
     <string name="refresh">Refresh</string>
     <string name="remove_description">Remove an account from this Wallet. The account removed will still reside on the blockchain.</string>
     <string name="remove">Remove</string>
