@@ -12,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cy.agorise.crystalwallet.BuildConfig;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
@@ -40,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity{
 
     @BindView(R.id.surface_view)
     public SurfaceView mSurfaceView;
+
+    @BindView(R.id.tvBuildVersion)
+    public TextView tvBuildVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,11 @@ public class SettingsActivity extends AppCompatActivity{
 
         mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
+
+        // Automatically get build version from app information
+        String buildVersion = "v";
+        buildVersion += BuildConfig.VERSION_NAME;
+        tvBuildVersion.setText(buildVersion);
     }
 
     private class SettingsPagerAdapter extends FragmentStatePagerAdapter {
