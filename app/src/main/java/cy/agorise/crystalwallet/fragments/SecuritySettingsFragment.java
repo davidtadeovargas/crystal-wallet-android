@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.util.ChildViewPager;
 
 /**
  * Created by xd on 1/17/18.
@@ -32,7 +33,7 @@ public class SecuritySettingsFragment extends Fragment {
     }
 
     @BindView(R.id.pager)
-    public ViewPager mPager;
+    public ChildViewPager mPager;
 
     public SecurityPagerAdapter securityPagerAdapter;
 
@@ -45,6 +46,7 @@ public class SecuritySettingsFragment extends Fragment {
 
         securityPagerAdapter = new SecurityPagerAdapter(getChildFragmentManager());
         mPager.setAdapter(securityPagerAdapter);
+        mPager.setSwipeLocked(true);
 
         TabLayout tabLayout = v.findViewById(R.id.tabs);
 
