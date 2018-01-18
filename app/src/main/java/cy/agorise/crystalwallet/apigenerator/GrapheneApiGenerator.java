@@ -61,7 +61,7 @@ public abstract class GrapheneApiGenerator {
     public static String faucetUrl = "http://185.208.208.147:5010";
     private static String equivalentUrl = "http://185.208.208.147:8090";
     //public static String url = "wss://bitshares.openledger.info/ws";
-    //private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
+    //private static Str ing equivalentUrl = "wss://bitshares.openledger.info/ws";
 
 
     // The message broker for bitshares

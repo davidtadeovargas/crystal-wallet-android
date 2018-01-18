@@ -9,6 +9,7 @@ import android.content.Context;
 import cy.agorise.crystalwallet.dao.converters.Converters;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
+import cy.agorise.crystalwallet.models.Contact;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
@@ -26,6 +27,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         AccountSeed.class,
         CryptoNetAccount.class,
         CryptoCoinTransaction.class,
+        Contact.class,
         CryptoCurrency.class,
         CryptoCoinBalance.class,
         GrapheneAccountInfo.class,
@@ -42,6 +44,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
     public abstract CryptoNetAccountDao cryptoNetAccountDao();
     public abstract GrapheneAccountInfoDao grapheneAccountInfoDao();
     public abstract TransactionDao transactionDao();
+    public abstract ContactDao contactDao();
     public abstract CryptoCoinBalanceDao cryptoCoinBalanceDao();
     public abstract CryptoCurrencyDao cryptoCurrencyDao();
     public abstract BitsharesAssetDao bitsharesAssetDao();
@@ -54,21 +57,8 @@ public abstract class CrystalDatabase extends RoomDatabase {
                     Room.databaseBuilder(context,
                             CrystalDatabase.class, "CrystalWallet.db")
                             .allowMainThreadQueries()
-                            //.addMigrations(MIGRATION_1_2)
                             .build();
         }
         return instance;
     }
-
-
-
-    /*static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("UPDATE TABLE 'crypto_net_account' ADD "
-                    + "'subclass' INT, "
-                    + "'bitshares_account_name' STRING, "
-                    + "'bitshares_account_id' STRING ");
-        }
-    };*/
 }
