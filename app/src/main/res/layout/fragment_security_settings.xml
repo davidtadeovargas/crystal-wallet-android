@@ -1,7 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/vPocketSecurity">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/lightGray"
+            app:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabTextColor="@color/black"
+                android:animateLayoutChanges="true">
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabNone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="None" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabPin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pin" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabPattern"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pattern" />
+
+            </android.support.design.widget.TabLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <View
+        android:id="@+id/vPocketSecurity"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="@color/lightGray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPocketSecurity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:text="Use &quot;Pocket&quot; Security"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@+id/vPocketSecurity"
+        app:layout_constraintStart_toStartOf="@id/vPocketSecurity"/>
+
+    <Switch
+        android:id="@+id/sPocketSecurity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="@+id/vPocketSecurity"
+        app:layout_constraintEnd_toEndOf="@id/vPocketSecurity" />
+
+    <TextView
+        android:id="@+id/tvPocketSecurityUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/user_name_password_placeholder"
+        tools:layout_editor_absoluteY="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvPocketSecurity"
+        app:layout_constraintStart_toStartOf="@id/tvPocketSecurity"/>
+    
+    <EditText
+        android:id="@+id/etPocketPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvPocketSecurityUser"
+        app:layout_constraintStart_toStartOf="@id/tvPocketSecurity"
+        app:layout_constraintEnd_toEndOf="@id/sPocketSecurity"/>
 
 </android.support.constraint.ConstraintLayout>

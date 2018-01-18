@@ -486,4 +486,5 @@
     <string name="refresh">Refresh</string>
     <string name="remove_description">Remove an account from this Wallet. The account removed will still reside on the blockchain.</string>
     <string name="remove">Remove</string>
+    <string name="user_name_password_placeholder">user_name Password</string>
 </resources>
