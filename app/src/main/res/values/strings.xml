@@ -487,4 +487,9 @@
     <string name="remove_description">Remove an account from this Wallet. The account removed will still reside on the blockchain.</string>
     <string name="remove">Remove</string>
     <string name="user_name_password_placeholder">user_name Password</string>
+    <string name="version_placeholder">v1.0</string>
+    <string name="block_number_placeholder">block# 14966596</string>
+    <string name="current_pin">Current PIN</string>
+    <string name="new_pin">New PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
 </resources>
