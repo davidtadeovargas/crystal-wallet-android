@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import cy.agorise.crystalwallet.util.ChildViewPager;
 
 /**
  * Created by xd on 1/17/18.
+ * In this fragment the user should be able to select its preferred security option.
  */
 
 public class SecuritySettingsFragment extends Fragment {
@@ -65,7 +65,7 @@ public class SecuritySettingsFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position){
                 case 0:
-                    //return new GeneralSettingsFragment();
+                    return new NoneSecurityFragment();
                 case 1:
                     return new PinSecurityFragment();
                 case 2:

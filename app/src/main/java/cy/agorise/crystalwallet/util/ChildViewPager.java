@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 
 /**
  * Created by xd on 1/18/18.
+ * This ViewPager is intended to be used inside another ViewPager therefore it has the
+ * setSwipeLocked which disables or enables the swipe gesture.
  */
 
 
@@ -44,5 +46,4 @@ public class ChildViewPager extends ViewPager {
     public boolean canScrollHorizontally(int direction) {
         return !swipeLocked && super.canScrollHorizontally(direction);
     }
-
 }

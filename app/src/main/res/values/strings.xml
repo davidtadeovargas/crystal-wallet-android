@@ -492,4 +492,8 @@
     <string name="current_pin">Current PIN</string>
     <string name="new_pin">New PIN</string>
     <string name="confirm_pin">Confirm PIN</string>
+    <string name="use_pocket_security">Use \"Pocket\" Security</string>
+    <string name="none">None</string>
+    <string name="pin">Pin</string>
+    <string name="pattern">Pattern</string>
 </resources>
