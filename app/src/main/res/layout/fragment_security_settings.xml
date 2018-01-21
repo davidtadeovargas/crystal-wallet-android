@@ -29,6 +29,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:tabSelectedTextColor="@color/black"
                 app:tabTextColor="@color/black"
                 android:animateLayoutChanges="true">
 
@@ -36,19 +37,19 @@
                     android:id="@+id/tabNone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="None" />
+                    android:text="@string/none" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabPin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pin" />
+                    android:text="@string/pin" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabPattern"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pattern" />
+                    android:text="@string/pattern" />
 
             </android.support.design.widget.TabLayout>
 
@@ -77,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginStart="24dp"
-        android:text="Use &quot;Pocket&quot; Security"
+        android:text="@string/use_pocket_security"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@+id/vPocketSecurity"
@@ -106,8 +107,10 @@
         android:id="@+id/etPocketPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:inputType="numberPassword"
         app:layout_constraintTop_toBottomOf="@id/tvPocketSecurityUser"
         app:layout_constraintStart_toStartOf="@id/tvPocketSecurity"
-        app:layout_constraintEnd_toEndOf="@id/sPocketSecurity"/>
+        app:layout_constraintEnd_toEndOf="@id/sPocketSecurity"
+        tools:ignore="LabelFor" />
 
 </android.support.constraint.ConstraintLayout>
