@@ -36,12 +36,10 @@ public class BitsharesAccountMnemonicValidationField extends ValidationField {
             @Override
             public void onCarryOut() {
                 if (!request.getMnemonicIsCorrect()){
+                    setMessageForValue(mixedValue,validator.getContext().getResources().getString(R.string.error_invalid_account));
                     setValidForValue(mixedValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.error_invalid_account));
-                    validator.validationFailed(field);
                 } else {
                     setValidForValue(mixedValue, true);
-                    validator.validationSucceeded(field);
                 }
             }
         });

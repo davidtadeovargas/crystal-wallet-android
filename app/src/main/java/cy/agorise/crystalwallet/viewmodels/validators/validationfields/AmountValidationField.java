@@ -42,22 +42,18 @@ public class AmountValidationField extends ValidationField {
             CryptoCoinBalance balance = CrystalDatabase.getAppDatabase(amountField.getContext()).cryptoCoinBalanceDao().getBalanceFromAccount(this.account.getId(),cryptoCurrency.getId());
 
             if (newAmountValue > balance.getBalance()){
+                setMessageForValue(mixedValues, validator.getContext().getResources().getString(R.string.insufficient_amount));
                 setValidForValue(mixedValues, false);
-                setMessage(validator.getContext().getResources().getString(R.string.insufficient_amount));
-                validator.validationFailed(field);
             } else if (newAmountValue == 0){
+                setMessageForValue(mixedValues, validator.getContext().getResources().getString(R.string.amount_should_be_greater_than_zero));
                 setValidForValue(mixedValues, false);
-                setMessage(validator.getContext().getResources().getString(R.string.amount_should_be_greater_than_zero));
-                validator.validationFailed(field);
             } else {
                 setValidForValue(mixedValues, true);
-                validator.validationSucceeded(field);
             }
         } catch (NumberFormatException e){
             setLastValue("");
+            setMessageForValue("",validator.getContext().getResources().getString(R.string.please_enter_valid_amount));
             setValidForValue("", false);
-            setMessage(validator.getContext().getResources().getString(R.string.please_enter_valid_amount));
-            validator.validationFailed(this);
         }
     }
 }

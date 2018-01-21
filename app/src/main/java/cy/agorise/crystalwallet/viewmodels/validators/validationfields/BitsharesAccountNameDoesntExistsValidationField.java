@@ -27,7 +27,7 @@ public class BitsharesAccountNameDoesntExistsValidationField extends ValidationF
 
         if (newValue.equals("")){
             setValidForValue("", false);
-            setMessage("");
+            setMessageForValue("","");
             validator.validationFailed(this);
         } else {
 
@@ -38,12 +38,10 @@ public class BitsharesAccountNameDoesntExistsValidationField extends ValidationF
                 @Override
                 public void onCarryOut() {
                     if (request.getAccountExists()) {
+                        setMessageForValue(newValue,validator.getContext().getResources().getString(R.string.account_name_already_exist,"'"+newValue+"'"));
                         setValidForValue(newValue, false);
-                        setMessage(validator.getContext().getResources().getString(R.string.account_name_already_exist,"'"+newValue+"'"));
-                        validator.validationFailed(field);
                     } else {
                         setValidForValue(newValue, true);
-                        validator.validationSucceeded(field);
                     }
                 }
             });

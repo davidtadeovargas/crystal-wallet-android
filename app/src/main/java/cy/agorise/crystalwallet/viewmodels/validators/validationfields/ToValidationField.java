@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
@@ -13,17 +14,22 @@ import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAcco
 
 public class ToValidationField extends ValidationField {
 
-    private EditText fromField;
+    private Spinner fromField;
     private EditText toField;
 
-    public ToValidationField(EditText fromField, EditText toField){
+    public ToValidationField(Spinner fromField, EditText toField){
         super(toField);
         this.fromField = fromField;
         this.toField = toField;
     }
 
     public void validate(){
-        final String fromNewValue = fromField.getText().toString();
+        final String fromNewValue;
+        if (fromField.getSelectedItem() != null) {
+            fromNewValue = fromField.getSelectedItem().toString();
+        } else {
+            fromNewValue = "";
+        }
         final String toNewValue = toField.getText().toString();
         final String mixedValue = fromNewValue+"_"+toNewValue;
         this.setLastValue(mixedValue);
@@ -31,9 +37,8 @@ public class ToValidationField extends ValidationField {
         final ValidationField field = this;
 
         if (fromNewValue.equals(toNewValue)){
+            setMessageForValue(mixedValue,validator.getContext().getResources().getString(R.string.warning_msg_same_account));
             setValidForValue(mixedValue, false);
-            setMessage(validator.getContext().getResources().getString(R.string.warning_msg_same_account));
-            validator.validationFailed(field);
         } else {
 
             final ValidateExistBitsharesAccountRequest request = new ValidateExistBitsharesAccountRequest(toNewValue);
@@ -41,12 +46,10 @@ public class ToValidationField extends ValidationField {
                 @Override
                 public void onCarryOut() {
                     if (!request.getAccountExists()) {
+                        setMessageForValue(mixedValue, validator.getContext().getResources().getString(R.string.account_name_not_exist,"'"+toNewValue+"'"));
                         setValidForValue(mixedValue, false);
-                        setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
-                        validator.validationFailed(field);
                     } else {
                         setValidForValue(mixedValue, true);
-                        validator.validationSucceeded(field);
                     }
                 }
             });

@@ -41,15 +41,23 @@ public abstract class ValidationField {
         this.validating = false;
     }
 
-    public void setValidForValue(String value, boolean newValue){
+    public void setValidForValue(String value, boolean isValid){
         if (this.lastValue.equals(value)) {
             this.validating = false;
-            this.valid = newValue;
+            this.valid = isValid;
+
+            if (isValid) {
+                validator.validationSucceeded(this);
+            } else {
+                validator.validationFailed(this);
+            }
         }
     }
 
-    public void setMessage(String newValue){
-        this.message = newValue;
+    public void setMessageForValue(String value, String message){
+        if (this.lastValue.equals(value)) {
+            this.message = message;
+        }
     }
 
     public String getMessage(){

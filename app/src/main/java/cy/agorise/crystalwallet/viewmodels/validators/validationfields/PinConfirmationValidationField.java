@@ -29,12 +29,10 @@ public class PinConfirmationValidationField extends ValidationField {
 
 
             if (!newConfirmationValue.equals(newValue)){
+                this.setMessageForValue(mixedValue,this.validator.getContext().getResources().getString(R.string.mismatch_pin));
                 this.setValidForValue(mixedValue,false);
-                this.setMessage(this.validator.getContext().getResources().getString(R.string.mismatch_pin));
-                this.validator.validationFailed(this);
             } else {
                 this.setValidForValue(mixedValue, true);
-                this.validator.validationSucceeded(this);
             }
         }
     }

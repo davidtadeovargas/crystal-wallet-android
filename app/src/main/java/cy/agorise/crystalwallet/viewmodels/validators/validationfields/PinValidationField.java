@@ -25,12 +25,10 @@ public class PinValidationField extends ValidationField {
             this.startValidating();
 
             if (newValue.length() < 6) {
+                this.setMessageForValue(newValue, this.validator.getContext().getResources().getString(R.string.pin_number_warning));
                 this.setValidForValue(newValue, false);
-                this.setMessage(this.validator.getContext().getResources().getString(R.string.pin_number_warning));
-                this.validator.validationFailed(this);
             } else {
                 this.setValidForValue(newValue, true);
-                this.validator.validationSucceeded(this);
             }
         }
     }

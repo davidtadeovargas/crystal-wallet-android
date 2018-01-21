@@ -48,6 +48,12 @@ public class CryptoNetAccount {
     @ColumnInfo(name = "crypto_net")
     private CryptoNet mCryptoNet;
 
+    /*
+     * The name of the account
+     */
+    @ColumnInfo(name = "name")
+    private String mName;
+
     public CryptoNetAccount() {
     }
 
@@ -89,5 +95,17 @@ public class CryptoNetAccount {
 
     public void setCryptoNet(CryptoNet cryptoNet) {
         this.mCryptoNet = cryptoNet;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String mName) {
+        this.mName = mName;
+    }
+
+    public String toString(){
+        return this.getName();
     }
 }

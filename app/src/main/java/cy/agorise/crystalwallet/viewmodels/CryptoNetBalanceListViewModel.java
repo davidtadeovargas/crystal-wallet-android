@@ -28,4 +28,8 @@ public class CryptoNetBalanceListViewModel extends AndroidViewModel {
     public LiveData<List<CryptoNetBalance>> getCryptoNetBalanceList(){
         return this.cryptoNetBalanceList;
     }
+
+    public long getFirstBitsharesAccountId(){
+        return this.db.cryptoCoinBalanceDao().getFirstBitsharesAccountId();
+    }
 }

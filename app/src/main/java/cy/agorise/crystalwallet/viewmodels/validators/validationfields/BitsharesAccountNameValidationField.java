@@ -31,12 +31,10 @@ public class BitsharesAccountNameValidationField extends ValidationField {
             @Override
             public void onCarryOut() {
                 if (!request.getAccountExists()){
+                    setMessageForValue(newValue,validator.getContext().getResources().getString(R.string.account_name_not_exist));
                     setValidForValue(newValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
-                    validator.validationFailed(field);
                 } else {
                     setValidForValue(newValue, true);
-                    validator.validationSucceeded(field);
                 }
             }
         });
