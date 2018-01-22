@@ -26,6 +26,9 @@ public interface CryptoCoinBalanceDao {
     @Query("SELECT id as account_id, crypto_net FROM crypto_net_account")
     LiveData<List<CryptoNetBalance>> getAllBalances();
 
+    @Query("SELECT id FROM crypto_net_account WHERE crypto_net = 'BITSHARES' ORDER BY id ASC LIMIT 1")
+    long getFirstBitsharesAccountId();
+
     @Query("SELECT * FROM crypto_coin_balance WHERE account_id = :accountId")
     LiveData<List<CryptoCoinBalance>> getBalancesFromAccount(long accountId);
 

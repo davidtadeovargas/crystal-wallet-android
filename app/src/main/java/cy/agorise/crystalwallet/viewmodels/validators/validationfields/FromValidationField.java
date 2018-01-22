@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
@@ -13,15 +14,23 @@ import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAcco
 
 public class FromValidationField extends ValidationField {
 
-    private EditText fromField;
+    //private EditText fromField;
+    private Spinner fromField;
 
-    public FromValidationField(EditText fromField){
+    public FromValidationField(Spinner fromField){
         super(fromField);
         this.fromField = fromField;
     }
 
     public void validate(){
-        final String newValue = fromField.getText().toString();
+        final String newValue;
+
+        if (fromField.getSelectedItem() != null) {
+            newValue = fromField.getSelectedItem().toString();
+        } else {
+            newValue = "";
+        }
+
         this.setLastValue(newValue);
         this.startValidating();
         final ValidationField field = this;
@@ -31,12 +40,10 @@ public class FromValidationField extends ValidationField {
             @Override
             public void onCarryOut() {
                 if (!request.getAccountExists()){
+                    setMessageForValue(newValue,validator.getContext().getResources().getString(R.string.account_name_not_exist, "'"+newValue+"'"));
                     setValidForValue(newValue, false);
-                    setMessage(validator.getContext().getResources().getString(R.string.account_name_not_exist));
-                    validator.validationFailed(field);
                 } else {
                     setValidForValue(newValue, true);
-                    validator.validationSucceeded(field);
                 }
             }
         });

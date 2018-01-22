@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.fragments;
 import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,16 +37,21 @@ import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
+import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
+import cy.agorise.crystalwallet.views.CryptoNetAccountAdapter;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class SendTransactionFragment extends DialogFragment implements UIValidatorListener, ZXingScannerView.ResultHandler {
@@ -144,8 +150,15 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                 }
             });
             // TODO SendTransactionValidator to accept spFrom
-            //sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, spFrom, etTo, spAsset, etAmount, etMemo);
+            sendTransactionValidator = new SendTransactionValidator(this.getContext(), this.cryptoNetAccount, spFrom, etTo, spAsset, etAmount, etMemo);
             sendTransactionValidator.setListener(this);
+
+            CryptoNetAccountListViewModel cryptoNetAccountListViewModel = ViewModelProviders.of(this).get(CryptoNetAccountListViewModel.class);
+            List<CryptoNetAccount> cryptoNetAccounts = cryptoNetAccountListViewModel.getCryptoNetAccountList();
+            CryptoNetAccountAdapter fromSpinnerAdapter = new CryptoNetAccountAdapter(this.getContext(), android.R.layout.simple_spinner_item, cryptoNetAccounts);
+            spFrom.setAdapter(fromSpinnerAdapter);
+            spFrom.setSelection(0);
+
             // etFrom.setText(this.grapheneAccount.getName());
         }
 
@@ -214,11 +227,11 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         this.dismiss();
     }
 
-    //@OnClick(R.id.btnSend)
+    @OnClick(R.id.btnSend)
     public void sendTransaction(){
         if (this.sendTransactionValidator.isValid()) {
             //TODO convert the amount to long type using the precision of the currency
-            ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
+            final ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
                 this.getContext(),
                 this.grapheneAccount,
                 this.etTo.getText().toString(),
@@ -227,7 +240,19 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                 etMemo.getText().toString()
             );
 
-            //this.finish();
+            sendRequest.setListener(new CryptoNetInfoRequestListener() {
+                @Override
+                public void onCarryOut() {
+                    if (sendRequest.isSend()){
+                        try {
+                            this.finalize();
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    }
+                }
+            });
+            CryptoNetInfoRequests.getInstance().addRequest(sendRequest);
         }
     }
 
@@ -241,41 +266,50 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     public void onValidationSucceeded(final ValidationField field) {
         final SendTransactionFragment fragment = this;
 
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
 
-        if (field.getView() == spFrom) {
-            tvFromError.setText("");
-        } else if (field.getView() == etTo){
-            tvToError.setText("");
-        } else if (field.getView() == etAmount){
-            tvAmountError.setText("");
-        } else if (field.getView() == spAsset){
-            tvAssetError.setText("");
-        } else if (field.getView() == etMemo){
-            tvMemoError.setText("");
-        }
+                if (field.getView() == spFrom) {
+                    tvFromError.setText("");
+                } else if (field.getView() == etTo) {
+                    tvToError.setText("");
+                } else if (field.getView() == etAmount) {
+                    tvAmountError.setText("");
+                } else if (field.getView() == spAsset) {
+                    tvAssetError.setText("");
+                } else if (field.getView() == etMemo) {
+                    tvMemoError.setText("");
+                }
 
-        if (btnSend != null) {
-            if (sendTransactionValidator.isValid()) {
-                btnSend.setEnabled(true);
-            } else {
-                btnSend.setEnabled(false);
+                if (btnSend != null) {
+                    if (sendTransactionValidator.isValid()) {
+                        btnSend.setEnabled(true);
+                    } else {
+                        btnSend.setEnabled(false);
+                    }
+                }
             }
-        }
+        });
     }
 
     @Override
-    public void onValidationFailed(ValidationField field) {
-        if (field.getView() == spFrom) {
-            tvFromError.setText(field.getMessage());
-        } else if (field.getView() == etTo){
-            tvToError.setText(field.getMessage());
-        } else if (field.getView() == spAsset){
-            tvAssetError.setText(field.getMessage());
-        } else if (field.getView() == etAmount){
-            tvAmountError.setText(field.getMessage());
-        } else if (field.getView() == etMemo){
-            tvMemoError.setText(field.getMessage());
-        }
+    public void onValidationFailed(final ValidationField field) {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+
+                if (field.getView() == spFrom) {
+                    tvFromError.setText(field.getMessage());
+                } else if (field.getView() == etTo) {
+                    tvToError.setText(field.getMessage());
+                } else if (field.getView() == spAsset) {
+                    tvAssetError.setText(field.getMessage());
+                } else if (field.getView() == etAmount) {
+                    tvAmountError.setText(field.getMessage());
+                } else if (field.getView() == etMemo) {
+                    tvMemoError.setText(field.getMessage());
+                }
+            }
+        });
     }
 
     @Override

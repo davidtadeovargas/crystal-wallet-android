@@ -1,6 +1,8 @@
 package cy.agorise.crystalwallet.activities;
 
 import android.app.ActivityOptions;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
@@ -21,6 +23,9 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import java.util.List;
+
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,8 +35,9 @@ import cy.agorise.crystalwallet.fragments.ContactsFragment;
 import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
-import cy.agorise.crystalwallet.util.CircularImageView;
 import de.hdodenhof.circleimageview.CircleImageView;
+import cy.agorise.crystalwallet.models.CryptoNetBalance;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
 
 /**
  * Created by Henry Varona on 7/10/2017.
@@ -225,8 +231,17 @@ public class BoardActivity  extends AppCompatActivity {
         }
         ft.addToBackStack(null);
 
+        long sendCryptoNetAccountId = -1;
+        if (this.cryptoNetAccountId != -1){
+            sendCryptoNetAccountId = this.cryptoNetAccountId;
+        } else {
+            CryptoNetBalanceListViewModel cryptoNetBalanceListViewModel = ViewModelProviders.of(this).get(CryptoNetBalanceListViewModel.class);
+            sendCryptoNetAccountId = cryptoNetBalanceListViewModel.getFirstBitsharesAccountId();
+        }
+
+
         // Create and show the dialog.
-        SendTransactionFragment newFragment = SendTransactionFragment.newInstance(this.cryptoNetAccountId);
+        SendTransactionFragment newFragment = SendTransactionFragment.newInstance(sendCryptoNetAccountId);
         newFragment.show(ft, "SendDialog");
     }
 

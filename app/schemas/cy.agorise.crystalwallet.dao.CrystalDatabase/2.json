@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "6a2b148b120a70c3faee581a13c96cf5",
+    "identityHash": "a44ccb96c8213951403ed2a283fb3367",
     "entities": [
       {
         "tableName": "account_seed",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "crypto_net_account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `seed_id` INTEGER NOT NULL, `account_index` INTEGER NOT NULL, `crypto_net` TEXT, FOREIGN KEY(`seed_id`) REFERENCES `account_seed`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `seed_id` INTEGER NOT NULL, `account_index` INTEGER NOT NULL, `crypto_net` TEXT, `name` TEXT, FOREIGN KEY(`seed_id`) REFERENCES `account_seed`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "mId",
@@ -67,6 +67,12 @@
           {
             "fieldPath": "mCryptoNet",
             "columnName": "crypto_net",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mName",
+            "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -616,7 +622,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6a2b148b120a70c3faee581a13c96cf5\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a44ccb96c8213951403ed2a283fb3367\")"
     ]
   }
 }
