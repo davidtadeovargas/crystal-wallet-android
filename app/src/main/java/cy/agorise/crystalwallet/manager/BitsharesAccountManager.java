@@ -268,13 +268,18 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Broadcast a transaction request
      */
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
-        Asset feeAsset = new Asset(sendRequest.getAsset());
+        //TODO feeAsset
+        String idAsset = getAssetInfoByName(sendRequest.getAsset());
+        Asset feeAsset = new Asset(idAsset);
         UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
-        UserAccount toUserAccount = new UserAccount(sendRequest.getToAccount());
+
+        GrapheneAccount toUserGrapheneAccount = this.getAccountInfoByName(sendRequest.getToAccount());
+        //TODO bad user to user account
+        UserAccount toUserAccount = new UserAccount(toUserGrapheneAccount.getAccountId());
         TransferOperationBuilder builder = new TransferOperationBuilder()
                 .setSource(fromUserAccount)
                 .setDestination(toUserAccount)
-                .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(sendRequest.getAsset())))
+                .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(idAsset)))
                 .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
         if(sendRequest.getMemo() != null) {
             //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
@@ -284,6 +289,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         operationList.add(builder.build());
 
         ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
+
         Transaction transaction = new Transaction(privateKey, null, operationList);
 
         ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
@@ -351,6 +357,31 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
 
         return listener.account;
+    }
+
+    //TODO expand function to be more generic
+    private String getAssetInfoByName(String assetName){
+        final Object SYNC = new Object();
+        long timeout = 60000;
+
+        AssetIdOrNameListener nameListener = new AssetIdOrNameListener(SYNC);
+        ApiRequest request = new ApiRequest(0, nameListener);
+        ArrayList<String> assetNames = new ArrayList<>();
+        assetNames.add(assetName);
+        GrapheneApiGenerator.getAssetByName(assetNames, request);
+
+        long cTime = System.currentTimeMillis();
+
+        while(!nameListener.ready && (System.currentTimeMillis()-cTime) < timeout){
+            synchronized (SYNC){
+                try {
+                    SYNC.wait(100);
+                } catch (InterruptedException ignore) {}
+            }
+        }
+
+        return nameListener.asset.getBitsharesId();
+
     }
 
     /**
@@ -536,6 +567,43 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 account = new GrapheneAccount();
                 account.setAccountId(props.id);
                 account.setName(props.name);
+            }
+
+            synchronized (SYNC){
+                ready = true;
+                SYNC.notifyAll();
+            }
+        }
+
+        @Override
+        public void fail(int idPetition) {
+            synchronized (SYNC){
+                ready = true;
+                SYNC.notifyAll();
+            }
+        }
+    }
+
+    /**
+     * Class to retrieve the asset id or the asset name, if one of those is missing
+     */
+    private class AssetIdOrNameListener implements ApiRequestListener{
+        final Object SYNC;
+        boolean ready = false;
+
+        BitsharesAsset asset;
+
+        AssetIdOrNameListener(Object SYNC) {
+            this.SYNC = SYNC;
+        }
+
+        @Override
+        public void success(Object answer, int idPetition) {
+            if(answer instanceof ArrayList) {
+
+                if (((ArrayList) answer).get(0) instanceof BitsharesAsset) {
+                    asset = (BitsharesAsset) ((ArrayList) answer).get(0);
+                }
             }
 
             synchronized (SYNC){
