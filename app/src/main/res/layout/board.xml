@@ -41,6 +41,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/transparent"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="-20dp"
                 app:layout_collapseMode="none"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -59,28 +60,33 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <cy.agorise.crystalwallet.util.CircularImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/toolbar_user_img"
                         android:layout_width="?attr/actionBarSize"
                         android:layout_height="?attr/actionBarSize"
                         android:layout_marginEnd="32dp"
                         android:src="@drawable/ken_code_gravatar"
+                        android:transitionName="gravatarTransition"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
+                        android:id="@+id/lightning"
                         android:layout_width="16dp"
                         android:layout_height="30dp"
                         app:srcCompat="@drawable/ic_lightning_24dp"
+                        android:transitionName="lightningTransition"
                         android:contentDescription="@string/lightning_icon"
                         app:layout_constraintStart_toStartOf="@id/toolbar_user_img"
                         app:layout_constraintBottom_toBottomOf="@id/toolbar_user_img"/>
 
                     <ImageView
+                        android:id="@+id/triangle"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         app:srcCompat="@drawable/ic_arrow_24dp"
+                        android:transitionName="triangleTransition"
                         android:contentDescription="@string/small_triangle_icon"
                         app:layout_constraintEnd_toEndOf="@id/toolbar_user_img"
                         app:layout_constraintBottom_toBottomOf="@id/toolbar_user_img"/>

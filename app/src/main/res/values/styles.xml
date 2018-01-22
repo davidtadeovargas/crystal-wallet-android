@@ -32,6 +32,23 @@
         <item name="android:colorButtonNormal">@color/white</item>
         <item name="android:fontFamily">@font/opensans</item>
         <item name="fontFamily">@font/opensans</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
+        <!-- enable window content transitions -->
+        <item name="android:windowContentTransitions">true</item>
+
+        <!-- specify shared element transitions
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/change_image_transform</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/change_image_transform</item> -->
+
+    </style>
+
+    <style name="ActivityDialog" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -75,13 +92,17 @@
         <item name="android:windowExitAnimation">@anim/receive_transaction_out</item>
     </style>
 
-    <style name="AccountsTheme" parent="Theme.AppCompat.DayNight.Dialog">
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/AccountsAnimation.Window</item>
-    </style>
-
     <style name="AccountsAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/accounts_in</item>
         <item name="android:windowExitAnimation">@anim/accounts_out</item>
+    </style>
+
+    <style name="Widget.Button" parent="android:Widget.Button">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 </resources>

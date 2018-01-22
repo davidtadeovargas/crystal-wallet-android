@@ -12,13 +12,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cy.agorise.crystalwallet.BuildConfig;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
+import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.GeneralSettingsFragment;
+import cy.agorise.crystalwallet.fragments.SecuritySettingsFragment;
 
 /**
  * Created by seven on 12/28/17.
@@ -37,6 +42,9 @@ public class SettingsActivity extends AppCompatActivity{
 
     @BindView(R.id.surface_view)
     public SurfaceView mSurfaceView;
+
+    @BindView(R.id.tvBuildVersion)
+    public TextView tvBuildVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,11 @@ public class SettingsActivity extends AppCompatActivity{
 
         mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
+
+        // Automatically get build version from app information
+        String buildVersion = "v";
+        buildVersion += BuildConfig.VERSION_NAME;
+        tvBuildVersion.setText(buildVersion);
     }
 
     private class SettingsPagerAdapter extends FragmentStatePagerAdapter {
@@ -88,14 +101,12 @@ public class SettingsActivity extends AppCompatActivity{
             switch (position){
                 case 0:
                     return new GeneralSettingsFragment();
-                /*case 1:
-                    return null;
-                case 2:
-                    return null;*/
                 case 1:
+                    return new SecuritySettingsFragment();
                 case 2:
+                    return new BackupsSettingsFragment();
                 case 3:
-                    return new BalanceFragment();
+                    return new AccountsSettingsFragment();
             }
 
 

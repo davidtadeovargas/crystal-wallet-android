@@ -473,4 +473,27 @@
     <string name="go_back_arrow">Go back arrow</string>
     <string name="settings2">Settings</string>
     <string name="info_icon">Info icon</string>
+    <string name="bin_file_description">Bin file. Always save your backup .bin file to a secret MicroSD card or USB Stick.</string>
+    <string name="brainkey_description">Brainkey. Account recovery words that can be captured or copied, but not edited.</string>
+    <string name="wif_key_description">WIF Key (Advanced). A long string of cryptic text that can be used with other Wallets.</string>
+    <string name="create_a_backup">CREATE A BACKUP</string>
+    <string name="view_and_copy"><![CDATA[View & Copy]]></string>
+    <string name="upgrade_description">Upgrade to LifeTime Membership (LTM). Bitshares\' LTM accounts pay near-zero fees, get 80% cashback and bonuses for referrals.</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="import_description">Import Accounts. Import multiple accounts from blockchains such as Bitshares, Bitcoin, Steem, Dash and more.</string>
+    <string name="import_">Import</string>
+    <string name="refresh_description">Refresh keys. Ony for bitshares accounts.</string>
+    <string name="refresh">Refresh</string>
+    <string name="remove_description">Remove an account from this Wallet. The account removed will still reside on the blockchain.</string>
+    <string name="remove">Remove</string>
+    <string name="user_name_password_placeholder">user_name Password</string>
+    <string name="version_placeholder">v1.0</string>
+    <string name="block_number_placeholder">block# 14966596</string>
+    <string name="current_pin">Current PIN</string>
+    <string name="new_pin">New PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="use_pocket_security">Use \"Pocket\" Security</string>
+    <string name="none">None</string>
+    <string name="pin">Pin</string>
+    <string name="pattern">Pattern</string>
 </resources>
