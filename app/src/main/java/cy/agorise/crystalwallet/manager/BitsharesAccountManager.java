@@ -60,9 +60,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             GrapheneAccount grapheneAccount = (GrapheneAccount) account;
             boolean created = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
-                    new Address(ECKey.fromPublicOnly(grapheneAccount.getOwnerKey(context).getPubKey()),"BTS").toString(),
-                    new Address(ECKey.fromPublicOnly(grapheneAccount.getActiveKey(context).getPubKey()),"BTS").toString(),
-                    new Address(ECKey.fromPublicOnly(grapheneAccount.getMemoKey(context).getPubKey()),"BTS").toString(),GrapheneApiGenerator.faucetUrl);
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getOwnerKey(context).getPubKey())).toString(),
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getActiveKey(context).getPubKey())).toString(),
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getMemoKey(context).getPubKey())).toString(),GrapheneApiGenerator.faucetUrl);
 
             if(created) {
                 GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
@@ -225,6 +225,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         long idSeed = db.accountSeedDao().insertAccountSeed(seed);
         seed.setId(idSeed);
+        seed.setName(createRequest.getAccountName());
         GrapheneAccount account = new GrapheneAccount();
         account.setName(createRequest.getAccountName());
         account.setSeedId(idSeed);

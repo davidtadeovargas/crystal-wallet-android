@@ -89,6 +89,7 @@ public class GrapheneAccount extends CryptoNetAccount {
         if(seed.getType().equals(SeedType.BRAINKEY)){
             return new BrainKey(seed.getMasterSeed(),0).getPrivateKey();
         }else{
+            System.out.println("calculating activekey from bip39");
             DeterministicKey masterKey = (DeterministicKey) seed.getPrivateKey();
             DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
                     new ChildNumber(48, true));
