@@ -54,6 +54,8 @@ import cy.agorise.graphenej.operations.TransferOperationBuilder;
  */
 public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetInfoRequestsListener {
 
+    private final static String BITSHARES_TESTNET_CHAIN_ID= "9cf6f255a208100d2bb275a3c52f4b1589b7ec9c9bfc2cb2a5fe6411295106d8";
+
     @Override
     public CryptoNetAccount createAccountFromSeed(CryptoNetAccount account, Context context) {
         if(account instanceof  GrapheneAccount) {
@@ -292,6 +294,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
 
         Transaction transaction = new Transaction(privateKey, null, operationList);
+        transaction.setChainId(BITSHARES_TESTNET_CHAIN_ID);
 
         ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
             @Override
