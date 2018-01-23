@@ -1,10 +1,14 @@
 package cy.agorise.crystalwallet.views;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.activities.BackupSeedActivity;
+import cy.agorise.crystalwallet.activities.SettingsActivity;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 
@@ -14,10 +18,12 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 
 public class AccountSeedViewHolder extends RecyclerView.ViewHolder {
     private TextView tvAccountSeedName;
+    private Context context;
 
     public AccountSeedViewHolder(View itemView) {
         super(itemView);
         tvAccountSeedName = (TextView) itemView.findViewById(R.id.tvAccountSeedName);
+        context = itemView.getContext();
     }
 
     public void clear(){
@@ -29,6 +35,15 @@ public class AccountSeedViewHolder extends RecyclerView.ViewHolder {
             tvAccountSeedName.setText("loading...");
         } else {
             tvAccountSeedName.setText(accountSeed.getName());
+
+            tvAccountSeedName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, BackupSeedActivity.class);
+                    intent.putExtra("SEED_ID", accountSeed.getId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

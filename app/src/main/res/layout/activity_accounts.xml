@@ -89,8 +89,17 @@
             app:layout_constraintTop_toTopOf="@id/secondView"
             app:srcCompat="@drawable/ic_add_24dp" />
 
-        <View
+        <!--<View
             android:id="@+id/thirdView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/secondView" />
+        -->
+        <cy.agorise.crystalwallet.views.AccountSeedListView
+            android:id="@+id/vAccountSeedList"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:background="@color/white"
@@ -106,10 +115,10 @@
             android:text="@string/dont_have_multiple_accounts"
             android:textAlignment="center"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/thirdView"
-            app:layout_constraintEnd_toEndOf="@id/thirdView"
-            app:layout_constraintStart_toStartOf="@id/thirdView"
-            app:layout_constraintTop_toTopOf="@id/thirdView" />
+            app:layout_constraintBottom_toBottomOf="@id/vAccountSeedList"
+            app:layout_constraintEnd_toEndOf="@id/vAccountSeedList"
+            app:layout_constraintStart_toStartOf="@id/vAccountSeedList"
+            app:layout_constraintTop_toTopOf="@id/vAccountSeedList" />
 
         <View
             android:id="@+id/forthView"
@@ -118,7 +127,7 @@
             android:background="@color/lightGray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/thirdView" />
+            app:layout_constraintTop_toBottomOf="@id/vAccountSeedList" />
 
         <ImageView
             android:id="@+id/ivSettings"

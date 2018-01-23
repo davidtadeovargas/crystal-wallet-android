@@ -46,6 +46,7 @@ public class BackupSeedActivity extends AppCompatActivity {
 
         if (seedId > -1) {
             accountSeedViewModel = ViewModelProviders.of(this).get(AccountSeedViewModel.class);
+            accountSeedViewModel.loadSeed(seedId);
             LiveData<AccountSeed> liveDataAccountSeed = accountSeedViewModel.getAccountSeed();
             liveDataAccountSeed.observe(this, new Observer<AccountSeed>() {
                 @Override
@@ -60,8 +61,8 @@ public class BackupSeedActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.btnCancel)
-    public void cancel(){
+    @OnClick(R.id.btnOk)
+    public void btnOkClick(){
         this.finish();
     }
 }
