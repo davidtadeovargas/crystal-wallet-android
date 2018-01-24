@@ -465,7 +465,6 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                 if (info == null) {
                     //The cryptoCurrency is not in the database, queringfor its data
-                    System.out.println("CryptoCurrency not in database");
                     final Object SYNC = new Object(); //Object to syn the answer
                     ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
                         @Override
@@ -628,7 +627,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     /**
      * Class to retrieve the transaction date
      */
-    private static class GetTransactionDate implements ApiRequestListener{
+    public static class GetTransactionDate implements ApiRequestListener{
         /**
          * The transaction to retrieve
          */
@@ -638,7 +637,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
          */
         TransactionDao transactionDao;
 
-        GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
+        public GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
             this.transaction = transaction;
             this.transactionDao = transactionDao;
         }

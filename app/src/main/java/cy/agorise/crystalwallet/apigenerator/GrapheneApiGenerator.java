@@ -12,16 +12,19 @@ import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
 import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
 import cy.agorise.crystalwallet.dao.CryptoCurrencyDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.dao.TransactionDao;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
+import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
+import cy.agorise.graphenej.BaseOperation;
 import cy.agorise.graphenej.Converter;
 import cy.agorise.graphenej.LimitOrder;
 import cy.agorise.graphenej.ObjectType;
@@ -43,9 +46,11 @@ import cy.agorise.graphenej.interfaces.WitnessResponseListener;
 import cy.agorise.graphenej.models.AccountBalanceUpdate;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
+import cy.agorise.graphenej.models.BroadcastedTransaction;
 import cy.agorise.graphenej.models.HistoricalTransfer;
 import cy.agorise.graphenej.models.SubscriptionResponse;
 import cy.agorise.graphenej.models.WitnessResponse;
+import cy.agorise.graphenej.operations.TransferOperation;
 
 
 /**
@@ -69,6 +74,7 @@ public abstract class GrapheneApiGenerator {
         @Override
         public void onError(BaseResponse.Error error) {
             //TODO subcription hub error
+            System.out.println("GrapheneAPI error");
         }
     });
 
@@ -347,15 +353,16 @@ public abstract class GrapheneApiGenerator {
      */
     public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId,
                                                  final Context context){
+        System.out.println("GrapheneAPI subscribe to account balance update");
         if(!currentBitsharesListener.containsKey(accountId)){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-        final CryptoCoinBalanceDao balanceDao = db.cryptoCoinBalanceDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
         final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
+        final TransactionDao transactionDao = db.transactionDao();
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
-                return ObjectType.BALANCE_OBJECT;
+                return ObjectType.TRANSACTION_OBJECT;
             }
 
             @Override
@@ -363,43 +370,66 @@ public abstract class GrapheneApiGenerator {
                 List<Serializable> updatedObjects = (List<Serializable>) response.params.get(1);
                 if(updatedObjects.size() > 0){
                     for(Serializable update : updatedObjects){
-                        if(update instanceof AccountBalanceUpdate){
-                            AccountBalanceUpdate balanceUpdate = (AccountBalanceUpdate) update;
-                            if(balanceUpdate.owner.equals(accountBitsharesId)){
-                                final CryptoCoinBalance balance = new CryptoCoinBalance();
-                                balance.setAccountId(accountId);
-                                balance.setBalance(((AccountBalanceUpdate) update).balance);
-                                BitsharesAssetInfo assetInfo = bitsharesAssetDao.getBitsharesAssetInfoById(((AccountBalanceUpdate) update).asset_type);
-                                if(assetInfo == null ){
-                                    final String assetType = ((AccountBalanceUpdate) update).asset_type;
-                                    ArrayList<String> idAssets = new ArrayList<>();
-                                    idAssets.add(assetType);
-                                    ApiRequest getAssetRequest = new ApiRequest(1, new ApiRequestListener() {
-                                        @Override
-                                        public void success(Object answer, int idPetition) {
-                                            if(answer instanceof  BitsharesAsset){
-                                                BitsharesAssetInfo info = new BitsharesAssetInfo((BitsharesAsset) answer);
-                                                long cryptoCurrencyId = cryptoCurrencyDao.insertCryptoCurrency((CryptoCurrency)answer )[0];
-                                                info.setCryptoCurrencyId(cryptoCurrencyId);
-                                                bitsharesAssetDao.insertBitsharesAssetInfo(info);
-                                                balance.setCryptoCurrencyId(cryptoCurrencyId);
-                                                balanceDao.insertCryptoCoinBalance(balance);
+                        if(update instanceof BroadcastedTransaction){
+                            BroadcastedTransaction transactionUpdate = (BroadcastedTransaction) update;
+                            for(BaseOperation operation : transactionUpdate.getTransaction().getOperations()){
+                                if(operation instanceof TransferOperation){
+                                    TransferOperation tOperation = (TransferOperation) operation;
+                                    if(tOperation.getFrom().getObjectId().equals(accountBitsharesId) || tOperation.getTo().getObjectId().equals(accountBitsharesId)){
+                                        GrapheneApiGenerator.getAccountBalance(accountId,accountBitsharesId,context);
+                                        CryptoCoinTransaction transaction = new CryptoCoinTransaction();
+                                        transaction.setAccountId(accountId);
+                                        transaction.setAmount(tOperation.getAssetAmount().getAmount().longValue());
+                                        BitsharesAssetInfo info = bitsharesAssetDao.getBitsharesAssetInfoById(tOperation.getAssetAmount().getAsset().getObjectId());
+                                        if (info == null) {
+                                            //The cryptoCurrency is not in the database, queringfor its data
+                                            final Object SYNC = new Object(); //Object to syn the answer
+                                            ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
+                                                @Override
+                                                public void success(Object answer, int idPetition) {
+                                                    ArrayList<BitsharesAsset> assets = (ArrayList<BitsharesAsset>) answer;
+                                                    for(BitsharesAsset asset : assets){
+                                                        long idCryptoCurrency = cryptoCurrencyDao.insertCryptoCurrency(asset)[0];
+                                                        BitsharesAssetInfo info = new BitsharesAssetInfo(asset);
+                                                        info.setCryptoCurrencyId(idCryptoCurrency);
+                                                        asset.setId((int)idCryptoCurrency);
+                                                        bitsharesAssetDao.insertBitsharesAssetInfo(info);
+                                                    }
+                                                    synchronized (SYNC){
+                                                        SYNC.notifyAll();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void fail(int idPetition) {
+                                                    synchronized (SYNC){
+                                                        SYNC.notifyAll();
+                                                    }
+                                                }
+                                            });
+                                            ArrayList<String> assets = new ArrayList<>();
+                                            assets.add(tOperation.getAssetAmount().getAsset().getObjectId());
+                                            GrapheneApiGenerator.getAssetById(assets,assetRequest);
+
+                                            synchronized (SYNC){
+                                                try {SYNC.wait(60000);} catch (InterruptedException ignore) {}
                                             }
+                                            info = bitsharesAssetDao.getBitsharesAssetInfoById(tOperation.getAssetAmount().getAsset().getObjectId());
                                         }
-
-                                        @Override
-                                        public void fail(int idPetition) {
-
+                                        if( info == null){
+                                            //We couldn't retrieve the cryptocurrency
+                                            return;
                                         }
-                                    });
-                                    getAssetById(idAssets,getAssetRequest);
-                                }else {
-
-                                    balance.setCryptoCurrencyId(assetInfo.getCryptoCurrencyId());
-                                    balanceDao.insertCryptoCoinBalance(balance);
+                                        transaction.setIdCurrency((int)info.getCryptoCurrencyId());
+                                        transaction.setConfirmed(true); //graphene transaction are always confirmed
+                                        transaction.setFrom(tOperation.getFrom().getObjectId());
+                                        transaction.setInput(!tOperation.getFrom().getObjectId().equals(accountBitsharesId));
+                                        transaction.setTo(tOperation.getTo().getObjectId());
+                                        transaction.setDate(new Date());
+                                        transactionDao.insertTransaction(transaction);
+                                        //GrapheneApiGenerator.getBlockHeaderTime(, new ApiRequest(0, new BitsharesAccountManager.GetTransactionDate(transaction, db.transactionDao())));
+                                    }
                                 }
-                                BitsharesAccountManager.refreshAccountTransactions(accountId,context);
-
                             }
                         }
                     }
