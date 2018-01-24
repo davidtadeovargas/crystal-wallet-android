@@ -15,6 +15,9 @@ import android.widget.Button;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.AccountSeed;
@@ -36,26 +39,33 @@ public class IntroActivity extends AppCompatActivity {
     TransactionListViewModel transactionListViewModel;
     TransactionListView transactionListView;
 
+    @BindView(R.id.btnCreateAccount)
+    public Button btnCreateAccount;
+
+    @BindView(R.id.btnImportAccount)
+    public Button btnImportAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+        ButterKnife.bind(this);
 
         //Checks if the user has any seed created
         AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
 
-        if (accountSeedListViewModel.accountSeedsCount() == 0){
+        /*if (accountSeedListViewModel.accountSeedsCount() == 0){
             //If the user doesn't have any seeds created, then
             //send the user to create/import an account
             //Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
             //Intent intent = new Intent(this, ImportSeedActivity.class);
-            Intent intent = new Intent(this, CreateSeedActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this, CreateSeedActivity.class);
+            //startActivity(intent);
         } else {
             //Intent intent = new Intent(this, CreateSeedActivity.class);
             Intent intent = new Intent(this, BoardActivity.class);
             startActivity(intent);
-        }
+        }*/
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);
@@ -91,5 +101,16 @@ public class IntroActivity extends AppCompatActivity {
                 transactionListView.setData(cryptoCoinTransactions);
             }
         });*/
+    }
+
+    @OnClick(R.id.btnCreateAccount)
+    public void createAccount() {
+        Intent intent = new Intent(this, CreateSeedActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btnImportAccount)
+    public void importAccount() {
+
     }
 }

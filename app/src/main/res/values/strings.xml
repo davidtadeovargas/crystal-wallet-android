@@ -496,4 +496,6 @@
     <string name="none">None</string>
     <string name="pin">Pin</string>
     <string name="pattern">Pattern</string>
+    <string name="new_user">New user?</string>
+    <string name="existing_user">Existing user?</string>
 </resources>
