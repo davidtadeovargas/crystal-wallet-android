@@ -231,11 +231,14 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     public void sendTransaction(){
         if (this.sendTransactionValidator.isValid()) {
             //TODO convert the amount to long type using the precision of the currency
+            Long amountFromEditText = Long.parseLong(this.etAmount.getText().toString());
+            Long amount = amountFromEditText*Math.round(Math.pow(10,((CryptoCurrency)spAsset.getSelectedItem()).getPrecision()));
+
             final ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
                 this.getContext(),
                 this.grapheneAccount,
                 this.etTo.getText().toString(),
-                Long.parseLong(this.etAmount.getText().toString()),
+                amount,
                 ((CryptoCurrency)spAsset.getSelectedItem()).getName(),
                 etMemo.getText().toString()
             );

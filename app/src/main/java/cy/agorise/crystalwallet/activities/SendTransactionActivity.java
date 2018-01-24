@@ -157,11 +157,15 @@ public class SendTransactionActivity extends AppCompatActivity implements UIVali
     public void importSend(){
         if (this.sendTransactionValidator.isValid()) {
             //TODO convert the amount to long type using the precision of the currency
+            Long amountFromEditText = Long.parseLong(this.etAmount.getText().toString());
+            Long amount = amountFromEditText*Math.round(Math.pow(10,((CryptoCurrency)spAsset.getSelectedItem()).getPrecision()));
+
+
             ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
                 this.getApplicationContext(),
                 this.grapheneAccount,
                 this.etTo.getText().toString(),
-                Long.parseLong(this.etAmount.getText().toString()),
+                amount,
                 ((CryptoCurrency)spAsset.getSelectedItem()).getName(),
                 etMemo.getText().toString()
             );
