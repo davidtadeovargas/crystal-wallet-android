@@ -7,9 +7,12 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
@@ -39,6 +42,9 @@ public class IntroActivity extends AppCompatActivity {
     TransactionListViewModel transactionListViewModel;
     TransactionListView transactionListView;
 
+    @BindView(R.id.surface_view)
+    public SurfaceView mSurfaceView;
+
     @BindView(R.id.btnCreateAccount)
     public Button btnCreateAccount;
 
@@ -51,8 +57,30 @@ public class IntroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_intro);
         ButterKnife.bind(this);
 
+        // Appbar animation
+        mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                //Log.d(TAG,"surfaceCreated");
+                MediaPlayer mediaPlayer = MediaPlayer.create(IntroActivity.this, R.raw.appbar_background);
+                mediaPlayer.setDisplay(mSurfaceView.getHolder());
+                mediaPlayer.setLooping(true);
+                mediaPlayer.start();
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+                //Log.d(TAG,"surfaceChanged");
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+                //Log.d(TAG,"surfaceDestroyed");
+            }
+        });
+
         //Checks if the user has any seed created
-        AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
+        /*AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
 
         if (accountSeedListViewModel.accountSeedsCount() == 0){
             //If the user doesn't have any seeds created, then
@@ -65,7 +93,7 @@ public class IntroActivity extends AppCompatActivity {
             //Intent intent = new Intent(this, CreateSeedActivity.class);
             Intent intent = new Intent(this, BoardActivity.class);
             startActivity(intent);
-        }
+        }*/
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);

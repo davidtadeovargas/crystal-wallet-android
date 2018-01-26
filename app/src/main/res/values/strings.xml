@@ -501,4 +501,6 @@
     <string name="connection_status">Connection status</string>
     <string name="people_icon">People icon</string>
     <string name="camera_feed_to_scan_qr">Camera feed to scan QR</string>
+    <string name="create_account">Create Account</string>
+    <string name="import_account">Import Account</string>
 </resources>
