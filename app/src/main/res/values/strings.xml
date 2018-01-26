@@ -503,4 +503,7 @@
     <string name="camera_feed_to_scan_qr">Camera feed to scan QR</string>
     <string name="create_account">Create Account</string>
     <string name="import_account">Import Account</string>
+    <string name="import_account_options_description">Select one option to import your existing account</string>
+    <string name="import_account_seed">Import Account Seed</string>
+    <string name="import_account_backup">Import Account Backup</string>
 </resources>

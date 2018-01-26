@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.fragments.ImportAccountOptionsFragment;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
@@ -139,6 +142,15 @@ public class IntroActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnImportAccount)
     public void importAccount() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("importAccountOptions");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
 
+        // Create and show the dialog.
+        ImportAccountOptionsFragment newFragment = ImportAccountOptionsFragment.newInstance();
+        newFragment.show(ft, "importAccountOptions");
     }
 }
