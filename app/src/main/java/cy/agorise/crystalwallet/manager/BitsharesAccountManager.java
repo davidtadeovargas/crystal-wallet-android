@@ -57,101 +57,149 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     private final static String BITSHARES_TESTNET_CHAIN_ID= "9cf6f255a208100d2bb275a3c52f4b1589b7ec9c9bfc2cb2a5fe6411295106d8";
 
     @Override
-    public CryptoNetAccount createAccountFromSeed(CryptoNetAccount account, Context context) {
+    public void createAccountFromSeed(CryptoNetAccount account, final ManagerRequest request, final Context context) {
         if(account instanceof  GrapheneAccount) {
 
-            GrapheneAccount grapheneAccount = (GrapheneAccount) account;
-            boolean created = BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
+            final GrapheneAccount grapheneAccount = (GrapheneAccount) account;
+            ApiRequest creationRequest = new ApiRequest(1, new ApiRequestListener() {
+                @Override
+                public void success(Object answer, int idPetition) {
+                    getAccountInfoByName(grapheneAccount.getName(), new ManagerRequest() {
+                        @Override
+                        public void success(Object answer) {
+                            GrapheneAccount fetch = (GrapheneAccount) answer;
+                            fetch.setSeedId(grapheneAccount.getSeedId());
+                            fetch.setCryptoNet(grapheneAccount.getCryptoNet());
+                            fetch.setAccountIndex(grapheneAccount.getAccountIndex());
+
+                            CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+                            long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(fetch)[0];
+                            fetch.setId(idAccount);
+                            db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(fetch));
+                            subscribeBitsharesAccount(fetch.getId(),fetch.getAccountId(),context);
+                            request.success(fetch);
+                        }
+
+                        @Override
+                        public void fail() {
+                            //TODO get account data fail
+                        }
+                    });
+
+                }
+
+                @Override
+                public void fail(int idPetition) {
+                    request.fail();
+                }
+            });
+            BitsharesFaucetApiGenerator.registerBitsharesAccount(grapheneAccount.getName(),
                     new Address(ECKey.fromPublicOnly(grapheneAccount.getOwnerKey(context).getPubKey())).toString(),
                     new Address(ECKey.fromPublicOnly(grapheneAccount.getActiveKey(context).getPubKey())).toString(),
-                    new Address(ECKey.fromPublicOnly(grapheneAccount.getMemoKey(context).getPubKey())).toString(),GrapheneApiGenerator.faucetUrl);
-
-            if(created) {
-                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
-                fetch.setSeedId(grapheneAccount.getSeedId());
-                fetch.setCryptoNet(grapheneAccount.getCryptoNet());
-                fetch.setAccountIndex(grapheneAccount.getAccountIndex());
-
-                CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-                long idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(fetch)[0];
-                fetch.setId(idAccount);
-                db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(fetch));
-
-                GrapheneApiGenerator.subscribeBitsharesAccount(fetch.getId(), fetch.getAccountId(), context);
-                BitsharesAccountManager.refreshAccountTransactions(fetch.getId(), context);
-                GrapheneApiGenerator.getAccountBalance(fetch.getId(), fetch.getAccountId(), context);
-                return fetch;
-            }
+                    new Address(ECKey.fromPublicOnly(grapheneAccount.getMemoKey(context).getPubKey())).toString(),
+                    GrapheneApiGenerator.faucetUrl, creationRequest);
         }
-        return null;
     }
 
     @Override
-    public CryptoNetAccount importAccountFromSeed(CryptoNetAccount account, Context context) {
+    public void importAccountFromSeed(CryptoNetAccount account, final Context context) {
 
         if(account instanceof GrapheneAccount) {
-            GrapheneAccount grapheneAccount = (GrapheneAccount) account;
+            final GrapheneAccount grapheneAccount = (GrapheneAccount) account;
 
             if(grapheneAccount.getAccountId() == null){
-                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
-                if(fetch == null) {
-                    //TODO grapaheneAccount null, error fetching
-                    return null;
-                }
-                grapheneAccount.setAccountId(fetch.getAccountId());
+                 this.getAccountInfoByName(grapheneAccount.getName(), new ManagerRequest() {
+                    @Override
+                    public void success(Object answer) {
+                        GrapheneAccount fetch = (GrapheneAccount) answer;
+                        grapheneAccount.setAccountId(fetch.getAccountId());
+                        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+                        db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
+                        db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
+                        subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
+                    }
+
+                    @Override
+                    public void fail() {
+                        //TODO get account data fail
+                    }
+                });
+
             }else if(grapheneAccount.getName() == null){
-                GrapheneAccount fetch = this.getAccountInfoById(grapheneAccount.getAccountId());
-                if(fetch == null) {
-                    //TODO grapaheneAccount null, error fetching
-                    return null;
-                }
-                grapheneAccount.setName(fetch.getName());
+                this.getAccountInfoById(grapheneAccount.getAccountId(), new ManagerRequest() {
+                    @Override
+                    public void success(Object answer) {
+                        GrapheneAccount fetch = (GrapheneAccount) answer;
+                        grapheneAccount.setName(fetch.getName());
+                        CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+                        db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
+                        db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
+                        subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
+                    }
+
+                    @Override
+                    public void fail() {
+                        //TODO get account data fail
+                    }
+                });
+            }else {
+                CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+                db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
+                db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
+                subscribeBitsharesAccount(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
             }
-
-            CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-            db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
-            db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
-
-            GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-            BitsharesAccountManager.refreshAccountTransactions(account.getId(), context);
-            GrapheneApiGenerator.getAccountBalance(grapheneAccount.getId(), grapheneAccount.getAccountId(), context);
-            return grapheneAccount;
         }
-        return null;
     }
 
     @Override
-    public void loadAccountFromDB(CryptoNetAccount account, Context context) {
+    public void loadAccountFromDB(CryptoNetAccount account, final Context context) {
         if(account instanceof GrapheneAccount){
-            GrapheneAccount grapheneAccount = (GrapheneAccount) account;
-            CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-            GrapheneAccountInfo info = db.grapheneAccountInfoDao().getByAccountId(account.getId());
+            final GrapheneAccount grapheneAccount = (GrapheneAccount) account;
+            final CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
+            final GrapheneAccountInfo info = db.grapheneAccountInfoDao().getByAccountId(account.getId());
             grapheneAccount.loadInfo(info);
             if(grapheneAccount.getAccountId() == null){
-                GrapheneAccount fetch = this.getAccountInfoByName(grapheneAccount.getName());
-                if(fetch != null){
-                    info.setAccountId(fetch.getAccountId());
-                    grapheneAccount.setAccountId(fetch.getAccountId());
-                    db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
-                }
+                this.getAccountInfoByName(grapheneAccount.getName(), new ManagerRequest() {
+                    @Override
+                    public void success(Object answer) {
+                        GrapheneAccount fetch = (GrapheneAccount) answer;
+                        info.setAccountId(fetch.getAccountId());
+                        grapheneAccount.setAccountId(fetch.getAccountId());
+                        db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
+                        subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
+                    }
+
+                    @Override
+                    public void fail() {
+                        //TODO account data retrieve failed
+                    }
+                });
             }else if(grapheneAccount.getName() == null){
-                GrapheneAccount fetch = this.getAccountInfoById(grapheneAccount.getAccountId());
-                if(fetch != null) {
-                    info.setName(fetch.getName());
-                    grapheneAccount.setName(fetch.getName());
-                    db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
-                }
-            }
+                this.getAccountInfoById(grapheneAccount.getAccountId(), new ManagerRequest() {
+                    @Override
+                    public void success(Object answer) {
+                        GrapheneAccount fetch = (GrapheneAccount) answer;
+                        info.setName(fetch.getName());
+                        grapheneAccount.setName(fetch.getName());
+                        db.grapheneAccountInfoDao().insertGrapheneAccountInfo(info);
+                        subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
+                    }
 
-            if(grapheneAccount.getName() == null || grapheneAccount.getAccountId() == null) {
-                //TODO grapaheneAccount null, error fetching
-                return;
+                    @Override
+                    public void fail() {
+                        //TODO account data retrieve failed
+                    }
+                });
+            }else{
+                subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
             }
-
-            GrapheneApiGenerator.subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
-            BitsharesAccountManager.refreshAccountTransactions(account.getId(),context);
-            GrapheneApiGenerator.getAccountBalance(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
         }
+    }
+
+    private void subscribeBitsharesAccount(long accountId, String accountBitsharesID, Context context){
+        GrapheneApiGenerator.subscribeBitsharesAccount(accountId,accountBitsharesID,context);
+        BitsharesAccountManager.refreshAccountTransactions(accountId,context);
+        GrapheneApiGenerator.getAccountBalance(accountId,accountBitsharesID,context);
     }
 
     /**
@@ -189,7 +237,6 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                         if(answer != null && answer instanceof AccountProperties) {
                             AccountProperties prop = (AccountProperties) answer;
                             //TODO change the way to compare keys
-
                             BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
                             System.out.println(bk.getPublicAddress("BTS").toString());
                             for(PublicKey activeKey : prop.owner.getKeyAuthList()){
@@ -220,7 +267,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         GrapheneApiGenerator.getAccountIdByName(importRequest.getAccountName(),checkAccountName);
     }
 
-    private void validateCreateAccount(ValidateCreateBitsharesAccountRequest createRequest){
+    private void validateCreateAccount(final ValidateCreateBitsharesAccountRequest createRequest){
         // Generate seed or find key
         Context context = createRequest.getContext();
         AccountSeed seed = AccountSeed.getAccountSeed(SeedType.BIP39, context);
@@ -233,12 +280,19 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         account.setSeedId(idSeed);
         account.setAccountIndex(0);
         account.setCryptoNet(CryptoNet.BITSHARES);
-        GrapheneAccount answer =(GrapheneAccount) this.createAccountFromSeed(account,context);
-        if (answer != null){
-            createRequest.setAccountExists(false);
-            createRequest.setAccount(answer);;
-        }
-        createRequest.setAccountExists(false);
+        this.createAccountFromSeed(account,new ManagerRequest(){
+
+            @Override
+            public void success(Object answer) {
+                createRequest.setAccountExists(false);
+                createRequest.setAccount((GrapheneAccount)answer);
+            }
+
+            @Override
+            public void fail() {
+                createRequest.setAccountExists(true);
+            }
+        },context );
 
     }
 
@@ -272,95 +326,79 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      */
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
         //TODO feeAsset
-        String idAsset = getAssetInfoByName(sendRequest.getAsset());
-        Asset feeAsset = new Asset(idAsset);
-        UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
+        final String idAsset = getAssetInfoByName(sendRequest.getAsset());
+        final Asset feeAsset = new Asset(idAsset);
+        final UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
 
-        GrapheneAccount toUserGrapheneAccount = this.getAccountInfoByName(sendRequest.getToAccount());
-        //TODO bad user to user account
-        UserAccount toUserAccount = new UserAccount(toUserGrapheneAccount.getAccountId());
-        TransferOperationBuilder builder = new TransferOperationBuilder()
-                .setSource(fromUserAccount)
-                .setDestination(toUserAccount)
-                .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(idAsset)))
-                .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
-        if(sendRequest.getMemo() != null) {
-            //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
-            //TODO memo
-        }
-        ArrayList<BaseOperation> operationList = new ArrayList<>();
-        operationList.add(builder.build());
-
-        ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
-
-        Transaction transaction = new Transaction(privateKey, null, operationList);
-        transaction.setChainId(BITSHARES_TESTNET_CHAIN_ID);
-
-        ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
+        //TODO cached to accounts
+        this.getAccountInfoByName(sendRequest.getToAccount(), new ManagerRequest() {
             @Override
-            public void success(Object answer, int idPetition) {
-                sendRequest.setSend(true);
+            public void success(Object answer) {
+                GrapheneAccount toUserGrapheneAccount = (GrapheneAccount) answer;
+                UserAccount toUserAccount = new UserAccount(toUserGrapheneAccount.getAccountId());
+                TransferOperationBuilder builder = new TransferOperationBuilder()
+                        .setSource(fromUserAccount)
+                        .setDestination(toUserAccount)
+                        .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(idAsset)))
+                        .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
+                if(sendRequest.getMemo() != null) {
+                    //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
+                    //TODO memo
+                }
+                ArrayList<BaseOperation> operationList = new ArrayList<>();
+                operationList.add(builder.build());
+
+                ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
+
+                Transaction transaction = new Transaction(privateKey, null, operationList);
+                transaction.setChainId(BITSHARES_TESTNET_CHAIN_ID);
+
+                ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
+                    @Override
+                    public void success(Object answer, int idPetition) {
+                        sendRequest.setSend(true);
+                    }
+
+                    @Override
+                    public void fail(int idPetition) {
+                        sendRequest.setSend(false);
+                    }
+                });
+
+                GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
             }
 
             @Override
-            public void fail(int idPetition) {
-                sendRequest.setSend(false);
+            public void fail() {
+                //TODO bad user to user account
             }
         });
 
-        GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
     }
 
     /**
      * Returns the account info from a graphene id
      * @param grapheneId The graphene id of the account
      */
-    private GrapheneAccount getAccountInfoById(String grapheneId){
-        final Object SYNC = new Object();
-        long timeout = 60000;
+    private void getAccountInfoById(String grapheneId, ManagerRequest request){
 
-        AccountIdOrNameListener listener = new AccountIdOrNameListener(SYNC);
+        AccountIdOrNameListener listener = new AccountIdOrNameListener(request);
 
-        ApiRequest request = new ApiRequest(0, listener);
-        GrapheneApiGenerator.getAccountById(grapheneId,request);
-
-        long cTime = System.currentTimeMillis();
-
-        while(!listener.ready && (System.currentTimeMillis()-cTime) < timeout){
-            synchronized (SYNC){
-                try {
-                    SYNC.wait(100);
-                } catch (InterruptedException ignore) {}
-            }
-        }
-
-        return listener.account;
+        ApiRequest accountRequest = new ApiRequest(0, listener);
+        GrapheneApiGenerator.getAccountById(grapheneId,accountRequest);
     }
 
     /**
      * Gets account info by its name
      * @param grapheneName The name of the account to retrieve
      */
-    private GrapheneAccount getAccountInfoByName(String grapheneName){
-        final Object SYNC = new Object();
-        long timeout = 60000;
+    private void getAccountInfoByName(String grapheneName, ManagerRequest request){
 
-        AccountIdOrNameListener listener = new AccountIdOrNameListener(SYNC);
+        AccountIdOrNameListener listener = new AccountIdOrNameListener(request);
 
-        ApiRequest request = new ApiRequest(0, listener);
-        GrapheneApiGenerator.getAccountByName(grapheneName,request);
+        ApiRequest accountRequest = new ApiRequest(0, listener);
+        GrapheneApiGenerator.getAccountByName(grapheneName,accountRequest);
 
-        long cTime = System.currentTimeMillis();
-
-        while(!listener.ready && (System.currentTimeMillis()-cTime) < timeout){
-            synchronized (SYNC){
-                try {
-                    SYNC.wait(100);
-                } catch (InterruptedException ignore) {}
-            }
-        }
-
-        return listener.account;
     }
 
     //TODO expand function to be more generic
@@ -554,13 +592,12 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Class to retrieve the account id or the account name, if one of those is missing
      */
     private class AccountIdOrNameListener implements ApiRequestListener{
-        final Object SYNC;
-        boolean ready = false;
+        final ManagerRequest request;
 
         GrapheneAccount account;
 
-        AccountIdOrNameListener(Object SYNC) {
-            this.SYNC = SYNC;
+        AccountIdOrNameListener(ManagerRequest request) {
+            this.request = request;
         }
 
         @Override
@@ -572,18 +609,12 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 account.setName(props.name);
             }
 
-            synchronized (SYNC){
-                ready = true;
-                SYNC.notifyAll();
-            }
+            request.success(account);
         }
 
         @Override
         public void fail(int idPetition) {
-            synchronized (SYNC){
-                ready = true;
-                SYNC.notifyAll();
-            }
+            request.fail();
         }
     }
 
@@ -649,7 +680,9 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 try {
                     transaction.setDate(dateFormat.parse(((BlockHeader) answer).timestamp));
-                    transactionDao.insertTransaction(transaction);
+                    if (transactionDao.getByTransaction(transaction.getDate(),transaction.getFrom(),transaction.getTo(),transaction.getAmount()) == null) {
+                        transactionDao.insertTransaction(transaction);
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

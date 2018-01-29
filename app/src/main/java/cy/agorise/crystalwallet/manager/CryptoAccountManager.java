@@ -18,14 +18,14 @@ public interface CryptoAccountManager {
      * @param account The values to be created,
      * @returnThe CruptoNetAccount created, or null if it couldn't be created
      */
-    public CryptoNetAccount createAccountFromSeed(CryptoNetAccount account, Context context);
+    public void createAccountFromSeed(CryptoNetAccount account, ManagerRequest request, Context context);
 
     /**
      * Imports a CryptoCoin account from a seed
      * @param account A CryptoNetAccount with the parameters to be imported
      * @returnThe CruptoNetAccount imported
      */
-    public CryptoNetAccount importAccountFromSeed(CryptoNetAccount account, Context context);
+    public void importAccountFromSeed(CryptoNetAccount account, Context context);
 
     /**
      * Loads account data from the database
