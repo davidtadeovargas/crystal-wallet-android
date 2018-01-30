@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.manager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.google.common.primitives.UnsignedLong;
@@ -31,6 +32,7 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
@@ -55,6 +57,9 @@ import cy.agorise.graphenej.operations.TransferOperationBuilder;
 public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetInfoRequestsListener {
 
     private final static String BITSHARES_TESTNET_CHAIN_ID= "9cf6f255a208100d2bb275a3c52f4b1589b7ec9c9bfc2cb2a5fe6411295106d8";
+
+    private final static String SIMPLE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private final static String DEFAULT_TIME_ZONE = "GMT";
 
     @Override
     public void createAccountFromSeed(CryptoNetAccount account, final ManagerRequest request, final Context context) {
@@ -220,6 +225,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.validateCreateAccount((ValidateCreateBitsharesAccountRequest) request);
         }else{
             //TODO not implemented
+            System.out.println("Error request not implemented " + request.getClass().getName());
         }
     }
 
@@ -273,26 +279,28 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         AccountSeed seed = AccountSeed.getAccountSeed(SeedType.BIP39, context);
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         long idSeed = db.accountSeedDao().insertAccountSeed(seed);
+        assert seed != null;
         seed.setId(idSeed);
         seed.setName(createRequest.getAccountName());
         GrapheneAccount account = new GrapheneAccount();
         account.setName(createRequest.getAccountName());
         account.setSeedId(idSeed);
-        account.setAccountIndex(0);
-        account.setCryptoNet(CryptoNet.BITSHARES);
-        this.createAccountFromSeed(account,new ManagerRequest(){
+            account.setAccountIndex(0);
+            account.setCryptoNet(CryptoNet.BITSHARES);
+            this.createAccountFromSeed(account, new ManagerRequest() {
 
-            @Override
-            public void success(Object answer) {
-                createRequest.setAccountExists(false);
-                createRequest.setAccount((GrapheneAccount)answer);
-            }
+                @Override
+                public void success(Object answer) {
+                    createRequest.setAccountExists(false);
+                    createRequest.setAccount((GrapheneAccount) answer);
+                }
 
-            @Override
-            public void fail() {
-                createRequest.setAccountExists(true);
-            }
-        },context );
+                @Override
+                public void fail() {
+                    createRequest.setAccountExists(true);
+                }
+            }, context);
+
 
     }
 
@@ -324,14 +332,49 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     /**
      * Broadcast a transaction request
      */
-    private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest){
+    private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest) {
         //TODO feeAsset
-        final String idAsset = getAssetInfoByName(sendRequest.getAsset());
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(sendRequest.getContext());
+        CryptoCurrency currency = db.cryptoCurrencyDao().getByNameAndCryptoNet(sendRequest.getAsset(), CryptoNet.BITSHARES.name());
+        if (currency == null){
+            getAssetInfoByName(sendRequest.getAsset(), new ManagerRequest() {
+                @Override
+                public void success(Object answer) {
+                    validateSendRequest(sendRequest, ((BitsharesAsset) answer).getBitsharesId());
+                }
+
+                @Override
+                public void fail() {
+
+                }
+            });
+        }else{
+            BitsharesAssetInfo info = db.bitsharesAssetDao().getBitsharesAssetInfo(currency.getId());
+            if (info == null || info.getBitsharesId() == null || info.getBitsharesId().isEmpty()){
+                getAssetInfoByName(sendRequest.getAsset(), new ManagerRequest() {
+                    @Override
+                    public void success(Object answer) {
+                        validateSendRequest(sendRequest, ((BitsharesAsset) answer).getBitsharesId());
+                    }
+
+                    @Override
+                    public void fail() {
+
+                    }
+                });
+            }else {
+                this.validateSendRequest(sendRequest, info.getBitsharesId());
+            }
+        }
+    }
+
+    private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest , final String idAsset){
         final Asset feeAsset = new Asset(idAsset);
         final UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
 
         //TODO cached to accounts
         this.getAccountInfoByName(sendRequest.getToAccount(), new ManagerRequest() {
+
             @Override
             public void success(Object answer) {
                 GrapheneAccount toUserGrapheneAccount = (GrapheneAccount) answer;
@@ -344,6 +387,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 if(sendRequest.getMemo() != null) {
                     //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
                     //TODO memo
+                    System.out.println("transaction has memo");
                 }
                 ArrayList<BaseOperation> operationList = new ArrayList<>();
                 operationList.add(builder.build());
@@ -402,27 +446,13 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     }
 
     //TODO expand function to be more generic
-    private String getAssetInfoByName(String assetName){
-        final Object SYNC = new Object();
-        long timeout = 60000;
+    private void getAssetInfoByName(String assetName, ManagerRequest request){
 
-        AssetIdOrNameListener nameListener = new AssetIdOrNameListener(SYNC);
-        ApiRequest request = new ApiRequest(0, nameListener);
+        AssetIdOrNameListener nameListener = new AssetIdOrNameListener(request);
+        ApiRequest assetRequest = new ApiRequest(0, nameListener);
         ArrayList<String> assetNames = new ArrayList<>();
         assetNames.add(assetName);
-        GrapheneApiGenerator.getAssetByName(assetNames, request);
-
-        long cTime = System.currentTimeMillis();
-
-        while(!nameListener.ready && (System.currentTimeMillis()-cTime) < timeout){
-            synchronized (SYNC){
-                try {
-                    SYNC.wait(100);
-                } catch (InterruptedException ignore) {}
-            }
-        }
-
-        return nameListener.asset.getBitsharesId();
+        GrapheneApiGenerator.getAssetByName(assetNames, assetRequest);
 
     }
 
@@ -431,7 +461,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * @param idAccount database id of the account
      * @param context The android context of this application
      */
-    public static void refreshAccountTransactions(long idAccount, Context context){
+    private static void refreshAccountTransactions(long idAccount, Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         List<CryptoCoinTransaction> transactions = db.transactionDao().getByIdAccount(idAccount);
         CryptoNetAccount account = db.cryptoNetAccountDao().getById(idAccount);
@@ -487,23 +517,22 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
 
         /**
-         * Handles the succes request of the transaction, if the amount of transaction is equal to the limit, ask for more transaction
+         * Handles the success request of the transaction, if the amount of transaction is equal to the limit, ask for more transaction
          * @param answer The answer, this object depends on the kind of request is made to the api
          * @param idPetition the id of the ApiRequest petition
          */
         @Override
         public void success(Object answer, int idPetition) {
             List<HistoricalTransfer> transfers = (List<HistoricalTransfer>) answer ;
-            for(HistoricalTransfer transfer : transfers) {
+            for(final HistoricalTransfer transfer : transfers) {
                 if (transfer.getOperation() != null){
-                    CryptoCoinTransaction transaction = new CryptoCoinTransaction();
+                    final CryptoCoinTransaction transaction = new CryptoCoinTransaction();
                     transaction.setAccountId(account.getId());
                     transaction.setAmount(transfer.getOperation().getAssetAmount().getAmount().longValue());
                     BitsharesAssetInfo info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
 
                 if (info == null) {
                     //The cryptoCurrency is not in the database, queringfor its data
-                    final Object SYNC = new Object(); //Object to syn the answer
                     ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
                         @Override
                         public void success(Object answer, int idPetition) {
@@ -514,39 +543,24 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                                 info.setCryptoCurrencyId(idCryptoCurrency);
                                 asset.setId((int)idCryptoCurrency);
                                 db.bitsharesAssetDao().insertBitsharesAssetInfo(info);
+                                saveTransaction(transaction,info,transfer);
                             }
-                            synchronized (SYNC){
-                                SYNC.notifyAll();
-                            }
+
                         }
 
                         @Override
                         public void fail(int idPetition) {
-                            synchronized (SYNC){
-                                SYNC.notifyAll();
-                            }
+                            //TODO Error
                         }
                     });
                     ArrayList<String> assets = new ArrayList<>();
                     assets.add(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
                     GrapheneApiGenerator.getAssetById(assets,assetRequest);
 
-                    synchronized (SYNC){
-                        try {SYNC.wait(60000);} catch (InterruptedException ignore) {}
-                    }
-                    info = db.bitsharesAssetDao().getBitsharesAssetInfoById(transfer.getOperation().getAssetAmount().getAsset().getObjectId());
+                }else{
+                    saveTransaction(transaction,info,transfer);
                 }
-                if( info == null){
-                    //We couldn't retrieve the cryptocurrency
-                    return;
-                }
-                transaction.setIdCurrency((int)info.getCryptoCurrencyId());
-                transaction.setConfirmed(true); //graphene transaction are always confirmed
-                transaction.setFrom(transfer.getOperation().getFrom().getObjectId());
-                transaction.setInput(!transfer.getOperation().getFrom().getObjectId().equals(account.getAccountId()));
-                transaction.setTo(transfer.getOperation().getTo().getObjectId());
 
-                GrapheneApiGenerator.getBlockHeaderTime(transfer.getBlockNum(), new ApiRequest(0, new GetTransactionDate(transaction, db.transactionDao())));
             }
             }
             if(transfers.size()>= limit){
@@ -561,6 +575,16 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         @Override
         public void fail(int idPetition) {
 
+        }
+
+        private void saveTransaction(CryptoCoinTransaction transaction, BitsharesAssetInfo info, HistoricalTransfer transfer){
+            transaction.setIdCurrency((int)info.getCryptoCurrencyId());
+            transaction.setConfirmed(true); //graphene transaction are always confirmed
+            transaction.setFrom(transfer.getOperation().getFrom().getObjectId());
+            transaction.setInput(!transfer.getOperation().getFrom().getObjectId().equals(account.getAccountId()));
+            transaction.setTo(transfer.getOperation().getTo().getObjectId());
+
+            GrapheneApiGenerator.getBlockHeaderTime(transfer.getBlockNum(), new ApiRequest(0, new GetTransactionDate(transaction, db.transactionDao())));
         }
     }
 
@@ -585,6 +609,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             GrapheneApiGenerator.getEquivalentValue(fromAsset.getBitsharesId(),toAsset.getBitsharesId(), getEquivalentRequest);
         }else{
             //TODO error
+            System.out.println("Equivalen Value error ");
         }
     }
 
@@ -622,36 +647,27 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Class to retrieve the asset id or the asset name, if one of those is missing
      */
     private class AssetIdOrNameListener implements ApiRequestListener{
-        final Object SYNC;
-        boolean ready = false;
+        final ManagerRequest request;
 
         BitsharesAsset asset;
 
-        AssetIdOrNameListener(Object SYNC) {
-            this.SYNC = SYNC;
+        AssetIdOrNameListener(ManagerRequest request) {
+            this.request = request;
         }
 
         @Override
         public void success(Object answer, int idPetition) {
             if(answer instanceof ArrayList) {
-
                 if (((ArrayList) answer).get(0) instanceof BitsharesAsset) {
                     asset = (BitsharesAsset) ((ArrayList) answer).get(0);
+                    request.success(asset);
                 }
-            }
-
-            synchronized (SYNC){
-                ready = true;
-                SYNC.notifyAll();
             }
         }
 
         @Override
         public void fail(int idPetition) {
-            synchronized (SYNC){
-                ready = true;
-                SYNC.notifyAll();
-            }
+            //TODO fail asset retrieve
         }
     }
 
@@ -668,7 +684,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
          */
         TransactionDao transactionDao;
 
-        public GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
+        GetTransactionDate(CryptoCoinTransaction transaction, TransactionDao transactionDao) {
             this.transaction = transaction;
             this.transactionDao = transactionDao;
         }
@@ -676,8 +692,8 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         @Override
         public void success(Object answer, int idPetition) {
             if(answer instanceof BlockHeader){
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
+                dateFormat.setTimeZone(TimeZone.getTimeZone(DEFAULT_TIME_ZONE));
                 try {
                     transaction.setDate(dateFormat.parse(((BlockHeader) answer).timestamp));
                     if (transactionDao.getByTransaction(transaction.getDate(),transaction.getFrom(),transaction.getTo(),transaction.getAmount()) == null) {
