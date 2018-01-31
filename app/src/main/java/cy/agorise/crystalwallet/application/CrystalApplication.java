@@ -26,5 +26,7 @@ public class CrystalApplication extends Application {
 
         Intent intent = new Intent(getApplicationContext(), CrystalWalletService.class);
         startService(intent);
+
+        registerActivityLifecycleCallbacks(new CrystalSecurityMonitor());
     }
 }

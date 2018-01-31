@@ -17,6 +17,7 @@ public class GeneralSetting {
 
     public final static String SETTING_NAME_PREFERED_COUNTRY = "PREFERED_COUNTRY";
     public final static String SETTING_NAME_PREFERED_CURRENCY = "PREFERED_CURRENCY";
+    public final static String SETTING_PASSWORD = "PASSWORD";
 
     /**
      * The id on the database

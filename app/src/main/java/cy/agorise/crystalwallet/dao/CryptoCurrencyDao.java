@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -27,6 +28,9 @@ public interface CryptoCurrencyDao {
 
     @Query("SELECT * FROM crypto_currency WHERE id IN (:ids)")
     List<CryptoCurrency> getByIds(List<Long> ids);
+
+    @Query("SELECT * FROM crypto_currency WHERE name = :name")
+    LiveData<CryptoCurrency> getLiveDataByName(String name);
 
     @Query("SELECT * FROM crypto_currency WHERE name = :name")
     CryptoCurrency getByName(String name);

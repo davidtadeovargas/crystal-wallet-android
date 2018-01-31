@@ -28,6 +28,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tvCurrentPin"
         tools:ignore="LabelFor" />
 
+    <TextView
+        android:id="@+id/tvCurrentPinError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintTop_toBottomOf="@+id/etCurrentPin" />
+
     <EditText
         android:id="@+id/etNewPin"
         android:layout_width="0dp"
@@ -39,7 +46,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etCurrentPin" />
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentPinError" />
+    <TextView
+        android:id="@+id/tvNewPinError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintTop_toBottomOf="@+id/etNewPin" />
 
     <EditText
         android:id="@+id/etConfirmPin"
@@ -52,6 +65,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNewPin" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tvNewPinError" />
+    <TextView
+        android:id="@+id/tvConfirmPinError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/red"
+        app:layout_constraintTop_toBottomOf="@+id/etConfirmPin" />
 </android.support.constraint.ConstraintLayout>

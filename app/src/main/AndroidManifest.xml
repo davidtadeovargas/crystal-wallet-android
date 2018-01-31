@@ -36,6 +36,8 @@
         </activity>
         <activity android:name=".activities.BackupSeedActivity" >
         </activity>
+        <activity android:name=".activities.PinRequestActivity" >
+        </activity>
         <activity android:name=".activities.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>

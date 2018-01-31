@@ -80,30 +80,39 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
                 public void onChanged(@Nullable GeneralSetting generalSetting) {
                     if (generalSetting != null) {
                         //Gets the currency object of the preferred currency
-                        CryptoCurrency currencyTo = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getByName(generalSetting.getValue());
+                        LiveData<CryptoCurrency> currencyToLiveData = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getLiveDataByName(generalSetting.getValue());
 
-                        //Retrieves the equivalent value of this balance using the "From" currency and the "To" currency
-                        LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
-                                .cryptoCurrencyEquivalenceDao().getByFromTo(
-                                        currencyTo.getId(),
-                                        currencyFrom.getId()
-
-                                );
-
-                        //Observes the equivalent value. If the equivalent value changes, this will keep the value showed correct
-                        currencyEquivalenceLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrencyEquivalence>() {
+                        currencyToLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrency>() {
                             @Override
-                            public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
-                                if (cryptoCurrencyEquivalence != null) {
-                                    CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getFromCurrencyId());
-                                    String equivalenceString = String.format(
-                                            "%.2f",
-                                            (balance.getBalance()/Math.pow(10,currencyFrom.getPrecision()))/
-                                            (cryptoCurrencyEquivalence.getValue()/Math.pow(10,toCurrency.getPrecision()))
-                                    );
+                            public void onChanged(@Nullable CryptoCurrency cryptoCurrency) {
+                                if (cryptoCurrency != null) {
+                                    CryptoCurrency currencyTo = cryptoCurrency;
 
-                                    cryptoCoinBalanceEquivalence.setText(
-                                            equivalenceString + " " + toCurrency.getName());
+                                    //Retrieves the equivalent value of this balance using the "From" currency and the "To" currency
+                                    LiveData<CryptoCurrencyEquivalence> currencyEquivalenceLiveData = CrystalDatabase.getAppDatabase(context)
+                                            .cryptoCurrencyEquivalenceDao().getByFromTo(
+                                                    currencyTo.getId(),
+                                                    currencyFrom.getId()
+
+                                            );
+
+                                    //Observes the equivalent value. If the equivalent value changes, this will keep the value showed correct
+                                    currencyEquivalenceLiveData.observe((LifecycleOwner) context, new Observer<CryptoCurrencyEquivalence>() {
+                                        @Override
+                                        public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
+                                            if (cryptoCurrencyEquivalence != null) {
+                                                CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getFromCurrencyId());
+                                                String equivalenceString = String.format(
+                                                        "%.2f",
+                                                        (balance.getBalance() / Math.pow(10, currencyFrom.getPrecision())) /
+                                                                (cryptoCurrencyEquivalence.getValue() / Math.pow(10, toCurrency.getPrecision()))
+                                                );
+
+                                                cryptoCoinBalanceEquivalence.setText(
+                                                        equivalenceString + " " + toCurrency.getName());
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });
