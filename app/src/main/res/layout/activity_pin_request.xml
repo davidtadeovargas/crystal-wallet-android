@@ -18,9 +18,11 @@
             android:padding="10dp"
             android:background="@color/colorPrimary"
             android:text="Enter Pin:"/>
+
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword" />
     </LinearLayout>
 </LinearLayout>
