@@ -204,6 +204,12 @@ public class BoardActivity  extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.fabAddContact)
+    public void beginCreateContact(){
+        Intent intent = new Intent(this, CreateContactActivity.class);
+        startActivity(intent);
+    }
+
     /*
      * dispatch the user to the receive fragment using this account
      */

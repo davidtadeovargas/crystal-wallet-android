@@ -12,9 +12,7 @@ import android.widget.RelativeLayout;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.Contact;
-import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.viewmodels.ContactListViewModel;
-import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 
 /**
  * Created by Henry Varona on 1/15/2018.

@@ -33,4 +33,8 @@ public class ContactListViewModel extends AndroidViewModel {
     public LiveData<PagedList<Contact>> getContactList(){
         return this.contactList;
     }
+
+    public  boolean contactExists(String name){
+        return this.db.contactDao().existsByName(name);
+    }
 }

@@ -26,4 +26,10 @@ public interface ContactDao {
 
     @Query("SELECT * FROM contact WHERE id = :id")
     LiveData<Contact> getById(long id);
+
+    @Query("SELECT count(*) FROM contact WHERE name = :name")
+    boolean existsByName(String name);
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    public long[] add(Contact... contacts);
 }
