@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,6 +25,7 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListen
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.models.ContactAddress;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.viewmodels.ContactListViewModel;
 import cy.agorise.crystalwallet.viewmodels.ContactViewModel;
@@ -27,6 +33,7 @@ import cy.agorise.crystalwallet.viewmodels.validators.CreateContactValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+import cy.agorise.crystalwallet.views.ContactAddressListAdapter;
 
 public class CreateContactActivity extends AppCompatActivity implements UIValidatorListener {
 
@@ -38,6 +45,12 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     Button btnCancel;
     @BindView(R.id.btnCreate)
     Button btnCreate;
+    @BindView(R.id.rvContactAddresses)
+    RecyclerView rvContactAddresses;
+    @BindView(R.id.btnAddAddress)
+    Button btnAddAddress;
+    List<ContactAddress> contactAddressList;
+    ContactAddressListAdapter listAdapter;
 
     CreateContactValidator createContactValidator;
 
@@ -48,6 +61,14 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         ButterKnife.bind(this);
 
         btnCreate.setEnabled(false);
+
+        //Initializes the recyclerview
+        contactAddressList = new ArrayList<ContactAddress>();
+        listAdapter = new ContactAddressListAdapter();
+        listAdapter.setList(contactAddressList);
+        rvContactAddresses.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rvContactAddresses.setAdapter(listAdapter);
+
         createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName);
         createContactValidator.setListener(this);
     }
@@ -58,6 +79,12 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         this.createContactValidator.validate();
     }
 
+    @OnClick(R.id.btnAddAddress)
+    public void addAddress(){
+        ContactAddress newContactAddress = new ContactAddress();
+        this.contactAddressList.add(newContactAddress);
+        this.listAdapter.notifyDataSetChanged();
+    }
 
     @OnClick(R.id.btnCancel)
     public void cancel(){
@@ -69,6 +96,11 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         if (this.createContactValidator.isValid()) {
             Contact newContact = new Contact();
             newContact.setName(etName.getText().toString());
+
+            for (ContactAddress contactAddress : contactAddressList){
+                newContact.addAddress(contactAddress);
+            }
+
             ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
             if (contactViewModel.addContact(newContact)){
                 this.finish();

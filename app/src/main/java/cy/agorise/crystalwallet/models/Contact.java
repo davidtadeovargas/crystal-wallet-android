@@ -10,6 +10,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,7 +72,11 @@ public class Contact {
     }
 
     public void addAddress(ContactAddress address){
+        if (this.mAddresses == null) {
+            this.mAddresses = new ArrayList<ContactAddress>();
+        }
         this.mAddresses.add(address);
+        address.setContactId(this.getId());
     }
 
     public static final DiffCallback<Contact> DIFF_CALLBACK = new DiffCallback<Contact>() {

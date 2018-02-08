@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "a44ccb96c8213951403ed2a283fb3367",
+    "identityHash": "1b825c6a18815f35456f569f59868945",
     "entities": [
       {
         "tableName": "account_seed",
@@ -278,6 +278,49 @@
               "name"
             ],
             "createSql": "CREATE UNIQUE INDEX `index_contact_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "contact_address",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contact_id` INTEGER NOT NULL, `crypto_net` TEXT NOT NULL, `address` TEXT, PRIMARY KEY(`contact_id`, `crypto_net`))",
+        "fields": [
+          {
+            "fieldPath": "mContactId",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mCryptoNet",
+            "columnName": "crypto_net",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mAddress",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "contact_id",
+            "crypto_net"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_contact_address_contact_id_crypto_net",
+            "unique": true,
+            "columnNames": [
+              "contact_id",
+              "crypto_net"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_contact_address_contact_id_crypto_net` ON `${TABLE_NAME}` (`contact_id`, `crypto_net`)"
           }
         ],
         "foreignKeys": []
@@ -622,7 +665,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a44ccb96c8213951403ed2a283fb3367\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1b825c6a18815f35456f569f59868945\")"
     ]
   }
 }

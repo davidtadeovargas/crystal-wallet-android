@@ -7,6 +7,8 @@ import android.arch.persistence.room.Index;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
 
+import cy.agorise.crystalwallet.enums.CryptoNet;
+
 /**
  * Represents a user contact address
  *
@@ -14,15 +16,19 @@ import android.support.v7.recyclerview.extensions.DiffCallback;
  */
 
 @Entity(tableName="contact_address",
-        primaryKeys = {"contact_id","crypto_currency_id"},
-        indices = {@Index(value = {"contact_id","crypto_currency_id"}, unique=true)})
+        primaryKeys = {"contact_id","crypto_net"},
+        indices = {@Index(value = {"contact_id","crypto_net"}, unique=true)})
 public class ContactAddress {
 
     @ColumnInfo(name = "contact_id")
     private long mContactId;
 
-    @ColumnInfo(name = "crypto_currency_id")
-    private long mCryptoCurrencyId;
+    /**
+     * The crypto net of the address
+     */
+    @NonNull
+    @ColumnInfo(name = "crypto_net")
+    private CryptoNet mCryptoNet;
 
     @ColumnInfo(name="address")
     private String mAddress;
@@ -35,12 +41,12 @@ public class ContactAddress {
         this.mContactId = contactId;
     }
 
-    public long getCryptoCurrencyId() {
-        return mCryptoCurrencyId;
+    public CryptoNet getCryptoNet() {
+        return mCryptoNet;
     }
 
-    public void setCryptoCurrencyId(long cryptoCurrencyId) {
-        this.mCryptoCurrencyId = cryptoCurrencyId;
+    public void setCryptoNet(CryptoNet cryptoNet) {
+        this.mCryptoNet = cryptoNet;
     }
 
     public String getAddress() {
@@ -56,7 +62,7 @@ public class ContactAddress {
         public boolean areItemsTheSame(
                 @NonNull ContactAddress oldContactAddress, @NonNull ContactAddress newContactAddress) {
             return (oldContactAddress.getContactId() == newContactAddress.getContactId())
-                    && (oldContactAddress.getCryptoCurrencyId() == newContactAddress.getCryptoCurrencyId());
+                    && (oldContactAddress.getCryptoNet() == newContactAddress.getCryptoNet());
         }
         @Override
         public boolean areContentsTheSame(
@@ -73,7 +79,7 @@ public class ContactAddress {
         ContactAddress that = (ContactAddress) o;
 
         if (mContactId != that.mContactId) return false;
-        if (mCryptoCurrencyId != that.mCryptoCurrencyId) return false;
+        if (mCryptoNet != that.mCryptoNet) return false;
         return mAddress.equals(that.mAddress);
     }
 }

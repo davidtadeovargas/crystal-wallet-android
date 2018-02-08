@@ -10,6 +10,7 @@ import cy.agorise.crystalwallet.dao.converters.Converters;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.models.ContactAddress;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
@@ -28,6 +29,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         CryptoNetAccount.class,
         CryptoCoinTransaction.class,
         Contact.class,
+        ContactAddress.class,
         CryptoCurrency.class,
         CryptoCoinBalance.class,
         GrapheneAccountInfo.class,

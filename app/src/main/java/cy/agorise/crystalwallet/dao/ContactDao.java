@@ -10,6 +10,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.models.ContactAddress;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 
 /**
@@ -32,4 +33,7 @@ public interface ContactDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     public long[] add(Contact... contacts);
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    public void addAddresses(ContactAddress... contactAddresses);
 }
