@@ -15,6 +15,7 @@ import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
+import cy.agorise.crystalwallet.models.Contact;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.ContactListViewModel;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
@@ -26,15 +27,31 @@ import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 public class ContactNameValidationField extends ValidationField {
 
     private EditText nameField;
+    private Contact contact;
 
     public ContactNameValidationField(EditText nameField){
         super(nameField);
         this.nameField = nameField;
+        this.contact = null;
+    }
+
+    public ContactNameValidationField(EditText nameField, Contact contact){
+        super(nameField);
+        this.nameField = nameField;
+        this.contact = contact;
     }
 
     public void validate(){
         final String newValue = this.nameField.getText().toString();
 
+        if (this.contact != null){
+            if (this.contact.getName().equals(newValue)){
+                this.setLastValue(newValue);
+                this.startValidating();
+                this.setValidForValue(newValue, true);
+                return;
+            }
+        }
 
         if (!newValue.equals("")) {
             if (!newValue.equals(this.getLastValue())) {

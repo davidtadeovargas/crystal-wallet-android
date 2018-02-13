@@ -6,6 +6,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import java.util.List;
 
@@ -31,9 +32,21 @@ public interface ContactDao {
     @Query("SELECT count(*) FROM contact WHERE name = :name")
     boolean existsByName(String name);
 
+    @Query("SELECT * FROM contact_address WHERE contact_id = :contactId")
+    LiveData<List<ContactAddress>> getContactAddresses(long contactId);
+
+    @Update(onConflict = OnConflictStrategy.ABORT)
+    public void update(Contact... contacts);
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     public long[] add(Contact... contacts);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     public void addAddresses(ContactAddress... contactAddresses);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    public void updateAddresses(ContactAddress... contactAddresses);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    public void updateAddressesFields(ContactAddress... contactAddresses);
 }

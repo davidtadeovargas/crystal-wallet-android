@@ -30,6 +30,8 @@ public class ContactAddressViewHolder extends RecyclerView.ViewHolder {
     private Spinner spCryptoNet;
     private EditText etAddress;
     private Context context;
+    private CryptoNet[] cryptoNetArray;
+    private ArrayAdapter<CryptoNet> cryptoNetSpinnerAdapter;
 
     public ContactAddressViewHolder(View itemView) {
         super(itemView);
@@ -40,8 +42,8 @@ public class ContactAddressViewHolder extends RecyclerView.ViewHolder {
 
 
         //load spinners values
-        CryptoNet[] cryptoNetArray = CryptoNet.values();
-        ArrayAdapter<CryptoNet> cryptoNetSpinnerAdapter = new ArrayAdapter<CryptoNet>(
+        cryptoNetArray = CryptoNet.values();
+        cryptoNetSpinnerAdapter = new ArrayAdapter<CryptoNet>(
                 this.context,
                 android.R.layout.simple_list_item_1,
                 cryptoNetArray
@@ -64,6 +66,18 @@ public class ContactAddressViewHolder extends RecyclerView.ViewHolder {
         if (contactAddress == null){
             this.clear();
         } else {
+            etAddress.setText(contactAddress.getAddress());
+
+            CryptoNet nextCryptoNet;
+            for (int i=0;i<cryptoNetArray.length;i++){
+                nextCryptoNet = cryptoNetArray[i];
+                if (nextCryptoNet.equals(contactAddress.getCryptoNet())){
+                    spCryptoNet.setSelection(i);
+                    break;
+                }
+            }
+
+
             spCryptoNet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

@@ -1,13 +1,18 @@
 package cy.agorise.crystalwallet.activities;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,9 +36,11 @@ import cy.agorise.crystalwallet.viewmodels.ContactListViewModel;
 import cy.agorise.crystalwallet.viewmodels.ContactViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.CreateContactValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
+import cy.agorise.crystalwallet.viewmodels.validators.ModifyContactValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.ContactAddressListAdapter;
+import cy.agorise.crystalwallet.views.ContactViewHolder;
 
 public class CreateContactActivity extends AppCompatActivity implements UIValidatorListener {
 
@@ -45,6 +52,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     Button btnCancel;
     @BindView(R.id.btnCreate)
     Button btnCreate;
+    @BindView(R.id.btnModify)
+    Button btnModify;
     @BindView(R.id.rvContactAddresses)
     RecyclerView rvContactAddresses;
     @BindView(R.id.btnAddAddress)
@@ -53,6 +62,9 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     ContactAddressListAdapter listAdapter;
 
     CreateContactValidator createContactValidator;
+    ModifyContactValidator modifyContactValidator;
+
+    Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,21 +74,81 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
 
         btnCreate.setEnabled(false);
 
-        //Initializes the recyclerview
-        contactAddressList = new ArrayList<ContactAddress>();
         listAdapter = new ContactAddressListAdapter();
-        listAdapter.setList(contactAddressList);
         rvContactAddresses.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         rvContactAddresses.setAdapter(listAdapter);
 
-        createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName);
-        createContactValidator.setListener(this);
+        long contactId = this.getIntent().getLongExtra("CONTACT_ID",-1);
+
+        btnCreate.setVisibility(View.GONE);
+        btnModify.setVisibility(View.GONE);
+
+        if (contactId >= 0){
+            final ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+
+            contactViewModel.init(contactId);
+            LiveData<Contact> contactLiveData = contactViewModel.getContact();
+            final CreateContactActivity thisActivity = this;
+
+            contactLiveData.observe(this, new Observer<Contact>() {
+                @Override
+                public void onChanged(@Nullable Contact contactChanged) {
+                    if (contactChanged != null){
+                        contact = contactChanged;
+                        etName.setText(contact.getName());
+
+                        LiveData<List<ContactAddress>> contactAddresses = contactViewModel.getContactAddresses();
+
+                        contactAddresses.observe(thisActivity, new Observer<List<ContactAddress>>() {
+                            @Override
+                            public void onChanged(@Nullable List<ContactAddress> contactAddresses) {
+                                contactAddressList = contactAddresses;
+                                listAdapter.setList(contactAddressList);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+                        modifyContactValidator = new ModifyContactValidator(thisActivity.getApplicationContext(),contact,etName);
+                        modifyContactValidator.setListener(thisActivity);
+                        btnModify.setVisibility(View.VISIBLE);
+                    } else {
+                        //No contact was found, this will exit the activity
+                        finish();
+                    }
+                }
+            });
+        } else {
+            contactAddressList = new ArrayList<ContactAddress>();
+            listAdapter.setList(contactAddressList);
+            createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName);
+            createContactValidator.setListener(this);
+
+            btnCreate.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void validate(){
+        if (this.createContactValidator != null){
+            this.createContactValidator.validate();
+        } else if (this.modifyContactValidator != null){
+            this.modifyContactValidator.validate();
+        }
+    }
+
+    public boolean isValid(){
+        if (this.createContactValidator != null){
+            return this.createContactValidator.isValid();
+        } else if (this.modifyContactValidator != null){
+            return this.modifyContactValidator.isValid();
+        }
+
+        return false;
     }
 
     @OnTextChanged(value = R.id.etName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterContactNameChanged(Editable editable) {
-        this.createContactValidator.validate();
+        this.validate();
     }
 
     @OnClick(R.id.btnAddAddress)
@@ -89,6 +161,25 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     @OnClick(R.id.btnCancel)
     public void cancel(){
         this.finish();
+    }
+
+    @OnClick(R.id.btnModify)
+    public void modifyContact(){
+        if (this.modifyContactValidator.isValid()) {
+            this.contact.setName(etName.getText().toString());
+            this.contact.clearAddresses();
+
+            for (ContactAddress contactAddress : contactAddressList){
+                this.contact.addAddress(contactAddress);
+            }
+
+            ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+            if (contactViewModel.modifyContact(this.contact)){
+                this.finish();
+            } else {
+                this.modifyContactValidator.validate();
+            }
+        }
     }
 
     @OnClick(R.id.btnCreate)
@@ -121,7 +212,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                     tvNameError.setText("");
                 }
 
-                if (activity.createContactValidator.isValid()){
+                if (activity.isValid()){
                     btnCreate.setEnabled(true);
                 } else {
                     btnCreate.setEnabled(false);

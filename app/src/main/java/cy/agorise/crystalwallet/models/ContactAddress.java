@@ -4,6 +4,7 @@ package cy.agorise.crystalwallet.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
 
@@ -16,9 +17,15 @@ import cy.agorise.crystalwallet.enums.CryptoNet;
  */
 
 @Entity(tableName="contact_address",
-        primaryKeys = {"contact_id","crypto_net"},
-        indices = {@Index(value = {"contact_id","crypto_net"}, unique=true)})
+        indices = {@Index(value = {"id"}, unique=true),@Index(value = {"contact_id","crypto_net"}, unique=true)})
 public class ContactAddress {
+
+    /**
+     * The id on the database
+     */
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private long mId;
 
     @ColumnInfo(name = "contact_id")
     private long mContactId;
@@ -32,6 +39,14 @@ public class ContactAddress {
 
     @ColumnInfo(name="address")
     private String mAddress;
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long id) {
+        this.mId = id;
+    }
 
     public long getContactId() {
         return mContactId;

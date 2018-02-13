@@ -71,6 +71,12 @@ public class Contact {
         return this.mAddresses.get(index);
     }
 
+    public void clearAddresses(){
+        if (this.mAddresses != null) {
+            this.mAddresses.clear();
+        }
+    }
+
     public void addAddress(ContactAddress address){
         if (this.mAddresses == null) {
             this.mAddresses = new ArrayList<ContactAddress>();
