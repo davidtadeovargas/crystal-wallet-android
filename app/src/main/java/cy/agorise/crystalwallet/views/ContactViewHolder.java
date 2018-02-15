@@ -1,8 +1,10 @@
 package cy.agorise.crystalwallet.views;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CreateContactActivity;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.Contact;
 
 /**
@@ -67,7 +70,22 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
             this.ivDeleteContact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //
+                    //delete the contact
+                    new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setMessage("Are you sure you want to delete this contact?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                CrystalDatabase.getAppDatabase(context).contactDao().deleteContacts(contact);
+                            }
+
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+
+
                 }
             });
         }
