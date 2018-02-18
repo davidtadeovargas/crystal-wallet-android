@@ -47,6 +47,7 @@ public class ContactsFragment extends Fragment {
         ButterKnife.bind(this, v);
 
         ContactListViewModel contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
+        contactListViewModel.init();
         LiveData<PagedList<Contact>> contactsLiveData = contactListViewModel.getContactList();
 
         contactsLiveData.observe(this, new Observer<PagedList<Contact>>() {

@@ -13,6 +13,8 @@ import android.support.v7.recyclerview.extensions.DiffCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.enums.CryptoNet;
+
 /**
  * Represents a user contact
  *
@@ -83,6 +85,18 @@ public class Contact {
         }
         this.mAddresses.add(address);
         address.setContactId(this.getId());
+    }
+
+    public ContactAddress getCryptoNetAddress(CryptoNet cryptoNet){
+        if (this.mAddresses != null) {
+            for (ContactAddress address : this.mAddresses) {
+                if (address.getCryptoNet() == cryptoNet) {
+                    return address;
+                }
+            }
+        }
+
+        return null;
     }
 
     public static final DiffCallback<Contact> DIFF_CALLBACK = new DiffCallback<Contact>() {
