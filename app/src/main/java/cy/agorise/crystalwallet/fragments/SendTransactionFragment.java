@@ -32,8 +32,12 @@ import android.widget.Toast;
 
 import com.google.zxing.Result;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +63,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
 import cy.agorise.crystalwallet.views.CryptoNetAccountAdapter;
+import cy.agorise.graphenej.Invoice;
+import cy.agorise.graphenej.LineItem;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class SendTransactionFragment extends DialogFragment implements UIValidatorListener, ZXingScannerView.ResultHandler {
@@ -91,6 +97,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     TextView btnCancel;
     @BindView(R.id.ivPeople)
     ImageView ivPeople;
+    CryptoCurrencyAdapter assetAdapter;
 
     Button btnScanQrCode;
 
@@ -154,7 +161,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                     }
                     List<CryptoCurrency> cryptoCurrencyList = db.cryptoCurrencyDao().getByIds(assetIds);
 
-                    CryptoCurrencyAdapter assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
+                    assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
                     spAsset.setAdapter(assetAdapter);
                 }
             });
@@ -370,6 +377,27 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     @Override
     public void handleResult(Result result) {
+        Invoice invoice = Invoice.fromQrCode(result.getText());
+
+        etTo.setText(invoice.getTo());
+
+        for (int i=0;i<assetAdapter.getCount();i++) {
+            if (assetAdapter.getItem(i).getName().equals(invoice.getCurrency())) {
+                spAsset.setSelection(i);
+                break;
+            }
+        }
+        etMemo.setText(invoice.getMemo());
+
+
+        double amount = 0.0;
+        for (LineItem nextItem : invoice.getLineItems()) {
+            amount += nextItem.getQuantity() * nextItem.getPrice();
+        }
+        DecimalFormat df = new DecimalFormat("####.####");
+        df.setRoundingMode(RoundingMode.CEILING);
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
+        etAmount.setText(df.format(amount));
         Log.i("SendFragment",result.getText());
     }
 }

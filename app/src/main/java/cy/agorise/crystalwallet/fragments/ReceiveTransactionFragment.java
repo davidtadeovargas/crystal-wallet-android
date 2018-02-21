@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.LauncherActivity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import butterknife.OnClick;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
+import cy.agorise.crystalwallet.views.CryptoNetAccountAdapter;
 import cy.agorise.graphenej.Invoice;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
 
     ReceiveTransactionValidator receiveTransactionValidator;
 
+    @BindView(R.id.spTo)
+    Spinner spTo;
     @BindView(R.id.etAmount)
     EditText etAmount;
     @BindView(R.id.tvAmountError)
@@ -145,6 +150,12 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
 
             receiveTransactionValidator = new ReceiveTransactionValidator(this.getContext(), this.cryptoNetAccount, spAsset, etAmount);
             receiveTransactionValidator.setListener(this);
+
+            CryptoNetAccountListViewModel cryptoNetAccountListViewModel = ViewModelProviders.of(this).get(CryptoNetAccountListViewModel.class);
+            List<CryptoNetAccount> cryptoNetAccounts = cryptoNetAccountListViewModel.getCryptoNetAccountList();
+            CryptoNetAccountAdapter toSpinnerAdapter = new CryptoNetAccountAdapter(this.getContext(), android.R.layout.simple_spinner_item, cryptoNetAccounts);
+            spTo.setAdapter(toSpinnerAdapter);
+            spTo.setSelection(0);
         }
 
         builder.setView(view);
@@ -197,6 +208,11 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
                 fabReceive.show();
             }
         }, 400);
+    }
+
+    @OnItemSelected(R.id.spTo)
+    public void afterToSelected(Spinner spinner, int position) {
+        this.receiveTransactionValidator.validate();
     }
 
     @OnTextChanged(value = R.id.etAmount,
