@@ -48,6 +48,10 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     EditText etName;
     @BindView(R.id.tvNameError)
     TextView tvNameError;
+    @BindView(R.id.etEmail)
+    EditText etEmail;
+    @BindView(R.id.tvEmailError)
+    TextView tvEmailError;
     @BindView(R.id.btnCancel)
     Button btnCancel;
     @BindView(R.id.btnCreate)
@@ -96,6 +100,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                     if (contactChanged != null){
                         contact = contactChanged;
                         etName.setText(contact.getName());
+                        etEmail.setText(contact.getEmail());
 
                         LiveData<List<ContactAddress>> contactAddresses = contactViewModel.getContactAddresses();
 
@@ -108,7 +113,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                             }
                         });
 
-                        modifyContactValidator = new ModifyContactValidator(thisActivity.getApplicationContext(),contact,etName);
+                        modifyContactValidator = new ModifyContactValidator(thisActivity.getApplicationContext(),contact,etName,etEmail);
                         modifyContactValidator.setListener(thisActivity);
                         btnModify.setVisibility(View.VISIBLE);
                     } else {
@@ -120,7 +125,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         } else {
             contactAddressList = new ArrayList<ContactAddress>();
             listAdapter.setList(contactAddressList);
-            createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName);
+            createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName,etEmail);
             createContactValidator.setListener(this);
 
             btnCreate.setVisibility(View.VISIBLE);
@@ -151,6 +156,13 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         this.validate();
     }
 
+    @OnTextChanged(value = R.id.etEmail,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterEmailChanged(Editable editable) {
+        this.validate();
+    }
+
+
     @OnClick(R.id.btnAddAddress)
     public void addAddress(){
         ContactAddress newContactAddress = new ContactAddress();
@@ -167,6 +179,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     public void modifyContact(){
         if (this.modifyContactValidator.isValid()) {
             this.contact.setName(etName.getText().toString());
+            this.contact.setEmail(etEmail.getText().toString());
             this.contact.clearAddresses();
 
             for (ContactAddress contactAddress : contactAddressList){
@@ -187,6 +200,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         if (this.createContactValidator.isValid()) {
             Contact newContact = new Contact();
             newContact.setName(etName.getText().toString());
+            newContact.setEmail(etEmail.getText().toString());
 
             for (ContactAddress contactAddress : contactAddressList){
                 newContact.addAddress(contactAddress);
@@ -210,6 +224,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
 
                 if (field.getView() == etName) {
                     tvNameError.setText("");
+                } else if (field.getView() == etEmail) {
+                    tvEmailError.setText("");
                 }
 
                 if (activity.isValid()){
@@ -229,6 +245,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
             public void run() {
                 if (field.getView() == etName) {
                     tvNameError.setText(field.getMessage());
+                } else if (field.getView() == etEmail) {
+                    tvEmailError.setText(field.getMessage());
                 }
             }
         });

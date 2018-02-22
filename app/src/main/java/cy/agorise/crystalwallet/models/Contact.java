@@ -35,6 +35,9 @@ public class Contact {
     @ColumnInfo(name="name")
     private String mName;
 
+    @ColumnInfo(name="email")
+    private String mEmail;
+
     @ColumnInfo(name = "gravatar")
     private String mGravatar;
 
@@ -63,6 +66,14 @@ public class Contact {
 
     public void setGravatar(String gravatar) {
         this.mGravatar = gravatar;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        this.mEmail = email;
     }
 
     public int addressesCount(){

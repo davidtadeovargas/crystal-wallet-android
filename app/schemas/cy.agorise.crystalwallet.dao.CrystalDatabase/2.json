@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "6f4a0d464f042d577c584ed532bffd2c",
+    "identityHash": "3ec53bc71906b5abcabeaefcd7505bc1",
     "entities": [
       {
         "tableName": "account_seed",
@@ -235,7 +235,7 @@
       },
       {
         "tableName": "contact",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `gravatar` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `email` TEXT, `gravatar` TEXT)",
         "fields": [
           {
             "fieldPath": "mId",
@@ -246,6 +246,12 @@
           {
             "fieldPath": "mName",
             "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mEmail",
+            "columnName": "email",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -678,7 +684,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6f4a0d464f042d577c584ed532bffd2c\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3ec53bc71906b5abcabeaefcd7505bc1\")"
     ]
   }
 }

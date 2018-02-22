@@ -5,6 +5,7 @@ import android.widget.EditText;
 
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.BitsharesAccountNameDoesntExistsValidationField;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ContactNameValidationField;
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.EmailValidationField;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinConfirmationValidationField;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinValidationField;
 
@@ -14,8 +15,9 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinValida
 
 public class CreateContactValidator extends UIValidator {
 
-    public CreateContactValidator(Context context, EditText nameEdit){
+    public CreateContactValidator(Context context, EditText nameEdit, EditText emailEdit){
         super(context);
         this.addField(new ContactNameValidationField(nameEdit));
+        this.addField(new EmailValidationField(emailEdit));
     }
 }

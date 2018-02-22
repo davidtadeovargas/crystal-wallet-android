@@ -36,7 +36,32 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:maxLines="1"
         android:textColor="@color/red" />
-
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="10dp"
+        android:text="Email"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/edittext_bg"
+        android:maxLines="1"
+        android:textColor="@color/black" />
+    <TextView
+        android:id="@+id/tvEmailError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:maxLines="1"
+        android:textColor="@color/red" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
