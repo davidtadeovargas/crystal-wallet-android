@@ -6,14 +6,19 @@ import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CreateContactActivity;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.util.CircleTransformation;
+import cy.agorise.crystalwallet.util.MD5Hash;
 
 /**
  * Created by Henry Varona on 1/17/2017.
@@ -66,6 +71,16 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
                     itemView.getContext().startActivity(intent);
                 }
             });
+
+            if (contact.getEmail() != null){
+                String emailHash = MD5Hash.hash(contact.getEmail());
+                String gravatarUrl = "http://www.gravatar.com/avatar/" + emailHash + "?s=204&d=404";
+
+                Picasso.with(this.context)
+                        .load(gravatarUrl)
+                        .transform(new CircleTransformation())
+                        .into(ivThumbnail);
+            }
 
             this.ivDeleteContact.setOnClickListener(new View.OnClickListener() {
                 @Override

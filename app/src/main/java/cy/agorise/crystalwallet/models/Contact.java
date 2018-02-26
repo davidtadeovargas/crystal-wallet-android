@@ -22,7 +22,7 @@ import cy.agorise.crystalwallet.enums.CryptoNet;
  */
 
 @Entity(tableName="contact",
-        indices = {@Index("id"),@Index(value = {"name"}, unique=true)})
+        indices = {@Index("id"),@Index(value = {"name"}, unique=true),@Index("email")})
 public class Contact {
 
     /**
@@ -69,7 +69,7 @@ public class Contact {
     }
 
     public String getEmail() {
-        return mEmail;
+        return this.mEmail;
     }
 
     public void setEmail(String email) {

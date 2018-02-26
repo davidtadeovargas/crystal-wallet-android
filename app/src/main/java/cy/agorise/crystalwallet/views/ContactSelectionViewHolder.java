@@ -9,10 +9,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CreateContactActivity;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.util.CircleTransformation;
+import cy.agorise.crystalwallet.util.MD5Hash;
 
 /**
  * Created by Henry Varona on 2/16/2018.
@@ -61,6 +65,16 @@ public class ContactSelectionViewHolder extends RecyclerView.ViewHolder {
 
             tvName.setText(contact.getName());
             tvLastPaid.setText("Paid: 1 Jan, 2001 01:01");
+
+            if (contact.getEmail() != null){
+                String emailHash = MD5Hash.hash(contact.getEmail());
+                String gravatarUrl = "http://www.gravatar.com/avatar/" + emailHash + "?s=204&d=404";
+
+                Picasso.with(this.context)
+                        .load(gravatarUrl)
+                        .transform(new CircleTransformation())
+                        .into(ivThumbnail);
+            }
 
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
