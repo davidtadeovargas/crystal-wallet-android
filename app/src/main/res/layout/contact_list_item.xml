@@ -34,7 +34,8 @@
             android:layout_below="@+id/tvContactName"
             android:layout_toRightOf="@+id/ivContactThumbnail"
             android:text="Paid: Jan 1, 2001, 01:01"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/ivDeleteContact"

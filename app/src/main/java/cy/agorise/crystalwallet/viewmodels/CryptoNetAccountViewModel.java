@@ -24,7 +24,7 @@ public class CryptoNetAccountViewModel extends AndroidViewModel {
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
     }
 
-    public void loadCryptoNetAccount(int accountId){
+    public void loadCryptoNetAccount(long accountId){
         this.cryptoNetAccount = this.db.cryptoNetAccountDao().getByIdLiveData(accountId);
     }
 
@@ -36,5 +36,4 @@ public class CryptoNetAccountViewModel extends AndroidViewModel {
     public LiveData<CryptoNetAccount> getCryptoNetAccount(){
         return this.cryptoNetAccount;
     }
-
 }

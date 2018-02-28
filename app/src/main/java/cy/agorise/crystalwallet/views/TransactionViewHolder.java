@@ -1,20 +1,30 @@
 package cy.agorise.crystalwallet.views;
 
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.TimeZone;
+
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CryptoCoinTransactionReceiptActivity;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.viewmodels.CryptoCurrencyViewModel;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
 
 /**
  * Created by Henry Varona on 17/9/2017.
@@ -26,16 +36,18 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
     /*
      * The view holding the transaction "from"
      */
-    private TextView transactionFrom;
+    private TextView tvFrom;
     /*
      * The view holding the transaction "to"
      */
-    private TextView transactionTo;
+    private TextView tvTo;
     /*
      * The view holding the transaction amount
      */
-    private TextView transactionAmount;
+    private TextView tvAmount;
+    private TextView tvEquivalent;
     private TextView tvTransactionDate;
+    private TextView tvTransactionHour;
     private View rootView;
 
     private Fragment fragment;
@@ -48,10 +60,12 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
         this.cryptoCoinTransactionId = -1;
 
         rootView = itemView.findViewById(R.id.rlTransactionItem);
-        transactionFrom = (TextView) itemView.findViewById(R.id.fromText);
-        transactionTo = (TextView) itemView.findViewById(R.id.toText);
-        transactionAmount = (TextView) itemView.findViewById(R.id.amountText);
+        tvFrom = (TextView) itemView.findViewById(R.id.fromText);
+        tvTo = (TextView) itemView.findViewById(R.id.toText);
+        tvAmount = (TextView) itemView.findViewById(R.id.tvAmount);
+        tvEquivalent = (TextView) itemView.findViewById(R.id.tvEquivalent);
         tvTransactionDate = (TextView) itemView.findViewById(R.id.tvTransactionDate);
+        tvTransactionHour = (TextView) itemView.findViewById(R.id.tvTransactionHour);
         this.fragment = fragment;
 
         rootView.setOnClickListener(new View.OnClickListener() {
@@ -85,9 +99,12 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
      * Clears all info in this element view
      */
     public void clear(){
-        transactionFrom.setText("loading...");
-        transactionTo.setText("");
-        transactionAmount.setText("");
+        tvFrom.setText("loading...");
+        tvTo.setText("");
+        tvAmount.setText("");
+        tvEquivalent.setText("");
+        tvTransactionDate.setText("");
+        tvTransactionHour.setText("");
     }
 
     /*
@@ -95,28 +112,53 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
      */
     public void bindTo(final CryptoCoinTransaction transaction/*, final OnTransactionClickListener listener*/) {
         if (transaction == null){
-            transactionFrom.setText("loading...");
-            transactionTo.setText("");
-            transactionAmount.setText("");
+            clear();
         } else {
             this.cryptoCoinTransactionId = transaction.getId();
             CryptoCurrencyViewModel cryptoCurrencyViewModel = ViewModelProviders.of(this.fragment).get(CryptoCurrencyViewModel.class);
             CryptoCurrency cryptoCurrency = cryptoCurrencyViewModel.getCryptoCurrencyById(transaction.getIdCurrency());
+            CryptoNetAccountViewModel cryptoNetAccountViewModel = ViewModelProviders.of(this.fragment).get(CryptoNetAccountViewModel.class);
+            cryptoNetAccountViewModel.loadCryptoNetAccount(transaction.getAccountId());
+
             String amountString = String.format("%.2f",transaction.getAmount()/Math.pow(10,cryptoCurrency.getPrecision()));
 
-            tvTransactionDate.setText(transaction.getDate().toString());
-            transactionFrom.setText(transaction.getFrom());
-            transactionTo.setText(transaction.getTo());
+            DateFormat dateFormat = new SimpleDateFormat("dd MMM");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("cet"));
+            DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+            hourFormat.setTimeZone(TimeZone.getTimeZone("cet"));
 
+            tvTransactionDate.setText(dateFormat.format(transaction.getDate()));
+            tvTransactionHour.setText(hourFormat.format(transaction.getDate())+" CET");
+
+            tvFrom.setText(transaction.getFrom());
+            tvTo.setText(transaction.getTo());
+
+            LiveData<CryptoNetAccount> cryptoNetAccountLiveData = cryptoNetAccountViewModel.getCryptoNetAccount();
+
+            cryptoNetAccountLiveData.observe(this.fragment, new Observer<CryptoNetAccount>() {
+                @Override
+                public void onChanged(@Nullable CryptoNetAccount cryptoNetAccount) {
+                    if (transaction.getInput()){
+                        tvTo.setText(cryptoNetAccount.getName());
+                    } else {
+                        tvFrom.setText(cryptoNetAccount.getName());
+                    }
+                }
+            });
+
+            String finalAmountText = "";
             if (transaction.getInput()) {
-                transactionAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.green));
+                tvAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.green));
+                finalAmountText = "+ "+amountString
+                        + " "
+                        + cryptoCurrency.getName();
             } else {
-                transactionAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.red));
+                tvAmount.setTextColor(itemView.getContext().getResources().getColor(R.color.red));
+                finalAmountText = amountString
+                        + " "
+                        + cryptoCurrency.getName();
             }
-            transactionAmount.setText(
-                    amountString
-                    + " "
-                    + cryptoCurrency.getName());
+            tvAmount.setText(finalAmountText);
             //This will load the transaction receipt when the user clicks this view
             /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
