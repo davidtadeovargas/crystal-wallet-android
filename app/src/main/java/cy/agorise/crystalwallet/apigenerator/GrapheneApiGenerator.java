@@ -12,12 +12,14 @@ import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
 import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
 import cy.agorise.crystalwallet.dao.CryptoCurrencyDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
@@ -58,12 +60,8 @@ public abstract class GrapheneApiGenerator {
 
     //TODO network connections
     //TODO make to work with all Graphene type, not only bitshares
-    public static String url = "http://185.208.208.147:11012";
     public static String faucetUrl = "http://185.208.208.147:5010";
-    private static String equivalentUrl = "http://185.208.208.147:8090";
-    //public static String url = "wss://bitshares.openledger.info/ws";
-    //private static Str ing equivalentUrl = "wss://bitshares.openledger.info/ws";
-
+    private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
 
     // The message broker for bitshares
     private static SubscriptionMessagesHub bitsharesSubscriptionHub = new SubscriptionMessagesHub("", "", true, new NodeErrorListener() {
@@ -77,7 +75,7 @@ public abstract class GrapheneApiGenerator {
     /**
      * The subscription thread for the real time updates
      */
-    private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub,url);
+    private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub, CryptoNetManager.getURL(CryptoNet.BITSHARES));
     /**
      * This is used for manager each listener in the subscription thread
      */
@@ -110,7 +108,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -138,7 +136,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
 
             thread.start();
     }
@@ -165,7 +163,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
             thread.start();
     }
 
@@ -192,7 +190,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -219,7 +217,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -243,7 +241,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -288,7 +286,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -336,7 +334,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -509,7 +507,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
 
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
 
         thread.start();
 
@@ -536,7 +534,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
 
     }

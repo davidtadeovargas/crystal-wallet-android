@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.network;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,13 +26,24 @@ public abstract class CryptoNetManager {
      */
     private static HashMap<CryptoNet,ArrayList<TestedURL>> TestedURLs = new  HashMap<>();
 
+    public static String getURL(CryptoNet crypto){
+        return CryptoNetManager.getURL(crypto,0);
+    }
+
+
     public static String getURL(CryptoNet crypto, int index){
-        if(TestedURLs.containsKey(crypto) && TestedURLs.get(crypto).size()<index){
+        if(TestedURLs.containsKey(crypto) && TestedURLs.get(crypto).size()>index){
+            StringBuilder debugString = new StringBuilder("CryptoNetManager urls times: ");
+            for(TestedURL url : TestedURLs.get(crypto)){
+                debugString.append("\r\n ").append(url.getTime()).append(" ").append(url.getUrl());
+            }
+            System.out.println(debugString.toString());
+
             return TestedURLs.get(crypto).get(index).getUrl();
         }
 
         if(CryptoNetURLs.containsKey(crypto) && !CryptoNetURLs.get(crypto).isEmpty()){
-
+            return CryptoNetURLs.get(crypto).iterator().next();
         }
         return null;
     }
@@ -49,6 +61,24 @@ public abstract class CryptoNetManager {
         }
 
         CryptoNetURLs.get(crypto).add(url);
+        CryptoNetVerifier verifier = CryptoNetVerifier.getNetworkVerify(crypto);
+        if(verifier != null) {
+            verifier.checkURL(url);
+        }
+    }
+
+    public static void addCryptoNetURL(CryptoNet crypto, String[] urls){
+        if(!CryptoNetURLs.containsKey(crypto)){
+            CryptoNetURLs.put(crypto,new HashSet<String>());
+        }
+        CryptoNetVerifier verifier = CryptoNetVerifier.getNetworkVerify(crypto);
+
+        for(String url : urls) {
+            CryptoNetURLs.get(crypto).add(url);
+            if(verifier != null) {
+                verifier.checkURL(url);
+            }
+        }
     }
 
     public static void removeCryptoNetURL(CryptoNet crypto, String url){
@@ -65,9 +95,19 @@ public abstract class CryptoNetManager {
             TestedURL testedUrl = new TestedURL(time,url);
             if(!TestedURLs.get(crypto).contains(testedUrl)){
                 TestedURLs.get(crypto).add(testedUrl);
-                Collections.reverse(TestedURLs.get(crypto));
+                Collections.sort(TestedURLs.get(crypto));
             }
+        }else{
+            //TODO add error handler
         }
+    }
+
+    public static String getChaindId(CryptoNet crypto){
+        CryptoNetVerifier verifier = CryptoNetVerifier.getNetworkVerify(crypto);
+        if(verifier != null) {
+            return verifier.getChainId();
+        }
+        return null;
     }
 
     private static class TestedURL implements Comparable{

@@ -32,7 +32,7 @@ public class GetChainId extends BaseGrapheneHandler {
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-        ApiCall getAccountByName = new ApiCall(0, "Get_Chain_Id", new ArrayList<Serializable>(), RPC.VERSION, 1);
+        ApiCall getAccountByName = new ApiCall(0, "get_chain_id", new ArrayList<Serializable>(), RPC.VERSION, 1);
         websocket.sendText(getAccountByName.toJsonString());
     }
 

@@ -12,10 +12,14 @@ import cy.agorise.crystalwallet.enums.CryptoNet;
 
 public abstract class CryptoNetVerifier {
 
-    public static CryptoNetVerifier getNetworkVerify(CryptoNet cryptoNet){
-
+    static CryptoNetVerifier getNetworkVerify(CryptoNet cryptoNet){
+        if(cryptoNet.getLabel().equals(CryptoNet.BITSHARES.getLabel())){
+            return new BitsharesCryptoNetVerifier();
+        }
         return null;
     }
 
-    public abstract void checkURL(String url);
+    public abstract void checkURL(final String url);
+
+    public abstract String getChainId();
 }
