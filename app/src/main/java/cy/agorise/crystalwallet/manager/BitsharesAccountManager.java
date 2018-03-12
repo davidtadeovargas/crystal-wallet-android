@@ -36,6 +36,7 @@ import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
@@ -56,7 +57,7 @@ import cy.agorise.graphenej.operations.TransferOperationBuilder;
  */
 public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetInfoRequestsListener {
 
-    private final static String BITSHARES_TESTNET_CHAIN_ID= "9cf6f255a208100d2bb275a3c52f4b1589b7ec9c9bfc2cb2a5fe6411295106d8";
+    //private final static String BITSHARES_TESTNET_CHAIN_ID= "9cf6f255a208100d2bb275a3c52f4b1589b7ec9c9bfc2cb2a5fe6411295106d8";
 
     private final static String SIMPLE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private final static String DEFAULT_TIME_ZONE = "GMT";
@@ -395,7 +396,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
 
                 Transaction transaction = new Transaction(privateKey, null, operationList);
-                transaction.setChainId(BITSHARES_TESTNET_CHAIN_ID);
+                transaction.setChainId(CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
 
                 ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
                     @Override
