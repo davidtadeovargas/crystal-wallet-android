@@ -39,12 +39,15 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
 
     private Context context;
 
-    public CryptoCoinBalanceViewHolder(View itemView) {
+    private CryptoNetBalanceViewHolder cryptoNetBalanceViewHolder;
+
+    public CryptoCoinBalanceViewHolder(View itemView, CryptoNetBalanceViewHolder cryptoNetBalanceViewHolder) {
         super(itemView);
         //TODO: use ButterKnife to load this
         cryptoCoinName = (TextView) itemView.findViewById(R.id.tvCryptoCoinName);
         cryptoCoinBalance = (TextView) itemView.findViewById(R.id.tvCryptoCoinBalanceAmount);
         cryptoCoinBalanceEquivalence = (TextView) itemView.findViewById(R.id.tvCryptoCoinBalanceEquivalence);
+        this.cryptoNetBalanceViewHolder = cryptoNetBalanceViewHolder;
         this.context = itemView.getContext();
 
     }
@@ -102,12 +105,14 @@ public class CryptoCoinBalanceViewHolder extends RecyclerView.ViewHolder {
                                         public void onChanged(@Nullable CryptoCurrencyEquivalence cryptoCurrencyEquivalence) {
                                             if (cryptoCurrencyEquivalence != null) {
                                                 CryptoCurrency toCurrency = CrystalDatabase.getAppDatabase(context).cryptoCurrencyDao().getById(cryptoCurrencyEquivalence.getFromCurrencyId());
+                                                double equivalentValue = (balance.getBalance() / Math.pow(10, currencyFrom.getPrecision())) /
+                                                        (cryptoCurrencyEquivalence.getValue() / Math.pow(10, toCurrency.getPrecision()));
                                                 String equivalenceString = String.format(
                                                         "%.2f",
-                                                        (balance.getBalance() / Math.pow(10, currencyFrom.getPrecision())) /
-                                                                (cryptoCurrencyEquivalence.getValue() / Math.pow(10, toCurrency.getPrecision()))
+                                                        equivalentValue
                                                 );
 
+                                                cryptoNetBalanceViewHolder.setEquivalentBalance(balance,equivalentValue);
                                                 cryptoCoinBalanceEquivalence.setText(
                                                         equivalenceString + " " + toCurrency.getName());
                                             }

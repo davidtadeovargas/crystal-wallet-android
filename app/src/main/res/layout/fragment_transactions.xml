@@ -4,9 +4,22 @@
     android:layout_height="match_parent"
     tools:context="cy.agorise.crystalwallet.fragments.TransactionsFragment">
 
-    <cy.agorise.crystalwallet.views.TransactionListView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/vTransactionListView" />
+        android:layout_height="wrap_content">
 
+        <!--<TextView
+            android:id="@+id/tvTransactionSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android: />
+<Spinner
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"></Spinner>
+-->
+        <cy.agorise.crystalwallet.views.TransactionListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/vTransactionListView" />
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

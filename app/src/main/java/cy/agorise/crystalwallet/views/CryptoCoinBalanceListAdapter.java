@@ -17,8 +17,14 @@ import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 
 public class CryptoCoinBalanceListAdapter extends ListAdapter<CryptoCoinBalance, CryptoCoinBalanceViewHolder> {
 
+    CryptoNetBalanceViewHolder cryptoNetBalanceViewHolder;
+
     public CryptoCoinBalanceListAdapter() {
         super(CryptoCoinBalance.DIFF_CALLBACK);
+    }
+
+    public void setCryptoNetBalanceViewHolder(CryptoNetBalanceViewHolder cryptoNetBalanceViewHolder){
+        this.cryptoNetBalanceViewHolder = cryptoNetBalanceViewHolder;
     }
 
     @Override
@@ -26,7 +32,7 @@ public class CryptoCoinBalanceListAdapter extends ListAdapter<CryptoCoinBalance,
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.crypto_coin_balance_list_item,parent,false);
 
 
-        return new CryptoCoinBalanceViewHolder(v);
+        return new CryptoCoinBalanceViewHolder(v, cryptoNetBalanceViewHolder);
     }
 
     @Override

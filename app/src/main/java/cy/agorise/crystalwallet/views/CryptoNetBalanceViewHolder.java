@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,9 +50,16 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
     TextView cryptoNetName;
 
     /*
+     * the view holding the equivalent total of the crypto net user account
+     */
+    TextView cryptoNetEquivalentTotal;
+
+    /*
      * The list view of the crypto coins balances of this crypto net balance
      */
     CryptoCoinBalanceListView cryptoCoinBalanceListView;
+
+    HashMap<CryptoCoinBalance, Double> equivalentTotalHashMap;
 
     /*
      * The button for sending transactions from this crypto net balance account
@@ -86,6 +94,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         //TODO: use ButterKnife to load the views
         cryptoNetIcon = (ImageView) itemView.findViewById(R.id.ivCryptoNetIcon);
         cryptoNetName = (TextView) itemView.findViewById(R.id.tvCryptoNetName);
+        cryptoNetEquivalentTotal = (TextView) itemView.findViewById(R.id.tvCryptoNetEquivalentTotal);
         cryptoCoinBalanceListView = (CryptoCoinBalanceListView) itemView.findViewById(R.id.cryptoCoinBalancesListView);
         btnSendFromThisAccount = (Button) itemView.findViewById(R.id.btnSendFromThisAccount);
         btnReceiveToThisAccount = (Button) itemView.findViewById(R.id.btnReceiveWithThisAccount);
@@ -157,6 +166,23 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         newFragment.show(ft, "ReceiveDialog");
     }
 
+    public void setEquivalentBalance(CryptoCoinBalance cryptoCoinBalance, double equivalentValue){
+        if (this.equivalentTotalHashMap == null){
+            this.equivalentTotalHashMap = new HashMap<CryptoCoinBalance, Double>();
+        }
+
+        if (cryptoCoinBalance != null) {
+            this.equivalentTotalHashMap.put(cryptoCoinBalance, equivalentValue);
+            float totalEquivalent = 0;
+
+            for (Double nextEquivalent : this.equivalentTotalHashMap.values()){
+                totalEquivalent += nextEquivalent;
+            }
+
+            this.cryptoNetEquivalentTotal.setText(""+totalEquivalent);
+        }
+    }
+
     /*
      * Binds this view with the data of an element of the list
      */
@@ -164,6 +190,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         if (balance == null){
             cryptoNetName.setText("loading...");
         } else {
+            final CryptoNetBalanceViewHolder thisViewHolder = this;
             this.cryptoNetAccountId = balance.getAccountId();
             cryptoNetName.setText(balance.getCryptoNet().getLabel());
 
@@ -172,13 +199,15 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
             cryptoCoinBalanceListViewModel.init(balance.getAccountId());
             LiveData<List<CryptoCoinBalance>> cryptoCoinBalanceData = cryptoCoinBalanceListViewModel.getCryptoCoinBalanceList();
 
-            cryptoCoinBalanceListView.setData(null);
+            cryptoCoinBalanceListView.setData(null, this);
 
             //Observes the livedata, so any of its changes on the database will be reloaded here
             cryptoCoinBalanceData.observe((LifecycleOwner)this.itemView.getContext(), new Observer<List<CryptoCoinBalance>>() {
                 @Override
                 public void onChanged(List<CryptoCoinBalance> cryptoCoinBalances) {
-                    cryptoCoinBalanceListView.setData(cryptoCoinBalances);
+                    cryptoCoinBalanceListView.setData(cryptoCoinBalances, thisViewHolder);
+
+
                 }
             });
         }
