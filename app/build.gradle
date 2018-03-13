@@ -63,4 +63,6 @@ dependencies {
     annotationProcessor 'android.arch.lifecycle:compiler:1.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

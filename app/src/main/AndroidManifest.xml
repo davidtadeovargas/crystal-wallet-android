@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cy.agorise.crystalwallet">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="cy.agorise.crystalwallet.application.CrystalApplication"
+        android:name=".application.CrystalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Crystal"
@@ -21,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.BoardActivity"
-            android:theme="@style/AppTheme.NoActionBar" > <!-- Dirty trick to avoid toolbar error on balance -->
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity android:name=".activities.AccountSeedsManagementActivity" >
         </activity>
@@ -37,20 +38,27 @@
         </activity>
         <activity android:name=".activities.BackupSeedActivity" >
         </activity>
-        <activity android:name=".activities.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan" >
+        <activity android:name=".activities.PinRequestActivity">
         </activity>
-        <activity android:name=".activities.AccountsActivity"
-            android:theme="@style/ActivityDialog"
-            android:parentActivityName=".activities.BoardActivity" >
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity
+            android:name=".activities.AccountsActivity"
+            android:parentActivityName=".activities.BoardActivity"
+            android:theme="@style/ActivityDialog">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.BoardActivity" />
         </activity>
 
-        <service android:name=".service.CrystalWalletService"
-            android:exported="false"/>
+        <service
+            android:name=".service.CrystalWalletService"
+            android:exported="false" />
+
+        <activity android:name=".activities.CreateContactActivity"></activity>
     </application>
 
 </manifest>

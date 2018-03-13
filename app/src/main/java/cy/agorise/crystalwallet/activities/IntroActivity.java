@@ -1,11 +1,6 @@
 package cy.agorise.crystalwallet.activities;
 
-import android.arch.lifecycle.LifecycleActivity;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -34,11 +29,10 @@ import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoCoinBalanceGene
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedListViewModel;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
-
-import static cy.agorise.crystalwallet.R.string.transactions;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -81,6 +75,9 @@ public class IntroActivity extends AppCompatActivity {
                 //Log.d(TAG,"surfaceDestroyed");
             }
         });
+
+        this.getApplication().registerActivityLifecycleCallbacks(new CrystalSecurityMonitor(this));
+
 
         //Checks if the user has any seed created
         /*AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);

@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -23,13 +25,19 @@ import android.view.Window;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.Result;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,10 +49,13 @@ import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListen
 import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.models.ContactAddress;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
+import cy.agorise.crystalwallet.viewmodels.ContactViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
@@ -52,6 +63,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;
 import cy.agorise.crystalwallet.views.CryptoNetAccountAdapter;
+import cy.agorise.graphenej.Invoice;
+import cy.agorise.graphenej.LineItem;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class SendTransactionFragment extends DialogFragment implements UIValidatorListener, ZXingScannerView.ResultHandler {
@@ -82,6 +95,9 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     FloatingActionButton btnSend;
     @BindView(R.id.btnCancel)
     TextView btnCancel;
+    @BindView(R.id.ivPeople)
+    ImageView ivPeople;
+    CryptoCurrencyAdapter assetAdapter;
 
     Button btnScanQrCode;
 
@@ -145,7 +161,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                     }
                     List<CryptoCurrency> cryptoCurrencyList = db.cryptoCurrencyDao().getByIds(assetIds);
 
-                    CryptoCurrencyAdapter assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
+                    assetAdapter = new CryptoCurrencyAdapter(getContext(), android.R.layout.simple_spinner_item, cryptoCurrencyList);
                     spAsset.setAdapter(assetAdapter);
                 }
             });
@@ -220,6 +236,50 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterMemoChanged(Editable editable) {
         this.sendTransactionValidator.validate();
+    }
+
+    @OnClick(R.id.ivPeople)
+    public void searchContact(){
+        FragmentTransaction ft = this.getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment prev = this.getActivity().getSupportFragmentManager().findFragmentByTag("ContactSelectionDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Show a contact selection list
+        ContactSelectionFragment contactSelectionFragment = ContactSelectionFragment.newInstance(this.cryptoNetAccount.getCryptoNet());
+        contactSelectionFragment.setTargetFragment(this, 1);
+        contactSelectionFragment.show(ft, "ContactSelectionDialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if(requestCode == 1) {
+            if(resultCode == 1) {
+                long contactId = data.getLongExtra("CONTACT_ID",-1);
+                if (contactId > -1){
+                    ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+                    contactViewModel.init(contactId);
+                    LiveData<List<ContactAddress>> contactAddressesLiveData = contactViewModel.getContactAddresses();
+
+                    contactAddressesLiveData.observe(this, new Observer<List<ContactAddress>>() {
+                        @Override
+                        public void onChanged(@Nullable List<ContactAddress> contactAddresses) {
+                            if (contactAddresses != null) {
+                                for (ContactAddress contactAddress : contactAddresses) {
+                                    if (contactAddress.getCryptoNet() == cryptoNetAccount.getCryptoNet()) {
+                                        etTo.setText(contactAddress.getAddress());
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     @OnClick(R.id.btnCancel)
@@ -317,6 +377,27 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
 
     @Override
     public void handleResult(Result result) {
+        Invoice invoice = Invoice.fromQrCode(result.getText());
+
+        etTo.setText(invoice.getTo());
+
+        for (int i=0;i<assetAdapter.getCount();i++) {
+            if (assetAdapter.getItem(i).getName().equals(invoice.getCurrency())) {
+                spAsset.setSelection(i);
+                break;
+            }
+        }
+        etMemo.setText(invoice.getMemo());
+
+
+        double amount = 0.0;
+        for (LineItem nextItem : invoice.getLineItems()) {
+            amount += nextItem.getQuantity() * nextItem.getPrice();
+        }
+        DecimalFormat df = new DecimalFormat("####.####");
+        df.setRoundingMode(RoundingMode.CEILING);
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
+        etAmount.setText(df.format(amount));
         Log.i("SendFragment",result.getText());
     }
 }

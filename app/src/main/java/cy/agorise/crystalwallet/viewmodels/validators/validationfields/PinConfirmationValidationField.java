@@ -22,18 +22,24 @@ public class PinConfirmationValidationField extends ValidationField {
     public void validate(){
         String newConfirmationValue = pinConfirmationField.getText().toString();
         String newValue = pinField.getText().toString();
-        String mixedValue = newValue+"_"+newConfirmationValue;
-        if (mixedValue != this.getLastValue()) {
-            this.setLastValue(mixedValue);
-            this.startValidating();
+        String mixedValue = newValue + "_" + newConfirmationValue;
 
-
-            if (!newConfirmationValue.equals(newValue)){
-                this.setMessageForValue(mixedValue,this.validator.getContext().getResources().getString(R.string.mismatch_pin));
-                this.setValidForValue(mixedValue,false);
-            } else {
-                this.setValidForValue(mixedValue, true);
+        if (!newConfirmationValue.equals("")) {
+            if (!mixedValue.equals(this.getLastValue())) {
+                this.setLastValue(mixedValue);
+                this.startValidating();
+                if (!newConfirmationValue.equals(newValue)) {
+                    this.setMessageForValue(mixedValue, this.validator.getContext().getResources().getString(R.string.mismatch_pin));
+                    this.setValidForValue(mixedValue, false);
+                } else {
+                    this.setValidForValue(mixedValue, true);
+                }
             }
+        } else {
+            this.setLastValue("");
+            this.startValidating();
+            this.setMessageForValue("", "");
+            this.setValidForValue("", false);
         }
     }
 }

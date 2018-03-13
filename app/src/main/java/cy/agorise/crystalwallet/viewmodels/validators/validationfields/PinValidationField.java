@@ -20,16 +20,23 @@ public class PinValidationField extends ValidationField {
 
     public void validate(){
         String newValue = pinField.getText().toString();
-        if (newValue != this.getLastValue()) {
-            this.setLastValue(newValue);
-            this.startValidating();
+        if (!newValue.equals("")) {
+            if (!newValue.equals(this.getLastValue())) {
+                this.setLastValue(newValue);
+                this.startValidating();
 
-            if (newValue.length() < 6) {
-                this.setMessageForValue(newValue, this.validator.getContext().getResources().getString(R.string.pin_number_warning));
-                this.setValidForValue(newValue, false);
-            } else {
-                this.setValidForValue(newValue, true);
+                if (newValue.length() < 6) {
+                    this.setMessageForValue(newValue, this.validator.getContext().getResources().getString(R.string.pin_number_warning));
+                    this.setValidForValue(newValue, false);
+                } else {
+                    this.setValidForValue(newValue, true);
+                }
             }
+        } else {
+            this.setLastValue("");
+            this.startValidating();
+            this.setMessageForValue("", "");
+            this.setValidForValue("", false);
         }
     }
 }

@@ -37,8 +37,9 @@ public abstract class BitsharesFaucetApiGenerator {
      * @param url The url of the faucet
      * @return The bitshares id of the registered account, or null
      */
-    public static boolean registerBitsharesAccount(String accountName, String ownerKey,
-                                                  String activeKey, String memoKey, String url){
+    public static void registerBitsharesAccount(String accountName, String ownerKey,
+                                                   String activeKey, String memoKey, String url,
+                                                   final ApiRequest request){
         CreateAccountPetition petition = new CreateAccountPetition();
         final Account account = new Account();
         account.name=accountName;
@@ -62,8 +63,7 @@ public abstract class BitsharesFaucetApiGenerator {
 
         HashMap<String, HashMap> hashMap = new HashMap<>();
         hashMap.put("account", hm);
-        final boolean[] answer = {false};
-        final Object SYNC = new Object();
+
         try {
             ServiceGenerator sg = new ServiceGenerator(url);
             IWebService service = sg.getService(IWebService.class);
@@ -78,56 +78,36 @@ public abstract class BitsharesFaucetApiGenerator {
                         if (resp.account != null) {
                             try {
                                 if(resp.account.name.equals(account.name)) {
-                                    synchronized (SYNC){
-                                        answer[0] = true;
-                                        SYNC.notifyAll();
-                                    }
+                                    request.getListener().success(true,request.getId());
                                 }else{
-                                    System.out.println("ERROR account name different" + resp.account.name);
-                                   //ERROR
-                                    synchronized (SYNC) {
-                                        SYNC.notifyAll();
-                                    }
+                                    request.getListener().fail(request.getId());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                synchronized (SYNC) {
-                                    SYNC.notifyAll();
-                                }
+                                request.getListener().fail(request.getId());
                             }
                         }else{
                             System.out.println("ERROR response doesn't have account " + response.message());
-                            //ERROR
-                            synchronized (SYNC) {
-                                SYNC.notifyAll();
-                            }
+                            request.getListener().fail(request.getId());
 
                         }
                     }else{
                         System.out.println("ERROR fetching info");
-                        //ERROR
-                        synchronized (SYNC) {
-                            SYNC.notifyAll();
-                        }
+                        request.getListener().fail(request.getId());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegisterAccountResponse> call, Throwable t) {
                     t.printStackTrace();
-                    synchronized (SYNC) {
-                        SYNC.notifyAll();
-                    }
+                    request.getListener().fail(request.getId());
                 }
             });
-            synchronized (SYNC) {
-                SYNC.wait(60000);
-            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+            request.getListener().fail(request.getId());
 
-        return answer[0];
+        }
     }
 
     /**

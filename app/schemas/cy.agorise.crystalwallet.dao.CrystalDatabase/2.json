@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "a44ccb96c8213951403ed2a283fb3367",
+    "identityHash": "22cb2a56b28a9f7088ec98d6a72f9f67",
     "entities": [
       {
         "tableName": "account_seed",
@@ -235,7 +235,7 @@
       },
       {
         "tableName": "contact",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `gravatar` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `email` TEXT, `gravatar` TEXT)",
         "fields": [
           {
             "fieldPath": "mId",
@@ -246,6 +246,12 @@
           {
             "fieldPath": "mName",
             "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mEmail",
+            "columnName": "email",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -278,6 +284,70 @@
               "name"
             ],
             "createSql": "CREATE UNIQUE INDEX `index_contact_name` ON `${TABLE_NAME}` (`name`)"
+          },
+          {
+            "name": "index_contact_email",
+            "unique": false,
+            "columnNames": [
+              "email"
+            ],
+            "createSql": "CREATE  INDEX `index_contact_email` ON `${TABLE_NAME}` (`email`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "contact_address",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contact_id` INTEGER NOT NULL, `crypto_net` TEXT NOT NULL, `address` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "mId",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mContactId",
+            "columnName": "contact_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mCryptoNet",
+            "columnName": "crypto_net",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mAddress",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_contact_address_id",
+            "unique": true,
+            "columnNames": [
+              "id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_contact_address_id` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "index_contact_address_contact_id_crypto_net",
+            "unique": true,
+            "columnNames": [
+              "contact_id",
+              "crypto_net"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_contact_address_contact_id_crypto_net` ON `${TABLE_NAME}` (`contact_id`, `crypto_net`)"
           }
         ],
         "foreignKeys": []
@@ -622,7 +692,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a44ccb96c8213951403ed2a283fb3367\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"22cb2a56b28a9f7088ec98d6a72f9f67\")"
     ]
   }
 }

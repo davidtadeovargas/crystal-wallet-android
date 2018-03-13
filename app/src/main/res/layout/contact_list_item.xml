@@ -34,6 +34,14 @@
             android:layout_below="@+id/tvContactName"
             android:layout_toRightOf="@+id/ivContactThumbnail"
             android:text="Paid: Jan 1, 2001, 01:01"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ivDeleteContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/deleteicon" />
     </RelativeLayout>
 </LinearLayout>

@@ -10,7 +10,10 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.DiffCallback;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import cy.agorise.crystalwallet.enums.CryptoNet;
 
 /**
  * Represents a user contact
@@ -19,7 +22,7 @@ import java.util.List;
  */
 
 @Entity(tableName="contact",
-        indices = {@Index("id"),@Index(value = {"name"}, unique=true)})
+        indices = {@Index("id"),@Index(value = {"name"}, unique=true),@Index("email")})
 public class Contact {
 
     /**
@@ -31,6 +34,9 @@ public class Contact {
 
     @ColumnInfo(name="name")
     private String mName;
+
+    @ColumnInfo(name="email")
+    private String mEmail;
 
     @ColumnInfo(name = "gravatar")
     private String mGravatar;
@@ -62,6 +68,14 @@ public class Contact {
         this.mGravatar = gravatar;
     }
 
+    public String getEmail() {
+        return this.mEmail;
+    }
+
+    public void setEmail(String email) {
+        this.mEmail = email;
+    }
+
     public int addressesCount(){
         return this.mAddresses.size();
     }
@@ -70,8 +84,30 @@ public class Contact {
         return this.mAddresses.get(index);
     }
 
+    public void clearAddresses(){
+        if (this.mAddresses != null) {
+            this.mAddresses.clear();
+        }
+    }
+
     public void addAddress(ContactAddress address){
+        if (this.mAddresses == null) {
+            this.mAddresses = new ArrayList<ContactAddress>();
+        }
         this.mAddresses.add(address);
+        address.setContactId(this.getId());
+    }
+
+    public ContactAddress getCryptoNetAddress(CryptoNet cryptoNet){
+        if (this.mAddresses != null) {
+            for (ContactAddress address : this.mAddresses) {
+                if (address.getCryptoNet() == cryptoNet) {
+                    return address;
+                }
+            }
+        }
+
+        return null;
     }
 
     public static final DiffCallback<Contact> DIFF_CALLBACK = new DiffCallback<Contact>() {

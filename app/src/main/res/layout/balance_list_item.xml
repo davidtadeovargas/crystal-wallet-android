@@ -14,7 +14,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/cryptoNetBalanceTitleBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,20 +31,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:layout_toRightOf="@id/ivCryptoNetIcon"
                 android:text="unknown coin" />
+
+            <TextView
+                android:id="@+id/tvCryptoNetEquivalentTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="0.003€" />
 
             <Button
                 android:id="@+id/btnSendFromThisAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="send"/>
+                android:text="send"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnReceiveWithThisAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="receive"/>
-        </LinearLayout>
+                android:text="receive"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <cy.agorise.crystalwallet.views.CryptoCoinBalanceListView
             android:id="@+id/cryptoCoinBalancesListView"

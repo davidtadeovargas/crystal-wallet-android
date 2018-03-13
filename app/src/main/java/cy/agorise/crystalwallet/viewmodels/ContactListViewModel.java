@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.paging.PagedList;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.Contact;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 
@@ -30,7 +31,31 @@ public class ContactListViewModel extends AndroidViewModel {
         );
     }
 
+    public void init(){
+        contactList = this.db.contactDao().contactsByName().create(0,
+                new PagedList.Config.Builder()
+                        .setEnablePlaceholders(true)
+                        .setPageSize(10)
+                        .setPrefetchDistance(10)
+                        .build()
+        );
+    }
+
+    public void init(CryptoNet cryptoNet){
+        contactList = this.db.contactDao().contactsByNameAndCryptoNet(cryptoNet.name()).create(0,
+                new PagedList.Config.Builder()
+                        .setEnablePlaceholders(true)
+                        .setPageSize(10)
+                        .setPrefetchDistance(10)
+                        .build()
+        );
+    }
+
     public LiveData<PagedList<Contact>> getContactList(){
         return this.contactList;
+    }
+
+    public  boolean contactExists(String name){
+        return this.db.contactDao().existsByName(name);
     }
 }

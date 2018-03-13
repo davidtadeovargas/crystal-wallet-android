@@ -204,6 +204,12 @@ public class BoardActivity  extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.fabAddContact)
+    public void beginCreateContact(){
+        Intent intent = new Intent(this, CreateContactActivity.class);
+        startActivity(intent);
+    }
+
     /*
      * dispatch the user to the receive fragment using this account
      */
@@ -215,8 +221,16 @@ public class BoardActivity  extends AppCompatActivity {
         }
         ft.addToBackStack(null);
 
+        long receiveCryptoNetAccountId = -1;
+        if (this.cryptoNetAccountId != -1){
+            receiveCryptoNetAccountId = this.cryptoNetAccountId;
+        } else {
+            CryptoNetBalanceListViewModel cryptoNetBalanceListViewModel = ViewModelProviders.of(this).get(CryptoNetBalanceListViewModel.class);
+            receiveCryptoNetAccountId = cryptoNetBalanceListViewModel.getFirstBitsharesAccountId();
+        }
+
         // Create and show the dialog.
-        ReceiveTransactionFragment newFragment = ReceiveTransactionFragment.newInstance(this.cryptoNetAccountId);
+        ReceiveTransactionFragment newFragment = ReceiveTransactionFragment.newInstance(receiveCryptoNetAccountId);
         newFragment.show(ft, "ReceiveDialog");
     }
 

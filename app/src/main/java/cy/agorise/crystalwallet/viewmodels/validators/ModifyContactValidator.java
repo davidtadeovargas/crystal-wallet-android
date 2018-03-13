@@ -1,0 +1,21 @@
+package cy.agorise.crystalwallet.viewmodels.validators;
+
+import android.content.Context;
+import android.widget.EditText;
+
+import cy.agorise.crystalwallet.models.Contact;
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ContactNameValidationField;
+import cy.agorise.crystalwallet.viewmodels.validators.validationfields.EmailValidationField;
+
+/**
+ * Created by Henry Varona on 2/11/2018.
+ */
+
+public class ModifyContactValidator extends UIValidator {
+
+    public ModifyContactValidator(Context context, Contact contact, EditText nameEdit, EditText emailEdit){
+        super(context);
+        this.addField(new ContactNameValidationField(nameEdit, contact));
+        this.addField(new EmailValidationField(emailEdit));
+    }
+}

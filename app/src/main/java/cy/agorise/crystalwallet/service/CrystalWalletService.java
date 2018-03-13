@@ -109,8 +109,7 @@ public class CrystalWalletService extends LifecycleService {
 
                                     if (LoadEquivalencesThread != null) {
                                         LoadEquivalencesThread.stopLoadingEquivalences();
-                                    }
-                                    ;
+                                    };
                                     LoadEquivalencesThread = new EquivalencesThread(service, generalSetting.getValue(), bitsharesAssets);
                                     LoadEquivalencesThread.start();
                                 }
@@ -184,14 +183,14 @@ public class CrystalWalletService extends LifecycleService {
         }
 
         //if (LoadEquivalencesThread == null) {
-        //    LoadEquivalencesThread = new Thread() {
+        //    LoadEquivalencesThread = new EquivalencesThread() {
         //        @Override
         //        public void run() {
                     loadEquivalentsValues();
         //        }
         //    };
         //    LoadEquivalencesThread.start();
-        //}
+       // }
 
         // If we get killed, after returning from here, restart
         return START_STICKY;

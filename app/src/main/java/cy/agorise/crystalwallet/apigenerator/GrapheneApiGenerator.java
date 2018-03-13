@@ -12,14 +12,14 @@ import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
 import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
 import cy.agorise.crystalwallet.dao.CryptoCurrencyDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
-import cy.agorise.crystalwallet.dao.TransactionDao;
-import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.network.WebSocketThread;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
@@ -43,11 +43,9 @@ import cy.agorise.graphenej.api.TransactionBroadcastSequence;
 import cy.agorise.graphenej.interfaces.NodeErrorListener;
 import cy.agorise.graphenej.interfaces.SubscriptionListener;
 import cy.agorise.graphenej.interfaces.WitnessResponseListener;
-import cy.agorise.graphenej.models.AccountBalanceUpdate;
 import cy.agorise.graphenej.models.AccountProperties;
 import cy.agorise.graphenej.models.BaseResponse;
 import cy.agorise.graphenej.models.BroadcastedTransaction;
-import cy.agorise.graphenej.models.HistoricalTransfer;
 import cy.agorise.graphenej.models.SubscriptionResponse;
 import cy.agorise.graphenej.models.WitnessResponse;
 import cy.agorise.graphenej.operations.TransferOperation;
@@ -62,12 +60,8 @@ public abstract class GrapheneApiGenerator {
 
     //TODO network connections
     //TODO make to work with all Graphene type, not only bitshares
-    public static String url = "http://185.208.208.147:11012";
     public static String faucetUrl = "http://185.208.208.147:5010";
-    private static String equivalentUrl = "http://185.208.208.147:8090";
-    //public static String url = "wss://bitshares.openledger.info/ws";
-    //private static Str ing equivalentUrl = "wss://bitshares.openledger.info/ws";
-
+    private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
 
     // The message broker for bitshares
     private static SubscriptionMessagesHub bitsharesSubscriptionHub = new SubscriptionMessagesHub("", "", true, new NodeErrorListener() {
@@ -81,7 +75,7 @@ public abstract class GrapheneApiGenerator {
     /**
      * The subscription thread for the real time updates
      */
-    private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub,url);
+    private static WebSocketThread subscriptionThread = new WebSocketThread(bitsharesSubscriptionHub, CryptoNetManager.getURL(CryptoNet.BITSHARES));
     /**
      * This is used for manager each listener in the subscription thread
      */
@@ -114,7 +108,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -142,7 +136,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
 
             thread.start();
     }
@@ -169,7 +163,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
             thread.start();
     }
 
@@ -196,7 +190,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -223,7 +217,7 @@ public abstract class GrapheneApiGenerator {
                 public void onError(BaseResponse.Error error) {
                     request.getListener().fail(request.getId());
                 }
-            }),url);
+            }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -247,7 +241,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -292,7 +286,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -340,7 +334,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
     }
 
@@ -353,12 +347,10 @@ public abstract class GrapheneApiGenerator {
      */
     public static void subscribeBitsharesAccount(final long accountId, final String accountBitsharesId,
                                                  final Context context){
-        System.out.println("GrapheneAPI subscribe to account balance update");
         if(!currentBitsharesListener.containsKey(accountId)){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();
         final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
-        final TransactionDao transactionDao = db.transactionDao();
         SubscriptionListener balanceListener = new SubscriptionListener() {
             @Override
             public ObjectType getInterestObjectType() {
@@ -374,16 +366,15 @@ public abstract class GrapheneApiGenerator {
                             BroadcastedTransaction transactionUpdate = (BroadcastedTransaction) update;
                             for(BaseOperation operation : transactionUpdate.getTransaction().getOperations()){
                                 if(operation instanceof TransferOperation){
-                                    TransferOperation tOperation = (TransferOperation) operation;
+                                    final TransferOperation tOperation = (TransferOperation) operation;
                                     if(tOperation.getFrom().getObjectId().equals(accountBitsharesId) || tOperation.getTo().getObjectId().equals(accountBitsharesId)){
                                         GrapheneApiGenerator.getAccountBalance(accountId,accountBitsharesId,context);
-                                        CryptoCoinTransaction transaction = new CryptoCoinTransaction();
+                                        final CryptoCoinTransaction transaction = new CryptoCoinTransaction();
                                         transaction.setAccountId(accountId);
                                         transaction.setAmount(tOperation.getAssetAmount().getAmount().longValue());
                                         BitsharesAssetInfo info = bitsharesAssetDao.getBitsharesAssetInfoById(tOperation.getAssetAmount().getAsset().getObjectId());
                                         if (info == null) {
                                             //The cryptoCurrency is not in the database, queringfor its data
-                                            final Object SYNC = new Object(); //Object to syn the answer
                                             ApiRequest assetRequest = new ApiRequest(0, new ApiRequestListener() {
                                                 @Override
                                                 public void success(Object answer, int idPetition) {
@@ -394,40 +385,21 @@ public abstract class GrapheneApiGenerator {
                                                         info.setCryptoCurrencyId(idCryptoCurrency);
                                                         asset.setId((int)idCryptoCurrency);
                                                         bitsharesAssetDao.insertBitsharesAssetInfo(info);
-                                                    }
-                                                    synchronized (SYNC){
-                                                        SYNC.notifyAll();
+                                                        saveTransaction(transaction,(int)info.getCryptoCurrencyId(),accountBitsharesId,tOperation,context);
                                                     }
                                                 }
 
                                                 @Override
                                                 public void fail(int idPetition) {
-                                                    synchronized (SYNC){
-                                                        SYNC.notifyAll();
-                                                    }
+                                                    //TODO error retrieving asset
                                                 }
                                             });
                                             ArrayList<String> assets = new ArrayList<>();
                                             assets.add(tOperation.getAssetAmount().getAsset().getObjectId());
                                             GrapheneApiGenerator.getAssetById(assets,assetRequest);
-
-                                            synchronized (SYNC){
-                                                try {SYNC.wait(60000);} catch (InterruptedException ignore) {}
-                                            }
-                                            info = bitsharesAssetDao.getBitsharesAssetInfoById(tOperation.getAssetAmount().getAsset().getObjectId());
+                                        }else{
+                                            saveTransaction(transaction,(int)info.getCryptoCurrencyId(),accountBitsharesId,tOperation,context);
                                         }
-                                        if( info == null){
-                                            //We couldn't retrieve the cryptocurrency
-                                            return;
-                                        }
-                                        transaction.setIdCurrency((int)info.getCryptoCurrencyId());
-                                        transaction.setConfirmed(true); //graphene transaction are always confirmed
-                                        transaction.setFrom(tOperation.getFrom().getObjectId());
-                                        transaction.setInput(!tOperation.getFrom().getObjectId().equals(accountBitsharesId));
-                                        transaction.setTo(tOperation.getTo().getObjectId());
-                                        transaction.setDate(new Date());
-                                        transactionDao.insertTransaction(transaction);
-                                        //GrapheneApiGenerator.getBlockHeaderTime(, new ApiRequest(0, new BitsharesAccountManager.GetTransactionDate(transaction, db.transactionDao())));
                                     }
                                 }
                             }
@@ -447,6 +419,26 @@ public abstract class GrapheneApiGenerator {
             bitsharesSubscriptionHub.resubscribe();
         }
         }
+    }
+
+    /**
+     * Fucniton to save a transaction retrieved from the update
+     * @param transaction The transaction db object
+     * @param currencyId The id of the currency on the database
+     * @param accountBitsharesId The id of the account in the bitshares network
+     * @param tOperation The transfer operation fetched from the update
+     * @param context The context of this app
+     */
+    private static void saveTransaction(CryptoCoinTransaction transaction, int currencyId,
+                                        String accountBitsharesId, TransferOperation tOperation ,
+                                        Context context){
+        transaction.setIdCurrency(currencyId);
+        transaction.setConfirmed(true); //graphene transaction are always confirmed
+        transaction.setFrom(tOperation.getFrom().getObjectId());
+        transaction.setInput(!tOperation.getFrom().getObjectId().equals(accountBitsharesId));
+        transaction.setTo(tOperation.getTo().getObjectId());
+        transaction.setDate(new Date());
+        CrystalDatabase.getAppDatabase(context).transactionDao().insertTransaction(transaction);
     }
 
     /**
@@ -515,7 +507,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
 
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
 
         thread.start();
 
@@ -542,7 +534,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),url);
+        }),CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.start();
 
     }
@@ -674,7 +666,7 @@ public abstract class GrapheneApiGenerator {
                         Converter converter = new Converter();
                         order.getSellPrice().base.getAsset().setPrecision(baseAsset.getPrecision());
                         order.getSellPrice().quote.getAsset().setPrecision(quoteAsset.getPrecision());
-                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.BASE_TO_QUOTE);
+                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.QUOTE_TO_BASE);
                         CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(), quoteAsset.getId(), (int) (Math.pow(10, baseAsset.getPrecision()) * equiValue), new Date());
                         CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
                         break;
