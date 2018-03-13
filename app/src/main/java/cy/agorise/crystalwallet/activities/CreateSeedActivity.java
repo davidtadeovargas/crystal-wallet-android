@@ -3,6 +3,8 @@ package cy.agorise.crystalwallet.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -39,23 +41,26 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     AccountSeedViewModel accountSeedViewModel;
     CreateSeedValidator createSeedValidator;
 
-    @BindView(R.id.etPin)
-    EditText etPin;
-    @BindView(R.id.tvPinError)
-    TextView tvPinError;
+    @BindView(R.id.tilPin)
+    TextInputLayout tilPin;
 
-    @BindView(R.id.etPinConfirmation)
-    EditText etPinConfirmation;
-    @BindView(R.id.tvPinConfirmationError)
-    TextView tvPinConfirmationError;
+    @BindView(R.id.tietPin)
+    TextInputEditText tietPin;
+
+    @BindView(R.id.tilPinConfirmation)
+    TextInputLayout tilPinConfirmation;
+
+    @BindView(R.id.tietPinConfirmation)
+    TextInputEditText tietPinConfirmation;
 
     //@BindView(R.id.tvSeedWords)
     //TextView tvSeedWords;
 
-    @BindView (R.id.etAccountName)
-    EditText etAccountName;
-    @BindView(R.id.tvAccountNameError)
-    TextView tvAccountNameError;
+    @BindView(R.id.tilAccountName)
+    TextInputLayout tilAccountName;
+
+    @BindView (R.id.tietAccountName)
+    TextInputEditText tietAccountName;
 
     @BindView(R.id.btnCreate)
     Button btnCreate;
@@ -69,19 +74,23 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         setContentView(R.layout.create_seed);
         ButterKnife.bind(this);
 
+        tilPin.setErrorEnabled(true);
+        tilPinConfirmation.setErrorEnabled(true);
+        tilAccountName.setErrorEnabled(true);
+
         btnCreate.setEnabled(false);
         accountSeedViewModel = ViewModelProviders.of(this).get(AccountSeedViewModel.class);
-        createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),etPin,etPinConfirmation,etAccountName);
+        createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),tietPin,tietPinConfirmation,tietAccountName);
         createSeedValidator.setListener(this);
     }
 
-    @OnTextChanged(value = R.id.etPin,
+    @OnTextChanged(value = R.id.tietPin,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterPinChanged(Editable editable) {
         this.createSeedValidator.validate();
     }
 
-    @OnTextChanged(value = R.id.etPinConfirmation,
+    @OnTextChanged(value = R.id.tietPinConfirmation,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterPinConfirmationChanged(Editable editable) {
         this.createSeedValidator.validate();
@@ -94,7 +103,7 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     }
 */
 
-    @OnTextChanged(value = R.id.etAccountName,
+    @OnTextChanged(value = R.id.tietAccountName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterAccountNameChanged(Editable editable) {
         this.createSeedValidator.validate();
@@ -110,7 +119,7 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         if (this.createSeedValidator.isValid()) {
             // Make request to create a bitshare account
             final ValidateCreateBitsharesAccountRequest request =
-                    new ValidateCreateBitsharesAccountRequest(etAccountName.getText().toString(), getApplicationContext());
+                    new ValidateCreateBitsharesAccountRequest(tietAccountName.getText().toString(), getApplicationContext());
 
 
             //Makes dialog to tell the user that the account is been created
@@ -168,12 +177,12 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         activity.runOnUiThread(new Runnable() {
             public void run() {
 
-                if (field.getView() == etPin) {
-                    tvPinError.setText("");
-                } else if (field.getView() == etPinConfirmation){
-                    tvPinConfirmationError.setText("");
-                } else if (field.getView() == etAccountName){
-                    tvAccountNameError.setText("");
+                if (field.getView() == tietPin) {
+                    tilPin.setError("");
+                } else if (field.getView() == tietPinConfirmation){
+                    tilPinConfirmation.setError("");
+                } else if (field.getView() == tietAccountName){
+                    tilAccountName.setError("");
                 } //else if (field.getView() == etSeedWords){
                 //    tvSeedWordsError.setText("");
                 //}
@@ -194,12 +203,12 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
 
             @Override
             public void run() {
-                if (field.getView() == etPin) {
-                    tvPinError.setText(field.getMessage());
-                } else if (field.getView() == etPinConfirmation){
-                    tvPinConfirmationError.setText(field.getMessage());
-                } else if (field.getView() == etAccountName){
-                    tvAccountNameError.setText(field.getMessage());
+                if (field.getView() == tietPin) {
+                    tilPin.setError(field.getMessage());
+                } else if (field.getView() == tietPinConfirmation){
+                    tilPinConfirmation.setError(field.getMessage());
+                } else if (field.getView() == tietAccountName){
+                    tilAccountName.setError(field.getMessage());
                 } //else if (field.getView() == etSeedWords){
                 //    tvSeedWordsError.setText(field.getMessage());
                 //}

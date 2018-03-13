@@ -496,4 +496,14 @@
     <string name="none">None</string>
     <string name="pin">Pin</string>
     <string name="pattern">Pattern</string>
+    <string name="new_user">New user?</string>
+    <string name="existing_user">Existing user?</string>
+    <string name="connection_status">Connection status</string>
+    <string name="people_icon">People icon</string>
+    <string name="camera_feed_to_scan_qr">Camera feed to scan QR</string>
+    <string name="create_account">Create Account</string>
+    <string name="import_account">Import Account</string>
+    <string name="import_account_options_description">Select one option to import your existing account</string>
+    <string name="import_account_seed">Import Account Seed</string>
+    <string name="import_account_backup">Import Account Backup</string>
 </resources>

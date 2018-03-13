@@ -84,11 +84,6 @@ public class SettingsActivity extends AppCompatActivity{
 
         mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
-
-        // Automatically get build version from app information
-        String buildVersion = "v";
-        buildVersion += BuildConfig.VERSION_NAME;
-        tvBuildVersion.setText(buildVersion);
     }
 
     private class SettingsPagerAdapter extends FragmentStatePagerAdapter {

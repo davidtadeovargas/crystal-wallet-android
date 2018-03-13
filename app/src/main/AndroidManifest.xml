@@ -13,28 +13,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.IntroActivity">
+        <activity android:name=".activities.IntroActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.BoardActivity"
-            android:theme="@style/AppTheme.NoActionBar"> <!-- Dirty trick to avoid toolbar error on balance -->
+        <activity android:name=".activities.BoardActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
-        <activity android:name=".activities.AccountSeedsManagementActivity"></activity>
-        <activity android:name=".activities.ImportSeedActivity"></activity>
-        <activity android:name=".activities.CreateSeedActivity"></activity>
-        <activity android:name=".activities.SendTransactionActivity"></activity>
-        <activity android:name=".activities.GeneralSettingsActivity"></activity>
-        <activity android:name=".activities.CryptoCoinTransactionReceiptActivity"></activity>
-        <activity android:name=".activities.BackupSeedActivity"></activity>
-        <activity android:name=".activities.PinRequestActivity"></activity>
+        <activity android:name=".activities.AccountSeedsManagementActivity" >
+        </activity>
+        <activity android:name=".activities.ImportSeedActivity" >
+        </activity>
+        <activity android:name=".activities.CreateSeedActivity" >
+        </activity>
+        <activity android:name=".activities.SendTransactionActivity" >
+        </activity>
+        <activity android:name=".activities.GeneralSettingsActivity" >
+        </activity>
+        <activity android:name=".activities.CryptoCoinTransactionReceiptActivity" >
+        </activity>
+        <activity android:name=".activities.BackupSeedActivity" >
+        </activity>
+        <activity android:name=".activities.PinRequestActivity">
+        </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
         <activity
             android:name=".activities.AccountsActivity"
             android:parentActivityName=".activities.BoardActivity"
