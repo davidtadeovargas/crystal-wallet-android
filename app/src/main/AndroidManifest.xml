@@ -58,7 +58,8 @@
             android:name=".service.CrystalWalletService"
             android:exported="false" />
 
-        <activity android:name=".activities.CreateContactActivity"></activity>
+        <activity android:name=".activities.CreateContactActivity">
+        </activity>
     </application>
 
 </manifest>
