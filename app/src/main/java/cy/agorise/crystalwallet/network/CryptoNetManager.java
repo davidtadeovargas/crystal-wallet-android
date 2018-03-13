@@ -33,12 +33,6 @@ public abstract class CryptoNetManager {
 
     public static String getURL(CryptoNet crypto, int index){
         if(TestedURLs.containsKey(crypto) && TestedURLs.get(crypto).size()>index){
-            StringBuilder debugString = new StringBuilder("CryptoNetManager urls times: ");
-            for(TestedURL url : TestedURLs.get(crypto)){
-                debugString.append("\r\n ").append(url.getTime()).append(" ").append(url.getUrl());
-            }
-            System.out.println(debugString.toString());
-
             return TestedURLs.get(crypto).get(index).getUrl();
         }
 

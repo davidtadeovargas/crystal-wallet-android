@@ -666,7 +666,7 @@ public abstract class GrapheneApiGenerator {
                         Converter converter = new Converter();
                         order.getSellPrice().base.getAsset().setPrecision(baseAsset.getPrecision());
                         order.getSellPrice().quote.getAsset().setPrecision(quoteAsset.getPrecision());
-                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.BASE_TO_QUOTE);
+                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.QUOTE_TO_BASE);
                         CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(), quoteAsset.getId(), (int) (Math.pow(10, baseAsset.getPrecision()) * equiValue), new Date());
                         CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
                         break;
