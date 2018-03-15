@@ -1,7 +1,6 @@
 package cy.agorise.crystalwallet.activities;
 
 import android.app.ActivityOptions;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -23,9 +22,6 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import java.util.List;
-
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -36,7 +32,6 @@ import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
-import cy.agorise.crystalwallet.models.CryptoNetBalance;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
 
 /**
@@ -48,9 +43,6 @@ public class BoardActivity  extends AppCompatActivity {
 
     @BindView(R.id.pager)
     public ViewPager mPager;
-
-    //@BindView(R.id.btnGeneralSettings)
-    //public ImageButton btnGeneralSettings;
 
     @BindView(R.id.fabSend)
     public FloatingActionButton fabSend;
@@ -182,7 +174,7 @@ public class BoardActivity  extends AppCompatActivity {
         });
     }
 
-    /*
+    /**
      * dispatch the user to the accounts fragment
      */
     @OnClick(R.id.toolbar_user_img)
@@ -221,7 +213,7 @@ public class BoardActivity  extends AppCompatActivity {
         }
         ft.addToBackStack(null);
 
-        long receiveCryptoNetAccountId = -1;
+        long receiveCryptoNetAccountId;
         if (this.cryptoNetAccountId != -1){
             receiveCryptoNetAccountId = this.cryptoNetAccountId;
         } else {
@@ -245,7 +237,7 @@ public class BoardActivity  extends AppCompatActivity {
         }
         ft.addToBackStack(null);
 
-        long sendCryptoNetAccountId = -1;
+        long sendCryptoNetAccountId;
         if (this.cryptoNetAccountId != -1){
             sendCryptoNetAccountId = this.cryptoNetAccountId;
         } else {
