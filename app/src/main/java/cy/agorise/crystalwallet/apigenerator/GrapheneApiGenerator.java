@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import cy.agorise.crystalwallet.application.constant.BitsharesConstant;
 import cy.agorise.crystalwallet.dao.BitsharesAssetDao;
 import cy.agorise.crystalwallet.dao.CryptoCoinBalanceDao;
 import cy.agorise.crystalwallet.dao.CryptoCurrencyDao;
@@ -58,10 +59,7 @@ import cy.agorise.graphenej.operations.TransferOperation;
 
 public abstract class GrapheneApiGenerator {
 
-    //TODO network connections
     //TODO make to work with all Graphene type, not only bitshares
-    public static String faucetUrl = "http://185.208.208.147:5010";
-    private static String equivalentUrl = "wss://bitshares.openledger.info/ws";
 
     // The message broker for bitshares
     private static SubscriptionMessagesHub bitsharesSubscriptionHub = new SubscriptionMessagesHub("", "", true, new NodeErrorListener() {
@@ -570,7 +568,7 @@ public abstract class GrapheneApiGenerator {
             public void onError(BaseResponse.Error error) {
                 request.getListener().fail(request.getId());
             }
-        }),equivalentUrl);
+        }), BitsharesConstant.EQUIVALENT_URL); //todo change equivalent url for current server url
         thread.start();
     }
 
@@ -586,7 +584,7 @@ public abstract class GrapheneApiGenerator {
             for(BitsharesAsset quoteAsset : quoteAssets){
                 WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(),
                         quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,
-                        quoteAsset,context)),equivalentUrl);
+                        quoteAsset,context)), BitsharesConstant.EQUIVALENT_URL); //todo change equivalent url for current server url
                 thread.start();
             }
     }
@@ -666,7 +664,7 @@ public abstract class GrapheneApiGenerator {
                         Converter converter = new Converter();
                         order.getSellPrice().base.getAsset().setPrecision(baseAsset.getPrecision());
                         order.getSellPrice().quote.getAsset().setPrecision(quoteAsset.getPrecision());
-                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.QUOTE_TO_BASE);
+                        double equiValue = converter.getConversionRate(order.getSellPrice(), Converter.BASE_TO_QUOTE);
                         CryptoCurrencyEquivalence equivalence = new CryptoCurrencyEquivalence(baseAsset.getId(), quoteAsset.getId(), (int) (Math.pow(10, baseAsset.getPrecision()) * equiValue), new Date());
                         CrystalDatabase.getAppDatabase(context).cryptoCurrencyEquivalenceDao().insertCryptoCurrencyEquivalence(equivalence);
                         break;

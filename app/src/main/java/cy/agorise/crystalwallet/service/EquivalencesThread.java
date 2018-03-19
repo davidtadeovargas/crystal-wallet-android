@@ -32,7 +32,7 @@ public class EquivalencesThread extends Thread{
             try {
                 GrapheneApiGenerator.getEquivalenValue(fromAsset, bitsharesAssets, this.service);
                 Log.i("Equivalences Thread", "In loop");
-                Thread.sleep(1000);
+                Thread.sleep(60000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
