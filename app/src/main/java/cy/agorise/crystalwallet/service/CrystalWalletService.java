@@ -68,7 +68,7 @@ public class CrystalWalletService extends LifecycleService {
 
         //getting the preferred currency of the user
         final LiveData<GeneralSetting> preferredCurrencySetting =
-                CrystalDatabase.getAppDatabase(service).generalSettingDao().getByName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+                CrystalDatabase.getAppDatabase(service).generalSettingDao().getByName(GeneralSetting.SETTING_NAME_PREFERRED_CURRENCY);
 
         preferredCurrencySetting.observe(service, new Observer<GeneralSetting>() {
             @Override

@@ -12,6 +12,7 @@
         android:label="Crystal"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:configChanges="locale"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.IntroActivity"
             android:theme="@style/AppTheme.NoActionBar">

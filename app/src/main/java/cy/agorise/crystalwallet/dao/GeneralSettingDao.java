@@ -24,6 +24,9 @@ public interface GeneralSettingDao {
     @Query("SELECT * FROM general_setting WHERE name = :name")
     LiveData<GeneralSetting> getByName(String name);
 
+    @Query("SELECT * FROM general_setting WHERE name = :name")
+    GeneralSetting getSettingByName(String name);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long[] insertGeneralSettings(GeneralSetting... generalSettings);
 

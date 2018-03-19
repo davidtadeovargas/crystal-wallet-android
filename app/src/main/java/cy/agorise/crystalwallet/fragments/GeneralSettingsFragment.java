@@ -3,9 +3,14 @@ package cy.agorise.crystalwallet.fragments;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ThemedSpinnerAdapter;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +28,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.Language;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
+
+
 
 /**
  * Created by xd on 12/28/17.
@@ -36,10 +45,15 @@ public class GeneralSettingsFragment extends Fragment {
     private GeneralSettingListViewModel generalSettingListViewModel;
     private LiveData<List<GeneralSetting>> generalSettingListLiveData;
 
+    private Boolean spPreferredLanguageInitialized;
+
     @BindView (R.id.spTaxableCountry)
     Spinner spTaxableCountry;
+    @BindView (R.id.spPreferredLanguage)
+    Spinner spPreferredLanguage;
 
     public GeneralSettingsFragment() {
+        this.spPreferredLanguageInitialized = false;
         // Required empty public constructor
     }
 
@@ -47,6 +61,8 @@ public class GeneralSettingsFragment extends Fragment {
         GeneralSettingsFragment fragment = new GeneralSettingsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+        fragment.spPreferredLanguageInitialized = false;
+
         return fragment;
     }
 
@@ -95,7 +111,15 @@ public class GeneralSettingsFragment extends Fragment {
             }
         });
 
+
+
         return v;
+    }
+
+    public void initPreferredLanguage(GeneralSetting preferredLanguageSetting){
+        ArrayAdapter<Language> preferredLanguageAdapter = new ArrayAdapter<Language>(getContext(), android.R.layout.simple_spinner_item, Language.values());
+        spPreferredLanguage.setAdapter(preferredLanguageAdapter);
+        spPreferredLanguage.setSelection(preferredLanguageAdapter.getPosition(Language.getByCode(preferredLanguageSetting.getValue())));
     }
 
     public GeneralSetting getSetting(String name){
@@ -111,16 +135,16 @@ public class GeneralSettingsFragment extends Fragment {
     @OnItemSelected(R.id.spTaxableCountry)
     void onItemSelected(int position) {
         if (position != 0) {
-            GeneralSetting generalSettingCountryCode = this.getSetting(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY);
-            GeneralSetting generalSettingCurrency = this.getSetting(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+            GeneralSetting generalSettingCountryCode = this.getSetting(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY);
+            GeneralSetting generalSettingCurrency = this.getSetting(GeneralSetting.SETTING_NAME_PREFERRED_CURRENCY);
 
             if (generalSettingCountryCode == null){
                 generalSettingCountryCode = new GeneralSetting();
-                generalSettingCountryCode.setName(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY);
+                generalSettingCountryCode.setName(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY);
             }
             if (generalSettingCurrency == null){
                 generalSettingCurrency = new GeneralSetting();
-                generalSettingCurrency.setName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+                generalSettingCurrency.setName(GeneralSetting.SETTING_NAME_PREFERRED_CURRENCY);
             }
 
             String countryCode = countriesMap.get((String) spTaxableCountry.getSelectedItem());
@@ -133,11 +157,46 @@ public class GeneralSettingsFragment extends Fragment {
         }
     }
 
+    @OnItemSelected(R.id.spPreferredLanguage)
+    void onPreferredLanguageSelected(int position){
+        //The first call will be when the spinner gets an adapter attached
+        if (this.spPreferredLanguageInitialized) {
+            Language languageSelected = (Language) this.spPreferredLanguage.getSelectedItem();
+            GeneralSetting generalSettingPreferredLanguage = this.getSetting(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
+
+            if (generalSettingPreferredLanguage == null) {
+                generalSettingPreferredLanguage = new GeneralSetting();
+                generalSettingPreferredLanguage.setName(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
+            }
+
+            if (!generalSettingPreferredLanguage.getValue().equals(languageSelected.getCode())) {
+                generalSettingPreferredLanguage.setValue(languageSelected.getCode());
+                this.generalSettingListViewModel.saveGeneralSettings(generalSettingPreferredLanguage);
+
+                Resources resources = getContext().getResources();
+                Locale locale = new Locale(languageSelected.getCode());
+                Locale.setDefault(locale);
+                DisplayMetrics dm = resources.getDisplayMetrics();
+                Configuration configuration = resources.getConfiguration();
+                configuration.locale = locale;
+                resources.updateConfiguration(configuration, dm);
+                Intent i = getContext().getPackageManager()
+                        .getLaunchIntentForPackage(getContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+            }
+        } else {
+            this.spPreferredLanguageInitialized = true;
+        }
+    }
+
     public void loadSettings(List<GeneralSetting> generalSettings){
         for (GeneralSetting generalSetting:generalSettings) {
-            if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY)){
+            if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY)){
                 String preferedCountryCode = generalSetting.getValue();
                 spTaxableCountry.setSelection(((ArrayAdapter<String>)spTaxableCountry.getAdapter()).getPosition(countriesMap.get(preferedCountryCode)));
+            } else if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE)){
+                initPreferredLanguage(generalSetting);
             }
         }
     }

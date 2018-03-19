@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindColor;
 import butterknife.BindView;

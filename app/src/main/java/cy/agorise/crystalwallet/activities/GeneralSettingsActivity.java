@@ -96,16 +96,16 @@ public class GeneralSettingsActivity extends AppCompatActivity {
     @OnItemSelected(R.id.spPreferedCountry)
     void onItemSelected(int position) {
         if (position != 0) {
-            GeneralSetting generalSettingCountryCode = this.getSetting(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY);
-            GeneralSetting generalSettingCurrency = this.getSetting(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+            GeneralSetting generalSettingCountryCode = this.getSetting(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY);
+            GeneralSetting generalSettingCurrency = this.getSetting(GeneralSetting.SETTING_NAME_PREFERRED_CURRENCY);
 
             if (generalSettingCountryCode == null){
                 generalSettingCountryCode = new GeneralSetting();
-                generalSettingCountryCode.setName(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY);
+                generalSettingCountryCode.setName(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY);
             }
             if (generalSettingCurrency == null){
                 generalSettingCurrency = new GeneralSetting();
-                generalSettingCurrency.setName(GeneralSetting.SETTING_NAME_PREFERED_CURRENCY);
+                generalSettingCurrency.setName(GeneralSetting.SETTING_NAME_PREFERRED_CURRENCY);
             }
 
             String countryCode = countriesMap.get((String) spPreferedCountry.getSelectedItem());
@@ -120,7 +120,7 @@ public class GeneralSettingsActivity extends AppCompatActivity {
 
     public void loadSettings(List<GeneralSetting> generalSettings){
         for (GeneralSetting generalSetting:generalSettings) {
-            if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERED_COUNTRY)){
+            if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY)){
                 String preferedCountryCode = generalSetting.getValue();
                 spPreferedCountry.setSelection(((ArrayAdapter<String>)spPreferedCountry.getAdapter()).getPosition(countriesMap.get(preferedCountryCode)));
             }

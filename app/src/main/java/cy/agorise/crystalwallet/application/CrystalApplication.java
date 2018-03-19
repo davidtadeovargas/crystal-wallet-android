@@ -2,14 +2,20 @@ package cy.agorise.crystalwallet.application;
 
 import android.app.Application;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 
 import com.idescout.sql.SqlScoutServer;
+
+import java.util.Locale;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.service.CrystalWalletService;
 
@@ -20,6 +26,8 @@ import cy.agorise.crystalwallet.service.CrystalWalletService;
  */
 
 public class CrystalApplication extends Application {
+    private Locale locale = null;
+
     public static String BITSHARES_URL[] =
             {
                     "wss://de.palmpay.io/ws",                   // Custom node
@@ -77,6 +85,18 @@ public class CrystalApplication extends Application {
 
         //Next line is for use the bitshares main net
         //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
+
+        GeneralSetting generalSettingPreferredLanguage = db.generalSettingDao().getSettingByName(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
+
+        if (generalSettingPreferredLanguage != null) {
+            Resources resources = getBaseContext().getResources();
+            Locale locale = new Locale(generalSettingPreferredLanguage.getValue());
+            Locale.setDefault(locale);
+            DisplayMetrics dm = resources.getDisplayMetrics();
+            Configuration configuration = resources.getConfiguration();
+            configuration.locale = locale;
+            resources.updateConfiguration(configuration, dm);
+        }
 
         Intent intent = new Intent(getApplicationContext(), CrystalWalletService.class);
         startService(intent);

@@ -15,8 +15,9 @@ import cy.agorise.crystalwallet.enums.SeedType;
 @Entity(tableName = "general_setting")
 public class GeneralSetting {
 
-    public final static String SETTING_NAME_PREFERED_COUNTRY = "PREFERED_COUNTRY";
-    public final static String SETTING_NAME_PREFERED_CURRENCY = "PREFERED_CURRENCY";
+    public final static String SETTING_NAME_PREFERRED_COUNTRY = "PREFERRED_COUNTRY";
+    public final static String SETTING_NAME_PREFERRED_CURRENCY = "PREFERRED_CURRENCY";
+    public final static String SETTING_NAME_PREFERRED_LANGUAGE = "PREFERRED_LANGUAGE";
     public final static String SETTING_PASSWORD = "PASSWORD";
 
     /**
