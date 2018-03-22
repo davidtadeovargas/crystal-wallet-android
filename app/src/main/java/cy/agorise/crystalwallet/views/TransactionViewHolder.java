@@ -23,8 +23,10 @@ import cy.agorise.crystalwallet.activities.CryptoCoinTransactionReceiptActivity;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.CryptoCurrencyViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
+import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 
 /**
  * Created by Henry Varona on 17/9/2017.
@@ -122,13 +124,23 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
 
             String amountString = String.format("%.2f",transaction.getAmount()/Math.pow(10,cryptoCurrency.getPrecision()));
 
+            GeneralSettingListViewModel generalSettingListViewModel = ViewModelProviders.of(this.fragment).get(GeneralSettingListViewModel.class);
+            GeneralSetting timeZoneSetting = generalSettingListViewModel.getGeneralSettingByName(GeneralSetting.SETTING_NAME_TIME_ZONE);
+
+            TimeZone userTimeZone;
+            if (timeZoneSetting != null){
+                userTimeZone = TimeZone.getTimeZone(timeZoneSetting.getValue());
+            } else {
+                userTimeZone = TimeZone.getTimeZone("cet");
+            }
+
             DateFormat dateFormat = new SimpleDateFormat("dd MMM");
-            dateFormat.setTimeZone(TimeZone.getTimeZone("cet"));
+            dateFormat.setTimeZone(userTimeZone);
             DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
-            hourFormat.setTimeZone(TimeZone.getTimeZone("cet"));
+            hourFormat.setTimeZone(userTimeZone);
 
             tvTransactionDate.setText(dateFormat.format(transaction.getDate()));
-            tvTransactionHour.setText(hourFormat.format(transaction.getDate())+" CET");
+            tvTransactionHour.setText(hourFormat.format(transaction.getDate()));
 
             tvFrom.setText(transaction.getFrom());
             tvTo.setText(transaction.getTo());

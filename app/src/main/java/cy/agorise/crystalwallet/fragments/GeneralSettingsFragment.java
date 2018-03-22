@@ -18,11 +18,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +35,7 @@ import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.Language;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
-
+import cy.agorise.crystalwallet.views.TimeZoneAdapter;
 
 
 /**
@@ -46,14 +49,18 @@ public class GeneralSettingsFragment extends Fragment {
     private LiveData<List<GeneralSetting>> generalSettingListLiveData;
 
     private Boolean spPreferredLanguageInitialized;
+    private Boolean spTimeZoneInitialized;
 
     @BindView (R.id.spTaxableCountry)
     Spinner spTaxableCountry;
     @BindView (R.id.spPreferredLanguage)
     Spinner spPreferredLanguage;
+    @BindView (R.id.spDisplayDateTime)
+    Spinner spDisplayDateTime;
 
     public GeneralSettingsFragment() {
         this.spPreferredLanguageInitialized = false;
+        this.spTimeZoneInitialized = false;
         // Required empty public constructor
     }
 
@@ -62,7 +69,7 @@ public class GeneralSettingsFragment extends Fragment {
         Bundle args = new Bundle();
         fragment.setArguments(args);
         fragment.spPreferredLanguageInitialized = false;
-
+        fragment.spTimeZoneInitialized = false;
         return fragment;
     }
 
@@ -81,7 +88,22 @@ public class GeneralSettingsFragment extends Fragment {
         generalSettingListViewModel = ViewModelProviders.of(this).get(GeneralSettingListViewModel.class);
         generalSettingListLiveData = generalSettingListViewModel.getGeneralSettingList();
 
-        // Initializes the countries spinner
+
+
+        //Observes the general settings data
+        generalSettingListLiveData.observe(this, new Observer<List<GeneralSetting>>() {
+            @Override
+            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
+                loadSettings(generalSettings);
+            }
+        });
+
+
+
+        return v;
+    }
+
+    public void initPreferredCountry(GeneralSetting preferredCountrySetting){
         countriesMap = new HashMap<String, String>();
         String[] countryCodeList = Locale.getISOCountries();
         ArrayList<String> countryAndCurrencyList = new ArrayList<String>();
@@ -103,23 +125,31 @@ public class GeneralSettingsFragment extends Fragment {
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, countryAndCurrencyList);
         spTaxableCountry.setAdapter(countryAdapter);
 
-        //Observes the general settings data
-        generalSettingListLiveData.observe(this, new Observer<List<GeneralSetting>>() {
-            @Override
-            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
-                loadSettings(generalSettings);
-            }
-        });
-
-
-
-        return v;
+        if (preferredCountrySetting != null) {
+            String preferedCountryCode = preferredCountrySetting.getValue();
+            spTaxableCountry.setSelection(((ArrayAdapter<String>) spTaxableCountry.getAdapter()).getPosition(countriesMap.get(preferedCountryCode)));
+        }
     }
 
     public void initPreferredLanguage(GeneralSetting preferredLanguageSetting){
         ArrayAdapter<Language> preferredLanguageAdapter = new ArrayAdapter<Language>(getContext(), android.R.layout.simple_spinner_item, Language.values());
         spPreferredLanguage.setAdapter(preferredLanguageAdapter);
-        spPreferredLanguage.setSelection(preferredLanguageAdapter.getPosition(Language.getByCode(preferredLanguageSetting.getValue())));
+        if (preferredLanguageSetting != null) {
+            spPreferredLanguage.setSelection(preferredLanguageAdapter.getPosition(Language.getByCode(preferredLanguageSetting.getValue())));
+        }
+    }
+
+    public void initDateTimeFormat(GeneralSetting dateTimeFormatSetting){
+        TimeZoneAdapter timeZoneAdapter;
+        if (spDisplayDateTime.getAdapter() == null) {
+            timeZoneAdapter = new TimeZoneAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item);
+            spDisplayDateTime.setAdapter(timeZoneAdapter);
+        } else {
+            timeZoneAdapter = (TimeZoneAdapter) spDisplayDateTime.getAdapter();
+        }
+        if (dateTimeFormatSetting != null) {
+            spDisplayDateTime.setSelection(timeZoneAdapter.getPosition(dateTimeFormatSetting.getValue()));
+        }
     }
 
     public GeneralSetting getSetting(String name){
@@ -157,6 +187,27 @@ public class GeneralSettingsFragment extends Fragment {
         }
     }
 
+    @OnItemSelected(R.id.spDisplayDateTime)
+    void onTimeZoneSelected(int position){
+        //The first call will be when the spinner gets an adapter attached
+        if (this.spTimeZoneInitialized) {
+            String timeZoneIdSelected = (String) this.spDisplayDateTime.getSelectedItem();
+            GeneralSetting generalSettingTimeZone = this.getSetting(GeneralSetting.SETTING_NAME_TIME_ZONE);
+
+            if (generalSettingTimeZone == null) {
+                generalSettingTimeZone = new GeneralSetting();
+                generalSettingTimeZone.setName(GeneralSetting.SETTING_NAME_TIME_ZONE);
+            }
+
+            if ((generalSettingTimeZone.getValue() == null)||(!generalSettingTimeZone.getValue().equals(timeZoneIdSelected))) {
+                generalSettingTimeZone.setValue(timeZoneIdSelected);
+                this.generalSettingListViewModel.saveGeneralSettings(generalSettingTimeZone);
+            }
+        } else {
+            this.spTimeZoneInitialized = true;
+        }
+    }
+
     @OnItemSelected(R.id.spPreferredLanguage)
     void onPreferredLanguageSelected(int position){
         //The first call will be when the spinner gets an adapter attached
@@ -169,7 +220,7 @@ public class GeneralSettingsFragment extends Fragment {
                 generalSettingPreferredLanguage.setName(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
             }
 
-            if (!generalSettingPreferredLanguage.getValue().equals(languageSelected.getCode())) {
+            if ((generalSettingPreferredLanguage.getValue() == null)||(!generalSettingPreferredLanguage.getValue().equals(languageSelected.getCode()))) {
                 generalSettingPreferredLanguage.setValue(languageSelected.getCode());
                 this.generalSettingListViewModel.saveGeneralSettings(generalSettingPreferredLanguage);
 
@@ -191,13 +242,9 @@ public class GeneralSettingsFragment extends Fragment {
     }
 
     public void loadSettings(List<GeneralSetting> generalSettings){
-        for (GeneralSetting generalSetting:generalSettings) {
-            if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY)){
-                String preferedCountryCode = generalSetting.getValue();
-                spTaxableCountry.setSelection(((ArrayAdapter<String>)spTaxableCountry.getAdapter()).getPosition(countriesMap.get(preferedCountryCode)));
-            } else if (generalSetting.getName().equals(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE)){
-                initPreferredLanguage(generalSetting);
-            }
-        }
+
+        initPreferredCountry(getSetting(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY));
+        initPreferredLanguage(getSetting(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE));
+        initDateTimeFormat(getSetting(GeneralSetting.SETTING_NAME_TIME_ZONE));
     }
 }

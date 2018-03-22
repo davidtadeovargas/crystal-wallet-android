@@ -18,6 +18,7 @@ public class GeneralSetting {
     public final static String SETTING_NAME_PREFERRED_COUNTRY = "PREFERRED_COUNTRY";
     public final static String SETTING_NAME_PREFERRED_CURRENCY = "PREFERRED_CURRENCY";
     public final static String SETTING_NAME_PREFERRED_LANGUAGE = "PREFERRED_LANGUAGE";
+    public final static String SETTING_NAME_TIME_ZONE = "TIME_ZONE";
     public final static String SETTING_PASSWORD = "PASSWORD";
 
     /**
