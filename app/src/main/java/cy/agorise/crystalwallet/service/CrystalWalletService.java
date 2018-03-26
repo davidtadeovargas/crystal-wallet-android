@@ -126,15 +126,17 @@ public class CrystalWalletService extends LifecycleService {
         final CrystalWalletService thisService = this;
 
         final CrystalDatabase db = CrystalDatabase.getAppDatabase(this);
-        final LiveData<List<CryptoNetAccount>> cryptoNetAccountList = db.cryptoNetAccountDao().getAll();
-        cryptoNetAccountList.observe(this, new Observer<List<CryptoNetAccount>>() {
+        //final LiveData<List<CryptoNetAccount>> cryptoNetAccountList = db.cryptoNetAccountDao().getAll();
+        final LiveData<List<GrapheneAccountInfo>> grapheneAccountInfoList = db.grapheneAccountInfoDao().getAll();
+        grapheneAccountInfoList.observe(this, new Observer<List<GrapheneAccountInfo>>() {
             @Override
-            public void onChanged(@Nullable List<CryptoNetAccount> cryptoNetAccounts) {
+            public void onChanged(@Nullable List<GrapheneAccountInfo> grapheneAccountInfos) {
                 GrapheneAccount nextGrapheneAccount;
-                for(CryptoNetAccount nextAccount : cryptoNetAccountList.getValue()) {
-                    GrapheneAccountInfo grapheneAccountInfo = db.grapheneAccountInfoDao().getByAccountId(nextAccount.getId());
+                for(GrapheneAccountInfo nextGrapheneAccountInfo : grapheneAccountInfos) {
+                    CryptoNetAccount nextAccount = db.cryptoNetAccountDao().getById(nextGrapheneAccountInfo.getCryptoNetAccountId());
+                    //GrapheneAccountInfo grapheneAccountInfo = db.grapheneAccountInfoDao().getByAccountId(nextAccount.getId());
                     nextGrapheneAccount = new GrapheneAccount(nextAccount);
-                    nextGrapheneAccount.loadInfo(grapheneAccountInfo);
+                    nextGrapheneAccount.loadInfo(nextGrapheneAccountInfo);
 
 
                     bitsharesAccountManager.loadAccountFromDB(nextGrapheneAccount,thisService);
