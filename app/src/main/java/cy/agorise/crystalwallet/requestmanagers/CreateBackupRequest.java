@@ -11,21 +11,43 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 
 public class CreateBackupRequest extends FileServiceRequest {
 
-    private AccountSeed seed;
-
-    enum StatusCode{
-
-
-
+    public enum StatusCode{
+        NOT_STARTED,
+        SUCCEEDED,
+        FAILED
     }
 
-    public CreateBackupRequest(Context context, Activity activity, AccountSeed seed) {
-        super(context, activity);
-        this.seed = seed;
+    private String filePath;
+    private StatusCode status;
+
+    public CreateBackupRequest(Context context) {
+        super(context);
+        this.filePath = "";
+        this.status = StatusCode.NOT_STARTED;
     }
 
-    public AccountSeed getSeed() {
-        return seed;
+    public void setFilePath(String filePath){
+        this.filePath = filePath;
+        this.validate();
+    }
+
+    public void setStatus(StatusCode statusCode){
+        this.status = statusCode;
+        this.validate();
+    }
+
+    public StatusCode getStatus(){
+        return this.status;
+    }
+
+    public String getFilePath() {
+        return this.filePath;
+    }
+
+    public void validate(){
+        if (this.status != StatusCode.NOT_STARTED){
+            this._fireOnCarryOutEvent();
+        }
     }
 
 

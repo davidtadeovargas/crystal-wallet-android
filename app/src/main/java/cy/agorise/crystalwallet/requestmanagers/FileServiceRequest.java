@@ -10,11 +10,11 @@ import android.content.Context;
 public abstract class FileServiceRequest {
 
     protected Context context;
-    protected Activity activity;
+    //protected Activity activity;
 
-    protected FileServiceRequest(Context context, Activity activity) {
+    protected FileServiceRequest(Context context/*, Activity activity*/) {
         this.context = context;
-        this.activity = activity;
+        //this.activity = activity;
     }
 
     protected FileServiceRequestListener listener;
@@ -27,9 +27,9 @@ public abstract class FileServiceRequest {
         return context;
     }
 
-    public Activity getActivity() {
+    /*public Activity getActivity() {
         return activity;
-    }
+    }*/
 
     protected void _fireOnCarryOutEvent(){
         listener.onCarryOut();
