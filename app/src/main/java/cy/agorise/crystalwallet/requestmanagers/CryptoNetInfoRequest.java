@@ -1,4 +1,4 @@
-package cy.agorise.crystalwallet.cryptonetinforequests;
+package cy.agorise.crystalwallet.requestmanagers;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 
@@ -19,7 +19,7 @@ public abstract class CryptoNetInfoRequest {
      */
     protected CryptoNetInfoRequestListener listener;
 
-    public CryptoNetInfoRequest(CryptoCoin coin){
+    protected CryptoNetInfoRequest(CryptoCoin coin){
         this.coin = coin;
     }
 

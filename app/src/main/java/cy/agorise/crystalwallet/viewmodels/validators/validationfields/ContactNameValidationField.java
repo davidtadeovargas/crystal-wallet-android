@@ -1,24 +1,11 @@
 package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
-import android.widget.Spinner;
 
-import java.util.List;
-
-import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
-import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.Contact;
-import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.ContactListViewModel;
-import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 
 /**
  * Created by Henry Varona on 2/03/2017.

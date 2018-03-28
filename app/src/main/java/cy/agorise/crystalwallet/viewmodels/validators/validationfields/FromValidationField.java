@@ -1,12 +1,11 @@
 package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
-import cy.agorise.crystalwallet.cryptonetinforequests.ValidateExistBitsharesAccountRequest;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.requestmanagers.ValidateExistBitsharesAccountRequest;
 
 /**
  * Created by Henry Varona on 7/10/2017.

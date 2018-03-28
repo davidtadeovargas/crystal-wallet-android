@@ -1,7 +1,6 @@
 package cy.agorise.crystalwallet.service;
 
 
-import android.app.Service;
 import android.arch.lifecycle.LifecycleService;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -16,14 +15,12 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.manager.BitsharesAccountManager;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
-import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GeneralSetting;

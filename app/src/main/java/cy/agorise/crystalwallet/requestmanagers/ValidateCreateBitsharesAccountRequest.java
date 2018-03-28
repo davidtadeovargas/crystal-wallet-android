@@ -1,6 +1,9 @@
-package cy.agorise.crystalwallet.cryptonetinforequests;
+package cy.agorise.crystalwallet.requestmanagers;
+
+import android.content.Context;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 
 /**
  * Imports a bitsahres accounts,
@@ -9,7 +12,7 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
  * Created by Henry Varona on 1/10/2017.
  */
 
-public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
+public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest {
 
     /**
      * The name of the account
@@ -17,23 +20,18 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
     private String accountName;
 
     /**
-     * The mnemonic words
-     */
-    private String mnemonic;
-
-    /**
      * Indicates if the account exist
      */
     private Boolean accountExists;
-    /**
-     * Indicates if the mnemonic provided belongs to that account
-     */
-    private Boolean mnemonicIsCorrect;
 
-    public ValidateImportBitsharesAccountRequest(String accountName, String mnemonic){
+    private GrapheneAccount account;
+
+    private Context context;
+
+    public ValidateCreateBitsharesAccountRequest(String accountName, Context context){
         super(CryptoCoin.BITSHARES);
         this.accountName = accountName;
-        this.mnemonic = mnemonic;
+        this.context = context;
     }
 
     public void setAccountExists(boolean value){
@@ -41,8 +39,8 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
         this.validate();
     }
 
-    public void setMnemonicIsCorrect(boolean value){
-        this.mnemonicIsCorrect = value;
+    public void setAccount(GrapheneAccount account){
+        this.account = account;
         this.validate();
     }
 
@@ -50,13 +48,19 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
         return this.accountExists;
     }
 
-    public boolean getMnemonicIsCorrect(){
-        return this.mnemonicIsCorrect;
+    public GrapheneAccount getAccount() {
+        return account;
     }
 
     public void validate(){
-        if ((this.accountExists != null) && (this.mnemonicIsCorrect != null)){
-            this._fireOnCarryOutEvent();
+        if ((this.accountExists != null)){// && (this.account != null)){
+            if (this.accountExists == true) {
+                this._fireOnCarryOutEvent();
+            } else {
+                if (this.account != null){
+                    this._fireOnCarryOutEvent();
+                }
+            }
         }
     }
 
@@ -68,11 +72,7 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
         this.accountName = accountName;
     }
 
-    public String getMnemonic() {
-        return mnemonic;
-    }
-
-    public void setMnemonic(String mnemonic) {
-        this.mnemonic = mnemonic;
+    public Context getContext() {
+        return context;
     }
 }

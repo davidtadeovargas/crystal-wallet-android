@@ -10,31 +10,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequestListener;
-import cy.agorise.crystalwallet.cryptonetinforequests.CryptoNetInfoRequests;
-import cy.agorise.crystalwallet.cryptonetinforequests.ValidateCreateBitsharesAccountRequest;
-import cy.agorise.crystalwallet.enums.SeedType;
-import cy.agorise.crystalwallet.models.AccountSeed;
-import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
+import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
-import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
-import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountViewModel;
-import cy.agorise.crystalwallet.viewmodels.GrapheneAccountInfoViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
-import cy.agorise.crystalwallet.viewmodels.validators.ImportSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
-
-import static cy.agorise.crystalwallet.enums.SeedType.BIP39;
 
 public class CreateSeedActivity extends AppCompatActivity implements UIValidatorListener {
 

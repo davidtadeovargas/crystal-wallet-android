@@ -1,7 +1,6 @@
 package cy.agorise.crystalwallet.fragments;
 
 import android.app.Dialog;
-import android.app.LauncherActivity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -43,14 +42,12 @@ import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.cryptonetinforequests.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.viewmodels.validators.ReceiveTransactionValidator;
-import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
 import cy.agorise.crystalwallet.views.CryptoCurrencyAdapter;

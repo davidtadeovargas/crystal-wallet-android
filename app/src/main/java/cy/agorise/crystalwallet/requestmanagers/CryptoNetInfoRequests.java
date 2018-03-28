@@ -1,4 +1,4 @@
-package cy.agorise.crystalwallet.cryptonetinforequests;
+package cy.agorise.crystalwallet.requestmanagers;
 
 import java.util.ArrayList;
 import java.util.List;

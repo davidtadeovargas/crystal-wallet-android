@@ -1,4 +1,4 @@
-package cy.agorise.crystalwallet.cryptonetinforequests;
+package cy.agorise.crystalwallet.requestmanagers;
 
 /**
  * Listener extends for the manager classes
