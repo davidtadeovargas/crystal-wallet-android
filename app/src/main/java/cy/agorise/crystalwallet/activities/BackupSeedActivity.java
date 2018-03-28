@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.activities;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +53,7 @@ public class BackupSeedActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnOk)
     public void btnOkClick(){
-        this.finish();
+        Intent intent = new Intent(this, IntroActivity.class);
+        startActivity(intent);
     }
 }
