@@ -10,10 +10,12 @@ import android.content.Context;
 public abstract class FileServiceRequest {
 
     protected Context context;
+    //protected Activity activity;
     protected String password;
 
     protected FileServiceRequest(Context context, String password) {
         this.context = context;
+        //this.activity = activity;
         this.password = password;
     }
 

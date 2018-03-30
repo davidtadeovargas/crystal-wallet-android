@@ -5,7 +5,9 @@ import android.os.Environment;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
@@ -92,12 +94,15 @@ public class FileBackupManager implements FileServiceRequestsListener {
     static void saveBinContentToFile(List<Integer> content, String fileName, CreateBackupRequest request )
     {
 
+        SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String dateHourString = df.format(new Date());
+
         String folder = Environment.getExternalStorageDirectory() + File.separator + "Crystal"; //TODO make constant
-        String path =  folder + File.separator + fileName + ".bin";
+        String path =  folder + File.separator + fileName + dateHourString +".bin";
 
         boolean success = saveBinFile(path,content,request);
         if(success) {
-            request.setStatus(CreateBackupRequest.StatusCode.OK);
+            request.setStatus(CreateBackupRequest.StatusCode.SUCCEEDED);
         }else{
             request.setStatus(CreateBackupRequest.StatusCode.FAILED);
         }
