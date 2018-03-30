@@ -20,8 +20,8 @@ public class CreateBackupRequest extends FileServiceRequest {
     private String filePath;
     private StatusCode status;
 
-    public CreateBackupRequest(Context context) {
-        super(context);
+    public CreateBackupRequest(Context context, String password) {
+        super(context,password);
         this.filePath = "";
         this.status = StatusCode.NOT_STARTED;
     }

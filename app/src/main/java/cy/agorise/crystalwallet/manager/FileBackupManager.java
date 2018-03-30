@@ -102,6 +102,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
 
         boolean success = saveBinFile(path,content,request);
         if(success) {
+            request.setFilePath(path);
             request.setStatus(CreateBackupRequest.StatusCode.SUCCEEDED);
         }else{
             request.setStatus(CreateBackupRequest.StatusCode.FAILED);
