@@ -22,6 +22,9 @@ public interface AccountSeedDao {
     @Query("SELECT * FROM account_seed")
     LiveData<List<AccountSeed>> getAll();
 
+    @Query("SELECT * FROM account_seed")
+    List<AccountSeed> getAllNoLiveData();
+
     @Query("SELECT * FROM account_seed WHERE id = :id")
     LiveData<AccountSeed> findByIdLiveData(long id);
 

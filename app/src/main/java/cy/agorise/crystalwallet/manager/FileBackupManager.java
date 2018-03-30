@@ -1,8 +1,6 @@
 package cy.agorise.crystalwallet.manager;
 
-import android.app.Activity;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -10,10 +8,11 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import cy.agorise.crystalwallet.application.CrystalApplication;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.CryptoNet;
+import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.requestmanagers.CreateBackupRequest;
-import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequestsListener;
 import cy.agorise.graphenej.BrainKey;
@@ -40,56 +39,69 @@ public class FileBackupManager implements FileServiceRequestsListener {
     public void createBackupBinFile(CreateBackupRequest request)
     {
         CrystalDatabase db = CrystalDatabase.getAppDatabase(request.getContext());
-        db.cryptoNetAccountDao().getAllCryptoNetAccountBySeed(request.getSeed().getId());
+        List<BitsharesSeedName> seedNames = new ArrayList<>();
+        List<AccountSeed> seeds = db.accountSeedDao().getAllNoLiveData();
+        for(AccountSeed seed : seeds) {
+            List<CryptoNetAccount> accounts = db.cryptoNetAccountDao().getAllCryptoNetAccountBySeed(seed.getId());
+            for(CryptoNetAccount account : accounts){
+                if(account.getCryptoNet().equals(CryptoNet.BITSHARES)){
+                    seedNames.add(new BitsharesSeedName(account.getName(),seed.getMasterSeed()));
+                }
+            }
+        }
 
-        /*TinyDB tinyDB = new TinyDB(myActivity);
-        ArrayList<AccountDetails> accountDetails = tinyDB.getListObject(myActivity.getResources().getString(R.string.pref_wallet_accounts), AccountDetails.class);
-        String _brnKey = getBrainKey(accountDetails);
-        String _accountName = getAccountName(accountDetails);
-        String _pinCode = getPin(accountDetails);
-
-        getBinBytesFromBrainkey(_pinCode, _brnKey, _accountName);*/
+        getBinBytesFromBrainkey(seedNames,request); //TODO make funcion for non-bitshares accounts
     }
 
-    public void getBinBytesFromBrainkey(String pin, String brnKey, String accountName, CreateBackupRequest request) {
-        BrainKey brainKey = new BrainKey(brnKey, 0);
+    public void getBinBytesFromBrainkey(List<BitsharesSeedName> bitsharesSeedNames, CreateBackupRequest request) {
+
         try {
             ArrayList<Wallet> wallets = new ArrayList<>();
             ArrayList<LinkedAccount> accounts = new ArrayList<>();
             ArrayList<PrivateKeyBackup> keys = new ArrayList<>();
-
-            Wallet wallet = new Wallet(accountName, brainKey.getBrainKey(), brainKey.getSequenceNumber(), Chains.BITSHARES.CHAIN_ID, pin);
-            wallets.add(wallet);
-
-            PrivateKeyBackup keyBackup = new PrivateKeyBackup(brainKey.getPrivateKey().getPrivKeyBytes(),
-                    brainKey.getSequenceNumber(), brainKey.getSequenceNumber(), wallet.getEncryptionKey(pin));
-            keys.add(keyBackup);
-
-            LinkedAccount linkedAccount = new LinkedAccount(accountName, Chains.BITSHARES.CHAIN_ID);
-            accounts.add(linkedAccount);
+            String fileName = null; //TODO choice a good name,  now we use the first bitshares account as the bin backup
+            for(BitsharesSeedName bitsharesSeedName : bitsharesSeedNames) {
+                if(fileName == null){
+                    fileName = bitsharesSeedName.accountName;
+                }
+                BrainKey brainKey = new BrainKey(bitsharesSeedName.accountSeed, 0); //TODO chain to use BIP39
+                //TODO adapt CHAIN ID
+                Wallet wallet = new Wallet(bitsharesSeedName.accountName, brainKey.getBrainKey(), brainKey.getSequenceNumber(), Chains.BITSHARES.CHAIN_ID, request.getPassword());
+                wallets.add(wallet);
+                PrivateKeyBackup keyBackup = new PrivateKeyBackup(brainKey.getPrivateKey().getPrivKeyBytes(),
+                        brainKey.getSequenceNumber(), brainKey.getSequenceNumber(), wallet.getEncryptionKey(request.getPassword()));
+                keys.add(keyBackup);
+                LinkedAccount linkedAccount = new LinkedAccount(bitsharesSeedName.accountName, Chains.BITSHARES.CHAIN_ID);
+                accounts.add(linkedAccount);
+            }
 
             WalletBackup backup = new WalletBackup(wallets, keys, accounts);
-            byte[] results = FileBin.serializeWalletBackup(backup, pin);
+            byte[] results = FileBin.serializeWalletBackup(backup, request.getPassword());
             List<Integer> resultFile = new ArrayList<>();
             for(byte result: results){
                 resultFile.add(result & 0xff);
             }
-            saveBinContentToFile(resultFile, accountName, request);
+            saveBinContentToFile(resultFile, fileName, request);
         }
         catch (Exception e) {
-
+            request.setStatus(CreateBackupRequest.StatusCode.FAILED);
             //TODO error exception
 
         }
     }
-    static void saveBinContentToFile(List<Integer> content, String _accountName, CreateBackupRequest request )
+    static void saveBinContentToFile(List<Integer> content, String fileName, CreateBackupRequest request )
     {
 
         String folder = Environment.getExternalStorageDirectory() + File.separator + "Crystal"; //TODO make constant
-        String path =  folder + File.separator + _accountName + ".bin";
+        String path =  folder + File.separator + fileName + ".bin";
 
         boolean success = saveBinFile(path,content,request);
-        //TODO handle sucess
+        if(success) {
+            request.setStatus(CreateBackupRequest.StatusCode.OK);
+        }else{
+            request.setStatus(CreateBackupRequest.StatusCode.FAILED);
+        }
+
     }
 
     private static boolean saveBinFile (String filePath , List<Integer> content, CreateBackupRequest request)
@@ -124,4 +136,15 @@ public class FileBackupManager implements FileServiceRequestsListener {
 
         return success;
     }
+
+    public class BitsharesSeedName{
+        String accountName;
+        String accountSeed;
+
+        public BitsharesSeedName(String accountName, String accountSeed) {
+            this.accountName = accountName;
+            this.accountSeed = accountSeed;
+        }
+    }
+
 }

@@ -9,7 +9,7 @@ import android.content.Context;
 
 public class ImportBackupRequest extends FileServiceRequest {
 
-    public ImportBackupRequest(Context context, Activity activity) {
-        super(context, activity);
+    public ImportBackupRequest(Context context, String password) {
+        super(context, password);
     }
 }

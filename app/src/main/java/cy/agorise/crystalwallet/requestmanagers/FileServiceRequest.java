@@ -10,11 +10,11 @@ import android.content.Context;
 public abstract class FileServiceRequest {
 
     protected Context context;
-    protected Activity activity;
+    protected String password;
 
-    protected FileServiceRequest(Context context, Activity activity) {
+    protected FileServiceRequest(Context context, String password) {
         this.context = context;
-        this.activity = activity;
+        this.password = password;
     }
 
     protected FileServiceRequestListener listener;
@@ -27,8 +27,8 @@ public abstract class FileServiceRequest {
         return context;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public String getPassword() {
+        return password;
     }
 
     protected void _fireOnCarryOutEvent(){
