@@ -100,6 +100,11 @@ public class FileBackupManager implements FileServiceRequestsListener {
         String folder = Environment.getExternalStorageDirectory() + File.separator + "Crystal"; //TODO make constant
         String path =  folder + File.separator + fileName + dateHourString +".bin";
 
+        File folderFile = new File(folder);
+        if (!folderFile.exists()) {
+            folderFile.mkdir();
+        }
+
         boolean success = saveBinFile(path,content,request);
         if(success) {
             request.setFilePath(path);

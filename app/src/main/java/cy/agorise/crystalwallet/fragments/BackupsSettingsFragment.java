@@ -1,7 +1,10 @@
 package cy.agorise.crystalwallet.fragments;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -21,6 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.requestmanagers.CreateBackupRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequestListener;
@@ -78,26 +83,38 @@ public class BackupsSettingsFragment extends Fragment{
 
     @OnClick(R.id.btnBinFile)
     public void makeBackupFile(){
-        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            
-            final CreateBackupRequest backupFileRequest = new CreateBackupRequest(getContext());
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
-            backupFileRequest.setListener(new FileServiceRequestListener() {
+            LiveData<GeneralSetting> generalSettingLD = CrystalDatabase.getAppDatabase(getContext()).generalSettingDao().getByName(GeneralSetting.SETTING_PASSWORD);
+
+            generalSettingLD.observe(this, new Observer<GeneralSetting>() {
                 @Override
-                public void onCarryOut() {
-                    if (backupFileRequest.getStatus() == CreateBackupRequest.StatusCode.SUCCEEDED){
-                        Toast toast = Toast.makeText(
-                                getContext(), "Backup done! File: "+backupFileRequest.getFilePath(), Toast.LENGTH_LONG);
-                        toast.show();
-                    } else if (backupFileRequest.getStatus() == CreateBackupRequest.StatusCode.FAILED){
-                        Toast toast = Toast.makeText(
-                                getContext(), "An error ocurred while making the backup!", Toast.LENGTH_LONG);
-                        toast.show();
+                public void onChanged(@Nullable GeneralSetting generalSetting) {
+                    String password = "";
+                    if (generalSetting != null) {
+                        password = generalSetting.getValue();
                     }
+
+                    final CreateBackupRequest backupFileRequest = new CreateBackupRequest(getContext(), password);
+
+                    backupFileRequest.setListener(new FileServiceRequestListener() {
+                        @Override
+                        public void onCarryOut() {
+                            if (backupFileRequest.getStatus() == CreateBackupRequest.StatusCode.SUCCEEDED){
+                                Toast toast = Toast.makeText(
+                                        getContext(), "Backup done! File: "+backupFileRequest.getFilePath(), Toast.LENGTH_LONG);
+                                toast.show();
+                            } else if (backupFileRequest.getStatus() == CreateBackupRequest.StatusCode.FAILED){
+                                Toast toast = Toast.makeText(
+                                        getContext(), "An error ocurred while making the backup!", Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        }
+                    });
+
+                    FileServiceRequests.getInstance().addRequest(backupFileRequest);
                 }
             });
-
-            FileServiceRequests.getInstance().addRequest(backupFileRequest);
         }
     }
 }
