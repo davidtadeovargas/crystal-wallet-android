@@ -2,8 +2,12 @@ package cy.agorise.crystalwallet.manager;
 
 import android.os.Environment;
 
+import org.bitcoinj.core.ECKey;
+
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,12 +18,15 @@ import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.requestmanagers.CreateBackupRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequestsListener;
+import cy.agorise.crystalwallet.requestmanagers.ImportBackupRequest;
+import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.BrainKey;
-import cy.agorise.graphenej.Chains;
 import cy.agorise.graphenej.FileBin;
+import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.models.backup.LinkedAccount;
 import cy.agorise.graphenej.models.backup.PrivateKeyBackup;
 import cy.agorise.graphenej.models.backup.Wallet;
@@ -38,7 +45,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
         }
     }
 
-    public void createBackupBinFile(CreateBackupRequest request)
+    private void createBackupBinFile(CreateBackupRequest request)
     {
         CrystalDatabase db = CrystalDatabase.getAppDatabase(request.getContext());
         List<BitsharesSeedName> seedNames = new ArrayList<>();
@@ -55,7 +62,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
         getBinBytesFromBrainkey(seedNames,request); //TODO make funcion for non-bitshares accounts
     }
 
-    public void getBinBytesFromBrainkey(List<BitsharesSeedName> bitsharesSeedNames, CreateBackupRequest request) {
+    private void getBinBytesFromBrainkey(List<BitsharesSeedName> bitsharesSeedNames, CreateBackupRequest request) {
 
         try {
             ArrayList<Wallet> wallets = new ArrayList<>();
@@ -68,12 +75,12 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 }
                 BrainKey brainKey = new BrainKey(bitsharesSeedName.accountSeed, 0); //TODO chain to use BIP39
                 //TODO adapt CHAIN ID
-                Wallet wallet = new Wallet(bitsharesSeedName.accountName, brainKey.getBrainKey(), brainKey.getSequenceNumber(), Chains.BITSHARES.CHAIN_ID, request.getPassword());
+                Wallet wallet = new Wallet(bitsharesSeedName.accountName, brainKey.getBrainKey(), brainKey.getSequenceNumber(), CryptoNetManager.getChaindId(CryptoNet.BITSHARES), request.getPassword());
                 wallets.add(wallet);
                 PrivateKeyBackup keyBackup = new PrivateKeyBackup(brainKey.getPrivateKey().getPrivKeyBytes(),
                         brainKey.getSequenceNumber(), brainKey.getSequenceNumber(), wallet.getEncryptionKey(request.getPassword()));
                 keys.add(keyBackup);
-                LinkedAccount linkedAccount = new LinkedAccount(bitsharesSeedName.accountName, Chains.BITSHARES.CHAIN_ID);
+                LinkedAccount linkedAccount = new LinkedAccount(bitsharesSeedName.accountName, CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
                 accounts.add(linkedAccount);
             }
 
@@ -91,7 +98,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
 
         }
     }
-    static void saveBinContentToFile(List<Integer> content, String fileName, CreateBackupRequest request )
+
+    private void saveBinContentToFile(List<Integer> content, String fileName, CreateBackupRequest request )
     {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
@@ -148,6 +156,55 @@ public class FileBackupManager implements FileServiceRequestsListener {
         return success;
     }
 
+    private void readBinFile(ImportBackupRequest request){
+        try {
+            File file = new File(request.getFilePath());
+            DataInputStream dis = new DataInputStream(new FileInputStream(file));
+
+            ArrayList<Integer> readBytes = new ArrayList<>();
+
+
+            for ( int i = 0 ; i < file.length() ; i++ )
+            {
+                int val = unsignedToBytes(dis.readByte());
+                readBytes.add(val);
+            }
+
+            dis.close();
+
+            byte[] byteArray = new byte[readBytes.size()];
+            for(int i = 0 ; i < readBytes.size();i++){
+                byteArray[i] = readBytes.get(i).byteValue();
+            }
+
+            WalletBackup walletBackup = FileBin.deserializeWalletBackup(byteArray,request.getPassword());
+            if(walletBackup == null){
+                //TODO handle error
+                return;
+            }
+
+            List<BitsharesSeedName> seedNames = new ArrayList<>();
+
+            for(int i = 0; i < walletBackup.getKeyCount(); i++){
+                String brainKey = walletBackup.getWallet(i).decryptBrainKey(request.getPassword());
+                int sequence = walletBackup.getWallet(i).getBrainkeySequence();
+                String accountName = walletBackup.getWallet(i).getPrivateName();
+                seedNames.add(new BitsharesSeedName(accountName,brainKey));
+            }
+            //TODO handle the accounts
+            request.setStatus(ImportBackupRequest.StatusCode.SUCCEEDED);
+
+
+        } catch (Exception e) {
+            request.setStatus(ImportBackupRequest.StatusCode.FAILED);
+            //TODO handle exception
+        }
+    }
+
+    private int unsignedToBytes(byte b) {
+        return b & 0xFF;
+    }
+
     public class BitsharesSeedName{
         String accountName;
         String accountSeed;
@@ -157,5 +214,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
             this.accountSeed = accountSeed;
         }
     }
+
+
 
 }
