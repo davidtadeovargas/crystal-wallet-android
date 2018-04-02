@@ -14,15 +14,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cy.agorise.crystalwallet.dao.AccountSeedDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
+import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.requestmanagers.CreateBackupRequest;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequestsListener;
 import cy.agorise.crystalwallet.requestmanagers.ImportBackupRequest;
+import cy.agorise.crystalwallet.requestmanagers.ValidateImportBitsharesAccountRequest;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.BrainKey;
 import cy.agorise.graphenej.FileBin;
@@ -156,7 +162,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
         return success;
     }
 
-    private void readBinFile(ImportBackupRequest request){
+    private void readBinFile(final ImportBackupRequest request){
         try {
             File file = new File(request.getFilePath());
             DataInputStream dis = new DataInputStream(new FileInputStream(file));
@@ -191,10 +197,38 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 String accountName = walletBackup.getWallet(i).getPrivateName();
                 seedNames.add(new BitsharesSeedName(accountName,brainKey));
             }
-            //TODO handle the accounts
-            request.setStatus(ImportBackupRequest.StatusCode.SUCCEEDED);
-
-
+            //TODO handle more than one account
+            final CrystalDatabase db = CrystalDatabase.getAppDatabase(request.getContext());
+            final AccountSeedDao accountSeedDao = db.accountSeedDao();
+            for(BitsharesSeedName seedName : seedNames) {
+                final ValidateImportBitsharesAccountRequest validatorRequest =
+                        new ValidateImportBitsharesAccountRequest(seedName.accountName, seedName.accountSeed);
+                validatorRequest.setListener(new CryptoNetInfoRequestListener() {
+                    @Override
+                    public void onCarryOut() {
+                        if (!validatorRequest.getMnemonicIsCorrect()) {
+                            request.setStatus(ImportBackupRequest.StatusCode.FAILED); // TODO reason bad seed
+                        } else {
+                            AccountSeed seed = new AccountSeed();
+                            seed.setName(validatorRequest.getAccountName());
+                            seed.setType(SeedType.BRAINKEY); // TODO change to use other types
+                            seed.setMasterSeed(validatorRequest.getMnemonic());
+                            long idSeed = accountSeedDao.insertAccountSeed(seed);
+                            if(idSeed >= 0) {
+                                GrapheneAccount account = new GrapheneAccount();
+                                account.setSeedId(idSeed);
+                                account.setName(validatorRequest.getAccountName());
+                                BitsharesAccountManager bManger = new BitsharesAccountManager();
+                                bManger.importAccountFromSeed(account,request.getContext());
+                                request.setStatus(ImportBackupRequest.StatusCode.SUCCEEDED);
+                            }else{
+                                request.setStatus(ImportBackupRequest.StatusCode.FAILED); //TODO reason couldn't insert seed
+                            }
+                        }
+                    }
+                });
+                CryptoNetInfoRequests.getInstance().addRequest(validatorRequest);
+            }
         } catch (Exception e) {
             request.setStatus(ImportBackupRequest.StatusCode.FAILED);
             //TODO handle exception
