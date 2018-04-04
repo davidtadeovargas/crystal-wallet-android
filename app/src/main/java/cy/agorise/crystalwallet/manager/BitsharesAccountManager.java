@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.manager;
 
+import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
@@ -250,7 +251,6 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                             for(PublicKey activeKey : prop.owner.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
                                     importRequest.setMnemonicIsCorrect(true);
-                                    return;
                                 }
                             }
                             importRequest.setMnemonicIsCorrect(false);
