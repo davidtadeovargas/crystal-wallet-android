@@ -33,6 +33,10 @@ public class ImportBackupRequest extends FileServiceRequest {
         this.validate();
     }
 
+    public StatusCode getStatus(){
+        return this.status;
+    }
+
     public void validate(){
         if (this.status != StatusCode.NOT_STARTED){
             this._fireOnCarryOutEvent();

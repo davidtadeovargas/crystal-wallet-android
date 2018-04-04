@@ -42,6 +42,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
     public void onNewRequest(FileServiceRequest request) {
         if(request instanceof CreateBackupRequest){
             createBackupBinFile((CreateBackupRequest) request);
+        } else if (request instanceof ImportBackupRequest){
+            readBinFile((ImportBackupRequest) request);
         }
     }
 
