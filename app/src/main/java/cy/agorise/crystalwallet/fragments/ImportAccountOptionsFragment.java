@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.fragments;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.net.URISyntaxException;
@@ -93,37 +95,62 @@ public class ImportAccountOptionsFragment extends DialogFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == FILE_CONTENT_REQUEST_CODE){
-            Uri fileUri = data.getData();
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View passwordDialogView = inflater.inflate(R.layout.dialog_password_input, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setView(passwordDialogView);
 
-            String filePath = null;
-            try {
-                filePath = UriTranslator.getFilePath(getContext(), fileUri);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            final EditText passwordInput = (EditText) passwordDialogView.findViewById(R.id.etPasswordInput);
 
-            final ImportBackupRequest importBackupRequest = new ImportBackupRequest(getContext(), "", filePath);
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    String passwordString = (passwordInput.getText()).toString();
 
-            importBackupRequest.setListener(new FileServiceRequestListener() {
-                @Override
-                public void onCarryOut() {
-                    if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.SUCCEEDED){
-                        Toast toast = Toast.makeText(
-                                getContext(), "Backup restored!", Toast.LENGTH_LONG);
-                        toast.show();
-                    } else if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.FAILED){
-                        Toast toast = Toast.makeText(
-                                getContext(), "An error ocurred while restoring the backup!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+                                    Uri fileUri = data.getData();
 
-            FileServiceRequests.getInstance().addRequest(importBackupRequest);
+                                    String filePath = null;
+                                    try {
+                                        filePath = UriTranslator.getFilePath(getContext(), fileUri);
+                                    } catch (URISyntaxException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    final ImportBackupRequest importBackupRequest = new ImportBackupRequest(getContext(), passwordString, filePath);
+
+                                    importBackupRequest.setListener(new FileServiceRequestListener() {
+                                        @Override
+                                        public void onCarryOut() {
+                                            if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.SUCCEEDED){
+                                                Toast toast = Toast.makeText(
+                                                        getContext(), "Backup restored!", Toast.LENGTH_LONG);
+                                                toast.show();
+                                            } else if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.FAILED){
+                                                Toast toast = Toast.makeText(
+                                                        getContext(), "An error ocurred while restoring the backup!", Toast.LENGTH_LONG);
+                                                toast.show();
+                                            }
+                                        }
+                                    });
+
+                                    FileServiceRequests.getInstance().addRequest(importBackupRequest);
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            AlertDialog passwordDialog = alertDialogBuilder.create();
+            passwordDialog.show();
 
         }
     }
