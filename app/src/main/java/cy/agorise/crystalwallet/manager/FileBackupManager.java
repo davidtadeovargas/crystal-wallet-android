@@ -62,7 +62,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
             List<CryptoNetAccount> accounts = db.cryptoNetAccountDao().getAllCryptoNetAccountBySeed(seed.getId());
             for(CryptoNetAccount account : accounts){
                 if(account.getCryptoNet().equals(CryptoNet.BITSHARES)){
-                    seedNames.add(new BitsharesSeedName(account.getName(),seed.getMasterSeed()));
+                        seedNames.add(new BitsharesSeedName(account.getName(), seed.getMasterSeed()));
                 }
             }
         }
@@ -101,6 +101,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
             saveBinContentToFile(resultFile, fileName, request);
         }
         catch (Exception e) {
+            e.printStackTrace();
             request.setStatus(CreateBackupRequest.StatusCode.FAILED);
             //TODO error exception
 
@@ -109,7 +110,6 @@ public class FileBackupManager implements FileServiceRequestsListener {
 
     private void saveBinContentToFile(List<Integer> content, String fileName, CreateBackupRequest request )
     {
-
         SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         String dateHourString = df.format(new Date());
 
@@ -118,7 +118,13 @@ public class FileBackupManager implements FileServiceRequestsListener {
 
         File folderFile = new File(folder);
         if (!folderFile.exists()) {
-            folderFile.mkdir();
+            if(folderFile.mkdirs()){
+                System.out.println("folder created");
+            }else{
+                System.out.println("couldn't create folder");
+                request.setStatus(CreateBackupRequest.StatusCode.FAILED);
+                return;
+            }
         }
 
         boolean success = saveBinFile(path,content,request);
@@ -158,6 +164,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             //TODO handle error
         }
 
@@ -178,8 +185,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 readBytes.add(val);
             }
 
-            dis.close();
 
+            dis.close();
             byte[] byteArray = new byte[readBytes.size()];
             for(int i = 0 ; i < readBytes.size();i++){
                 byteArray[i] = readBytes.get(i).byteValue();
@@ -188,6 +195,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
             WalletBackup walletBackup = FileBin.deserializeWalletBackup(byteArray,request.getPassword());
             if(walletBackup == null){
                 //TODO handle error
+                System.out.println("FileBackupManager error walletBackup null");
+                request.setStatus(ImportBackupRequest.StatusCode.FAILED);
                 return;
             }
 
@@ -232,6 +241,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 CryptoNetInfoRequests.getInstance().addRequest(validatorRequest);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             request.setStatus(ImportBackupRequest.StatusCode.FAILED);
             //TODO handle exception
         }
