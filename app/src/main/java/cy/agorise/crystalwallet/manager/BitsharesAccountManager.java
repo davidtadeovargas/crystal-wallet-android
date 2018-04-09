@@ -19,6 +19,7 @@ import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.BitsharesFaucetApiGenerator;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.application.constant.BitsharesConstant;
+import cy.agorise.crystalwallet.models.seed.BIP39;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetEquivalentRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestsListener;
@@ -247,12 +248,22 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                             AccountProperties prop = (AccountProperties) answer;
                             //TODO change the way to compare keys
                             BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
-                            System.out.println(bk.getPublicAddress("BTS").toString());
                             for(PublicKey activeKey : prop.owner.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
+                                    System.out.println("Mnemonic brainkey correct");
                                     importRequest.setMnemonicIsCorrect(true);
+                                    return;
                                 }
                             }
+                            BIP39 bip39 = new BIP39(-1, importRequest.getMnemonic());
+                            for(PublicKey activeKey : prop.active.getKeyAuthList()){
+                                if((new Address(activeKey.getKey(),"BTS")).toString().equals(new Address(ECKey.fromPublicOnly(bip39.getBitsharesActiveKey(0).getPubKey())).toString())){
+                                    System.out.println("Mnemonic BIP39 correct");
+                                    importRequest.setMnemonicIsCorrect(true);
+                                    return;
+                                }
+                            }
+                            System.out.println("Mnemonic incorrect");
                             importRequest.setMnemonicIsCorrect(false);
                         }
 

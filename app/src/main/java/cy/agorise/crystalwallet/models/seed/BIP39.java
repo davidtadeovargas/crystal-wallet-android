@@ -1,13 +1,15 @@
 package cy.agorise.crystalwallet.models.seed;
 
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.crypto.MnemonicCode;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import cy.agorise.crystalwallet.enums.SeedType;
 import cy.agorise.crystalwallet.models.AccountSeed;
@@ -89,5 +91,20 @@ public class BIP39  extends AccountSeed{
 
     public byte[] getSeed() {
         return MnemonicCode.toSeed(Arrays.asList(this.getMasterSeed().split(" ")), "");
+    }
+
+    public ECKey getBitsharesActiveKey(int number){
+        DeterministicKey masterKey = HDKeyDerivation.createMasterPrivateKey(this.getSeed());
+        DeterministicKey purposeKey = HDKeyDerivation.deriveChildKey(masterKey,
+                new ChildNumber(48, true));
+        DeterministicKey networkKey = HDKeyDerivation.deriveChildKey(purposeKey,
+                new ChildNumber(1, true));
+        DeterministicKey accountIndexKey = HDKeyDerivation.deriveChildKey(networkKey,
+                new ChildNumber(0, true));
+        DeterministicKey permission = HDKeyDerivation.deriveChildKey(accountIndexKey,
+                new ChildNumber(1, true));
+        DeterministicKey address = HDKeyDerivation.deriveChildKey(permission,
+                new ChildNumber(number, false));  //TODO implement multiple Address and accounts
+        return org.bitcoinj.core.ECKey.fromPrivate(address.getPrivKeyBytes());
     }
 }

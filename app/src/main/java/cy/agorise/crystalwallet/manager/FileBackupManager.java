@@ -2,17 +2,34 @@ package cy.agorise.crystalwallet.manager;
 
 import android.os.Environment;
 
+import com.google.common.primitives.Bytes;
+import com.google.gson.GsonBuilder;
+
 import org.bitcoinj.core.ECKey;
+import org.tukaani.xz.CorruptedInputException;
+import org.tukaani.xz.LZMAInputStream;
+import org.tukaani.xz.XZInputStream;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cy.agorise.crystalwallet.dao.AccountSeedDao;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
@@ -32,6 +49,7 @@ import cy.agorise.crystalwallet.requestmanagers.ValidateImportBitsharesAccountRe
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.BrainKey;
 import cy.agorise.graphenej.FileBin;
+import cy.agorise.graphenej.Util;
 import cy.agorise.graphenej.api.GetKeyReferences;
 import cy.agorise.graphenej.models.backup.LinkedAccount;
 import cy.agorise.graphenej.models.backup.PrivateKeyBackup;
@@ -81,12 +99,15 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 if(fileName == null){
                     fileName = bitsharesSeedName.accountName;
                 }
-                BrainKey brainKey = new BrainKey(bitsharesSeedName.accountSeed, 0); //TODO chain to use BIP39
+
+                int sequence = 0;
                 //TODO adapt CHAIN ID
-                Wallet wallet = new Wallet(bitsharesSeedName.accountName, brainKey.getBrainKey(), brainKey.getSequenceNumber(), CryptoNetManager.getChaindId(CryptoNet.BITSHARES), request.getPassword());
+                Wallet wallet = new Wallet(bitsharesSeedName.accountName, bitsharesSeedName.accountSeed, sequence, CryptoNetManager.getChaindId(CryptoNet.BITSHARES), request.getPassword());
                 wallets.add(wallet);
+
+                BrainKey brainKey = new BrainKey(bitsharesSeedName.accountSeed, sequence); //TODO chain to use BIP39
                 PrivateKeyBackup keyBackup = new PrivateKeyBackup(brainKey.getPrivateKey().getPrivKeyBytes(),
-                        brainKey.getSequenceNumber(), brainKey.getSequenceNumber(), wallet.getEncryptionKey(request.getPassword()));
+                        sequence, sequence, wallet.getEncryptionKey(request.getPassword()));
                 keys.add(keyBackup);
                 LinkedAccount linkedAccount = new LinkedAccount(bitsharesSeedName.accountName, CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
                 accounts.add(linkedAccount);
@@ -192,7 +213,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 byteArray[i] = readBytes.get(i).byteValue();
             }
 
-            WalletBackup walletBackup = FileBin.deserializeWalletBackup(byteArray,request.getPassword());
+            WalletBackup walletBackup = deserializeWalletBackup(byteArray,request.getPassword());
             if(walletBackup == null){
                 //TODO handle error
                 System.out.println("FileBackupManager error walletBackup null");
@@ -259,6 +280,99 @@ public class FileBackupManager implements FileServiceRequestsListener {
             this.accountName = accountName;
             this.accountSeed = accountSeed;
         }
+    }
+
+
+    /**
+     * This part is copied from the graphenej library, to edit possible error.
+     * TODO in graphenej library to catch EOFException reading files
+     */
+
+    public static WalletBackup deserializeWalletBackup(byte[] input, String password){
+        try{
+            byte[] publicKey = new byte[33];
+            byte[] rawDataEncripted = new byte[input.length - 33];
+
+            System.arraycopy(input, 0, publicKey, 0, 33);
+            System.arraycopy(input, 33, rawDataEncripted, 0, rawDataEncripted.length);
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            ECKey randomECKey = ECKey.fromPublicOnly(publicKey);
+            byte[] finalKey = randomECKey.getPubKeyPoint().multiply(ECKey.fromPrivate(md.digest(password.getBytes("UTF-8"))).getPrivKey()).normalize().getXCoord().getEncoded();
+            MessageDigest md1 = MessageDigest.getInstance("SHA-512");
+            finalKey = md1.digest(finalKey);
+            byte[] decryptedData = Util.decryptAES(rawDataEncripted, Util.bytesToHex(finalKey).getBytes());
+
+            byte[] checksum = new byte[4];
+            System.arraycopy(decryptedData, 0, checksum, 0, 4);
+            byte[] compressedData = new byte[decryptedData.length - 4];
+            System.arraycopy(decryptedData, 4, compressedData, 0, compressedData.length);
+
+            byte[] decompressedData = decompress(compressedData, Util.LZMA);
+            String walletString = new String(decompressedData, "UTF-8");
+            System.out.println("Wallet str: "+walletString);
+            return new GsonBuilder().create().fromJson(walletString, WalletBackup.class);
+        }catch(NoSuchAlgorithmException e){
+            System.out.println("NoSuchAlgorithmException. Msg: "+e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("UnsupportedEncodingException. Msg: "+e.getMessage());
+        }
+        return null;
+    }
+
+    public static byte[] decompress(byte[] inputBytes, int which) {
+        InputStream in = null;
+        try {
+            System.out.println("Bytes: "+Util.bytesToHex(inputBytes));
+            ByteArrayInputStream input = new ByteArrayInputStream(inputBytes);
+            ByteArrayOutputStream output = new ByteArrayOutputStream(16*2048);
+            if(which == Util.XZ) {
+                in = new XZInputStream(input);
+            }else if(which == Util.LZMA){
+                in = new LZMAInputStream(input);
+            }
+            int size;
+            try{
+                while ((size = in.read()) != -1) {
+                    output.write(size);
+                }
+            }catch(CorruptedInputException e){
+                // Taking property byte
+                byte[] properties = Arrays.copyOfRange(inputBytes, 0, 1);
+                // Taking dict size bytes
+                byte[] dictSize = Arrays.copyOfRange(inputBytes, 1, 5);
+                // Taking uncompressed size bytes
+                byte[] uncompressedSize = Arrays.copyOfRange(inputBytes, 5, 13);
+
+                // Reversing bytes in header
+                byte[] header = Bytes.concat(properties, Util.revertBytes(dictSize), Util.revertBytes(uncompressedSize));
+                byte[] payload = Arrays.copyOfRange(inputBytes, 13, inputBytes.length);
+
+                // Trying again
+                input = new ByteArrayInputStream(Bytes.concat(header, payload));
+                output = new ByteArrayOutputStream(2048);
+                if(which == Util.XZ) {
+                    in = new XZInputStream(input);
+                }else if(which == Util.LZMA){
+                    in = new LZMAInputStream(input);
+                }
+                try{
+                    while ((size = in.read()) != -1) {
+                        output.write(size);
+                    }
+                }catch(CorruptedInputException ex){
+                    System.out.println("CorruptedInputException. Msg: "+ex.getMessage());
+                }
+            }catch(EOFException e){
+
+            }
+            in.close();
+            return output.toByteArray();
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
 
