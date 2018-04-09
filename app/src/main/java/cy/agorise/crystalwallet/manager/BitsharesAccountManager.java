@@ -112,7 +112,6 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
     @Override
     public void importAccountFromSeed(CryptoNetAccount account, final Context context) {
-
         if(account instanceof GrapheneAccount) {
             final GrapheneAccount grapheneAccount = (GrapheneAccount) account;
 
@@ -123,7 +122,8 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                         GrapheneAccount fetch = (GrapheneAccount) answer;
                         grapheneAccount.setAccountId(fetch.getAccountId());
                         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
-                        db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
+                        long[] idAccount = db.cryptoNetAccountDao().insertCryptoNetAccount(grapheneAccount);
+                        grapheneAccount.setId(idAccount[0]);
                         db.grapheneAccountInfoDao().insertGrapheneAccountInfo(new GrapheneAccountInfo(grapheneAccount));
                         subscribeBitsharesAccount(grapheneAccount.getId(),grapheneAccount.getAccountId(),context);
                     }

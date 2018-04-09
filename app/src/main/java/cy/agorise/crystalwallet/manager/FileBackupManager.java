@@ -252,6 +252,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
                                 account.setName(validatorRequest.getAccountName());
                                 BitsharesAccountManager bManger = new BitsharesAccountManager();
                                 bManger.importAccountFromSeed(account,request.getContext());
+
+
                                 request.setStatus(ImportBackupRequest.StatusCode.SUCCEEDED);
                             }else{
                                 request.setStatus(ImportBackupRequest.StatusCode.FAILED); //TODO reason couldn't insert seed

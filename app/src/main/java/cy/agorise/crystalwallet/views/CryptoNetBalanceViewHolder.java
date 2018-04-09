@@ -187,7 +187,7 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
      * Binds this view with the data of an element of the list
      */
     public void bindTo(final CryptoNetBalance balance) {
-        if (balance == null){
+        if (balance == null ){
             cryptoNetName.setText("loading...");
         } else {
             final CryptoNetBalanceViewHolder thisViewHolder = this;
