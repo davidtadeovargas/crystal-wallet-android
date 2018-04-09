@@ -251,6 +251,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                             for(PublicKey activeKey : prop.owner.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
                                     System.out.println("Mnemonic brainkey correct");
+                                    importRequest.setSeedType(SeedType.BRAINKEY);
                                     importRequest.setMnemonicIsCorrect(true);
                                     return;
                                 }
@@ -259,6 +260,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                             for(PublicKey activeKey : prop.active.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(new Address(ECKey.fromPublicOnly(bip39.getBitsharesActiveKey(0).getPubKey())).toString())){
                                     System.out.println("Mnemonic BIP39 correct");
+                                    importRequest.setSeedType(SeedType.BIP39);
                                     importRequest.setMnemonicIsCorrect(true);
                                     return;
                                 }

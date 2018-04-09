@@ -243,7 +243,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
                         } else {
                             AccountSeed seed = new AccountSeed();
                             seed.setName(validatorRequest.getAccountName());
-                            seed.setType(SeedType.BRAINKEY); // TODO change to use other types
+                            seed.setType(validatorRequest.getSeedType());
                             seed.setMasterSeed(validatorRequest.getMnemonic());
                             long idSeed = accountSeedDao.insertAccountSeed(seed);
                             if(idSeed >= 0) {

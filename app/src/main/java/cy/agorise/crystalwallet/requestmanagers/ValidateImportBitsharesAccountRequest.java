@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.requestmanagers;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
+import cy.agorise.crystalwallet.enums.SeedType;
 
 /**
  * Imports a bitsahres accounts,
@@ -29,6 +30,8 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
      * Indicates if the mnemonic provided belongs to that account
      */
     private Boolean mnemonicIsCorrect;
+
+    private SeedType seedType;
 
     public ValidateImportBitsharesAccountRequest(String accountName, String mnemonic){
         super(CryptoCoin.BITSHARES);
@@ -74,5 +77,13 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
 
     public void setMnemonic(String mnemonic) {
         this.mnemonic = mnemonic;
+    }
+
+    public SeedType getSeedType() {
+        return seedType;
+    }
+
+    public void setSeedType(SeedType seedType) {
+        this.seedType = seedType;
     }
 }
