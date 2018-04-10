@@ -248,6 +248,8 @@ public class FileBackupManager implements FileServiceRequestsListener {
                             long idSeed = accountSeedDao.insertAccountSeed(seed);
                             if(idSeed >= 0) {
                                 GrapheneAccount account = new GrapheneAccount();
+                                account.setCryptoNet(CryptoNet.BITSHARES);
+                                account.setAccountIndex(0);
                                 account.setSeedId(idSeed);
                                 account.setName(validatorRequest.getAccountName());
                                 BitsharesAccountManager bManger = new BitsharesAccountManager();
