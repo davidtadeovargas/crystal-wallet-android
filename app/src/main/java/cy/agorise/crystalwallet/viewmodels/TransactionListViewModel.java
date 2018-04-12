@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.LivePagedListProvider;
 import android.arch.paging.PagedList;
 import android.content.Context;
 
@@ -25,13 +26,46 @@ public class TransactionListViewModel extends AndroidViewModel {
     public TransactionListViewModel(Application application) {
         super(application);
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
-        transactionList = this.db.transactionDao().transactionsByDate().create(0,
+        /*transactionList = this.db.transactionDao().transactionsByDate().create(0,
                 new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
                         .setPageSize(10)
                         .setPrefetchDistance(10)
                         .build()
-        );
+        );*/
+    }
+
+    public void initTransactionList(String orderField){
+        LivePagedListProvider<Integer, CryptoCoinTransaction> livePagedListProvider = null;
+
+        switch (orderField){
+            case "date":
+                livePagedListProvider = this.db.transactionDao().transactionsByDate();
+                break;
+            case "amount":
+                livePagedListProvider = this.db.transactionDao().transactionsByAmount();
+                break;
+            case "is_input":
+                livePagedListProvider = this.db.transactionDao().transactionsByIsInput();
+                break;
+            case "from":
+                livePagedListProvider = this.db.transactionDao().transactionsByFrom();
+                break;
+            case "to":
+                livePagedListProvider = this.db.transactionDao().transactionsByTo();
+                break;
+        }
+        if (livePagedListProvider != null) {
+            this.transactionList = livePagedListProvider.create(0,
+                    new PagedList.Config.Builder()
+                            .setEnablePlaceholders(true)
+                            .setPageSize(10)
+                            .setPrefetchDistance(10)
+                            .build()
+            );
+        } else {
+            this.transactionList = null;
+        }
     }
 
     public LiveData<PagedList<CryptoCoinTransaction>> getTransactionList(){

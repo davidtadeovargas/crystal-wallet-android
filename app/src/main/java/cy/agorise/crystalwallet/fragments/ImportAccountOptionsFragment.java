@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.activities.IntroActivity;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequestListener;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequests;
 import cy.agorise.crystalwallet.requestmanagers.ImportBackupRequest;
@@ -127,15 +128,24 @@ public class ImportAccountOptionsFragment extends DialogFragment {
                                     importBackupRequest.setListener(new FileServiceRequestListener() {
                                         @Override
                                         public void onCarryOut() {
-                                            if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.SUCCEEDED){
-                                                Toast toast = Toast.makeText(
-                                                        getContext(), "Backup restored!", Toast.LENGTH_LONG);
-                                                toast.show();
-                                            } else if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.FAILED){
-                                                Toast toast = Toast.makeText(
-                                                        getContext(), "An error ocurred while restoring the backup!", Toast.LENGTH_LONG);
-                                                toast.show();
-                                            }
+                                            getActivity().runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.SUCCEEDED) {
+                                                        Toast toast = Toast.makeText(
+                                                                getContext(), "Backup restored!", Toast.LENGTH_LONG);
+                                                        toast.show();
+
+                                                        Intent intent = new Intent(getContext(), IntroActivity.class);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                        startActivity(intent);
+                                                    } else if (importBackupRequest.getStatus() == ImportBackupRequest.StatusCode.FAILED) {
+                                                        Toast toast = Toast.makeText(
+                                                                getContext(), "An error ocurred while restoring the backup!", Toast.LENGTH_LONG);
+                                                        toast.show();
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
 

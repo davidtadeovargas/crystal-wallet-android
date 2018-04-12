@@ -12,7 +12,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,15 +24,22 @@ import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
+import cy.agorise.crystalwallet.views.TransactionOrderSpinnerAdapter;
 
 public class TransactionsFragment extends Fragment {
 
     @BindView(R.id.vTransactionListView)
     TransactionListView transactionListView;
 
+    @BindView(R.id.spTransactionsOrder)
+    Spinner spTransactionsOrder;
+
     RecyclerView balanceRecyclerView;
     FloatingActionButton fabSend;
     FloatingActionButton fabReceive;
+
+    TransactionListViewModel transactionListViewModel;
+    LiveData<PagedList<CryptoCoinTransaction>> transactionsLiveData;
 
     public TransactionsFragment() {
         // Required empty public constructor
@@ -83,8 +93,23 @@ public class TransactionsFragment extends Fragment {
             }
         });
 
-        TransactionListViewModel transactionListViewModel = ViewModelProviders.of(this).get(TransactionListViewModel.class);
-        LiveData<PagedList<CryptoCoinTransaction>> transactionsLiveData = transactionListViewModel.getTransactionList();
+        transactionListViewModel = ViewModelProviders.of(this).get(TransactionListViewModel.class);
+
+
+        initTransactionsOrderSpinner();
+        changeTransactionList();
+        return view;
+    }
+
+    public void changeTransactionList(){
+        TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem orderSelected =
+                (TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem)(spTransactionsOrder.getSelectedItem());
+
+        if (transactionsLiveData != null){
+            transactionsLiveData.removeObservers(this);
+        }
+        transactionListViewModel.initTransactionList(orderSelected.getField());
+        transactionsLiveData = transactionListViewModel.getTransactionList();
 
         final Fragment fragment = this;
         transactionsLiveData.observe(this, new Observer<PagedList<CryptoCoinTransaction>>() {
@@ -93,7 +118,32 @@ public class TransactionsFragment extends Fragment {
                 transactionListView.setData(cryptoCoinTransactions, fragment);
             }
         });
+    }
 
-        return view;
+    public void initTransactionsOrderSpinner(){
+        List<TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem> spinnerValues = new ArrayList<TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem>();
+        spinnerValues.add(new TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem("date","Date",0,false));
+        spinnerValues.add(new TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem("amount","Amount",0,false));
+        spinnerValues.add(new TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem("is_input","In/Out",0,false));
+        spinnerValues.add(new TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem("from","From",0,false));
+        spinnerValues.add(new TransactionOrderSpinnerAdapter.TransactionOrderSpinnerItem("to","To",0,false));
+
+        TransactionOrderSpinnerAdapter transactionOrderSpinnerAdapter =
+                new TransactionOrderSpinnerAdapter(
+                        getContext(), android.R.layout.simple_spinner_item,spinnerValues
+                );
+        spTransactionsOrder.setAdapter(transactionOrderSpinnerAdapter);
+
+        spTransactionsOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                changeTransactionList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 }

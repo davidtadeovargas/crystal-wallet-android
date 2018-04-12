@@ -24,6 +24,18 @@ public interface TransactionDao {
     @Query("SELECT * FROM crypto_coin_transaction ORDER BY date DESC")
     LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByDate();
 
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY amount DESC")
+    LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByAmount();
+
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY is_input DESC")
+    LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByIsInput();
+
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY `from` DESC")
+    LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByFrom();
+
+    @Query("SELECT * FROM crypto_coin_transaction ORDER BY `to` DESC")
+    LivePagedListProvider<Integer, CryptoCoinTransaction>  transactionsByTo();
+
     @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date DESC")
     LiveData<List<CryptoCoinTransaction>> getByIdAccountLiveData(long idAccount);
 
