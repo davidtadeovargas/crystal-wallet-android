@@ -15,14 +15,26 @@ import cy.agorise.crystalwallet.models.GrapheneAccount;
 public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest {
 
     /**
+     * The status code of this request
+     */
+    public enum StatusCode{
+        NOT_STARTED,
+        SUCCEEDED,
+        NO_INTERNET,
+        NO_SERVER_CONNECTION,
+        ACCOUNT_EXIST,
+        NO_ACCOUNT_DATA
+
+    }
+
+    /**
      * The name of the account
      */
     private String accountName;
 
-    /**
-     * Indicates if the account exist
-     */
-    private Boolean accountExists;
+
+    // The state of this request
+    private StatusCode status = StatusCode.NOT_STARTED;
 
     private GrapheneAccount account;
 
@@ -34,34 +46,19 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
         this.context = context;
     }
 
-    public void setAccountExists(boolean value){
-        this.accountExists = value;
-        this.validate();
-    }
-
     public void setAccount(GrapheneAccount account){
         this.account = account;
         this.validate();
     }
 
-    public boolean getAccountExists(){
-        return this.accountExists;
-    }
 
     public GrapheneAccount getAccount() {
         return account;
     }
 
     public void validate(){
-        if ((this.accountExists != null)){// && (this.account != null)){
-            if (this.accountExists == true) {
-                this._fireOnCarryOutEvent();
-            } else {
-                if (this.account != null){
-                    this._fireOnCarryOutEvent();
-                }
-            }
-        }
+        if(!status.equals(StatusCode.NOT_STARTED))
+            this._fireOnCarryOutEvent();
     }
 
     public String getAccountName() {
@@ -74,5 +71,14 @@ public class ValidateCreateBitsharesAccountRequest extends CryptoNetInfoRequest 
 
     public Context getContext() {
         return context;
+    }
+
+    public void setStatus(StatusCode code){
+        this.status = code;
+        this.validate();
+    }
+
+    public StatusCode getStatus() {
+        return status;
     }
 }

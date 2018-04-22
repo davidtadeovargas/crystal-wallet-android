@@ -289,6 +289,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
     }
 
     private void validateCreateAccount(final ValidateCreateBitsharesAccountRequest createRequest){
+        //TODO test for internet and server connection
         // Generate seed or find key
         Context context = createRequest.getContext();
         AccountSeed seed = AccountSeed.getAccountSeed(SeedType.BIP39, context);
@@ -306,13 +307,13 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                 @Override
                 public void success(Object answer) {
-                    createRequest.setAccountExists(false);
                     createRequest.setAccount((GrapheneAccount) answer);
+                    createRequest.setStatus(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED);
                 }
 
                 @Override
                 public void fail() {
-                    createRequest.setAccountExists(true);
+                    createRequest.setStatus(ValidateCreateBitsharesAccountRequest.StatusCode.ACCOUNT_EXIST);
                 }
             }, context);
 
@@ -348,6 +349,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Broadcast a transaction request
      */
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest) {
+        //TODO check internet, server connection
         //TODO feeAsset
         CrystalDatabase db = CrystalDatabase.getAppDatabase(sendRequest.getContext());
         CryptoCurrency currency = db.cryptoCurrencyDao().getByNameAndCryptoNet(sendRequest.getAsset(), CryptoNet.BITSHARES.name());
@@ -360,7 +362,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                 @Override
                 public void fail() {
-
+                    sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.NO_ASSET_INFO_DB);
                 }
             });
         }else{
@@ -374,7 +376,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                     @Override
                     public void fail() {
-
+                        sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.NO_ASSET_INFO);
                     }
                 });
             }else {
@@ -415,12 +417,12 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
                 ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
                     @Override
                     public void success(Object answer, int idPetition) {
-                        sendRequest.setSend(true);
+                        sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.SUCCEEDED);
                     }
 
                     @Override
                     public void fail(int idPetition) {
-                        sendRequest.setSend(false);
+                        sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.PETITION_FAILED);
                     }
                 });
 
@@ -429,7 +431,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
             @Override
             public void fail() {
-                //TODO bad user to user account
+                sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.NO_TO_USER_INFO);
             }
         });
 

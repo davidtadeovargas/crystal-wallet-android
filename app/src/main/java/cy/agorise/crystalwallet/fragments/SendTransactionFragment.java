@@ -301,7 +301,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             sendRequest.setListener(new CryptoNetInfoRequestListener() {
                 @Override
                 public void onCarryOut() {
-                    if (sendRequest.isSend()){
+                    if (sendRequest.getStatus().equals(ValidateBitsharesSendRequest.StatusCode.SUCCEEDED)){
                         try {
                             this.finalize();
                         } catch (Throwable throwable) {
