@@ -17,20 +17,24 @@
                 android:id="@+id/etTransactionSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                 />
+                android:layout_toLeftOf="@+id/btnTransactionsFilterDisplay" />
+
             <Button
                 android:id="@+id/btnTransactionsFilterDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/spTransactionsOrder" />
 
             <Spinner
                 android:id="@+id/spTransactionsOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="order"
-                 />
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/sort_transactions_icon"
+                android:text="order" />
         </RelativeLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/transactionListView"

@@ -19,10 +19,12 @@ allprojects {
         maven {
             // For Room Persistence Library
             url "https://maven.google.com"
-
         }
         maven {
             url 'http://www.idescout.com/maven/repo/'
+        }
+        maven {
+            url "https://jitpack.io"
         }
         google()
     }

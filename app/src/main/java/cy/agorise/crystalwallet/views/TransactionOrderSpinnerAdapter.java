@@ -66,7 +66,9 @@ public class TransactionOrderSpinnerAdapter extends ArrayAdapter<TransactionOrde
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return getView(position, convertView, parent);
+        View v = getView(position, convertView, parent);
+        v.setVisibility(View.VISIBLE);
+        return v;
     }
 
     /*
@@ -81,6 +83,7 @@ public class TransactionOrderSpinnerAdapter extends ArrayAdapter<TransactionOrde
         TransactionOrderSpinnerItem transactionOrderSpinnerItem = getItem(position);
         tvTransactionOrderLabel.setText(transactionOrderSpinnerItem.getLabel());
 
+        v.setVisibility(View.GONE);
         return v;
     }
 }

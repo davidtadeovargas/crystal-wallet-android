@@ -2,11 +2,18 @@ package cy.agorise.crystalwallet.activities;
 
 import android.app.ActivityOptions;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.FileObserver;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,6 +30,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,6 +84,8 @@ public class BoardActivity  extends AppCompatActivity {
 
     @BindView(R.id.triangle)
     public ImageView triangle;
+
+    File photoDirectory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +186,30 @@ public class BoardActivity  extends AppCompatActivity {
 
             }
         });
+
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        photoDirectory = cw.getDir("profile", Context.MODE_PRIVATE);
+        if (!photoDirectory.exists()) {
+            photoDirectory.mkdir();
+        }
+        loadUserImage();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadUserImage();
+    }
+
+    public void loadUserImage(){
+        //Search for a existing photo
+        File photoFile = new File(photoDirectory + File.separator + "photo.png");
+
+        if (photoFile.exists()){
+            Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getPath());
+            userImage.setImageBitmap(bitmap);
+        }
     }
 
     /**
