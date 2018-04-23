@@ -12,6 +12,20 @@ import cy.agorise.crystalwallet.models.GrapheneAccount;
  */
 
 public class ValidateBitsharesSendRequest extends CryptoNetInfoRequest {
+    /**
+     * The status code of this request
+     */
+    public enum StatusCode{
+        NOT_STARTED,
+        SUCCEEDED,
+        NO_INTERNET,
+        NO_SERVER_CONNECTION,
+        NO_ASSET_INFO_DB,
+        NO_ASSET_INFO,
+        NO_TO_USER_INFO,
+        PETITION_FAILED
+    }
+
     // The app context
     private Context mContext;
     // The source account used to transfer fund from
@@ -25,7 +39,7 @@ public class ValidateBitsharesSendRequest extends CryptoNetInfoRequest {
     // The memo, can be null
     private String mMemo;
     // The state of this request
-    private Boolean isSend;
+    private StatusCode status = StatusCode.NOT_STARTED;
 
     public ValidateBitsharesSendRequest(Context context, GrapheneAccount sourceAccount,
                                         String toAccount, long amount, String asset, String memo) {
@@ -68,18 +82,18 @@ public class ValidateBitsharesSendRequest extends CryptoNetInfoRequest {
         return mMemo;
     }
 
-    public boolean isSend() {
-        return isSend;
-    }
-
-    public void setSend(boolean send) {
-        isSend = send;
-        this.validate();
-    }
-
     public void validate(){
-        if ((this.isSend != null)){
+        if ((this.status != StatusCode.NOT_STARTED)){
             this._fireOnCarryOutEvent();
         }
+    }
+
+    public void setStatus(StatusCode code){
+        this.status = code;
+        this._fireOnCarryOutEvent();
+    }
+
+    public StatusCode getStatus() {
+        return status;
     }
 }

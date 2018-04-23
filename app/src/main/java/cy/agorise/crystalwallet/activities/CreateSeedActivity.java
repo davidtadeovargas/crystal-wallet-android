@@ -130,17 +130,14 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                 @Override
                 public void onCarryOut() {
                     processDialog.dismiss();
-
-                    if (request.getAccount() != null){
+                    if (request.getStatus().equals(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
                         GrapheneAccount accountSeed = request.getAccount();
                         Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
-                        intent.putExtra("SEED_ID",accountSeed.getId());
+                        intent.putExtra("SEED_ID", accountSeed.getId());
                         startActivity(intent);
                     } else {
                         createSeedValidator.validate();
                     }
-
-
                 }
             });
 
