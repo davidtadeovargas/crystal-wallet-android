@@ -35,11 +35,12 @@ public class BitsharesAccountMnemonicValidationField extends ValidationField {
         request.setListener(new CryptoNetInfoRequestListener() {
             @Override
             public void onCarryOut() {
-                if (!request.getMnemonicIsCorrect()){
+                if(request.getStatus().equals(ValidateImportBitsharesAccountRequest.StatusCode.SUCCEEDED)){
+                    setValidForValue(mixedValue, true);
+                }else{
+                    //TODO handle error request
                     setMessageForValue(mixedValue,validator.getContext().getResources().getString(R.string.error_invalid_account));
                     setValidForValue(mixedValue, false);
-                } else {
-                    setValidForValue(mixedValue, true);
                 }
             }
         });
