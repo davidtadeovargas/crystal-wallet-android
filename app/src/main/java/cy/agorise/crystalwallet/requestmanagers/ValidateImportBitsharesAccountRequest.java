@@ -4,7 +4,7 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
 import cy.agorise.crystalwallet.enums.SeedType;
 
 /**
- * Imports a bitsahres accounts,
+ * Imports a bitshares accounts,
  *
  * return true if the account exist, and the mnemonic (brainkey provide is for that account
  * Created by Henry Varona on 1/10/2017.
