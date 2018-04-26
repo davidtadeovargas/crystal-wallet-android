@@ -4,7 +4,7 @@ import cy.agorise.crystalwallet.enums.CryptoCoin;
 import cy.agorise.crystalwallet.enums.SeedType;
 
 /**
- * Imports a bitsahres accounts,
+ * Imports a bitshares accounts,
  *
  * return true if the account exist, and the mnemonic (brainkey provide is for that account
  * Created by Henry Varona on 1/10/2017.
@@ -13,25 +13,38 @@ import cy.agorise.crystalwallet.enums.SeedType;
 public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest {
 
     /**
+     * The status code of this request
+     */
+    public enum StatusCode{
+        NOT_STARTED,
+        SUCCEEDED,
+        NO_INTERNET,
+        NO_SERVER_CONNECTION,
+        ACCOUNT_DOESNT_EXIST,
+        BAD_SEED,
+        NO_ACCOUNT_DATA,
+        PETITION_FAILED
+    }
+
+    /**
      * The name of the account
      */
-    private String accountName;
+    private final String accountName;
 
     /**
      * The mnemonic words
      */
-    private String mnemonic;
+    private final String mnemonic;
 
     /**
-     * Indicates if the account exist
+     * If this seed is BIP39 or Brainkey
      */
-    private Boolean accountExists;
-    /**
-     * Indicates if the mnemonic provided belongs to that account
-     */
-    private Boolean mnemonicIsCorrect;
-
     private SeedType seedType;
+
+    /**
+     * The status of this request
+     */
+    private StatusCode status = StatusCode.NOT_STARTED;
 
     public ValidateImportBitsharesAccountRequest(String accountName, String mnemonic){
         super(CryptoCoin.BITSHARES);
@@ -39,26 +52,8 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
         this.mnemonic = mnemonic;
     }
 
-    public void setAccountExists(boolean value){
-        this.accountExists = value;
-        this.validate();
-    }
-
-    public void setMnemonicIsCorrect(boolean value){
-        this.mnemonicIsCorrect = value;
-        this.validate();
-    }
-
-    public boolean getAccountExists(){
-        return this.accountExists;
-    }
-
-    public boolean getMnemonicIsCorrect(){
-        return this.mnemonicIsCorrect;
-    }
-
     public void validate(){
-        if ((this.accountExists != null) && (this.mnemonicIsCorrect != null)){
+        if (!(this.status.equals(StatusCode.NOT_STARTED))){
             this._fireOnCarryOutEvent();
         }
     }
@@ -67,16 +62,8 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
         return accountName;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
     public String getMnemonic() {
         return mnemonic;
-    }
-
-    public void setMnemonic(String mnemonic) {
-        this.mnemonic = mnemonic;
     }
 
     public SeedType getSeedType() {
@@ -85,5 +72,14 @@ public class ValidateImportBitsharesAccountRequest extends CryptoNetInfoRequest 
 
     public void setSeedType(SeedType seedType) {
         this.seedType = seedType;
+    }
+
+    public void setStatus(StatusCode status) {
+        this.status = status;
+        this._fireOnCarryOutEvent();
+    }
+
+    public StatusCode getStatus() {
+        return status;
     }
 }

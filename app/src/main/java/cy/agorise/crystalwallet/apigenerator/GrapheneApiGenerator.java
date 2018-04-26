@@ -589,7 +589,14 @@ public abstract class GrapheneApiGenerator {
             }
     }
 
-    public static void getEquivalenValue(String baseAssetName, final  List<BitsharesAsset> quoteAssets, final Context context){
+    /**
+     * Retrieves the equivalent value from a list of assets to a base asset
+     *
+     * @param baseAssetName The base asset to use
+     * @param quoteAssets The list of quotes assets to query
+     * @param context The Context of this Application
+     */
+    public static void getEquivalentValue(String baseAssetName, final  List<BitsharesAsset> quoteAssets, final Context context){
         CrystalDatabase db = CrystalDatabase.getAppDatabase(context);
         final CryptoCurrencyDao cryptoCurrencyDao = db.cryptoCurrencyDao();
         final BitsharesAssetDao bitsharesAssetDao = db.bitsharesAssetDao();

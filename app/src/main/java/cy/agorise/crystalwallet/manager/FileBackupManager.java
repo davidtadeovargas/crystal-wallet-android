@@ -238,7 +238,7 @@ public class FileBackupManager implements FileServiceRequestsListener {
                 validatorRequest.setListener(new CryptoNetInfoRequestListener() {
                     @Override
                     public void onCarryOut() {
-                        if (!validatorRequest.getMnemonicIsCorrect()) {
+                        if (!validatorRequest.getStatus().equals(ValidateImportBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
                             request.setStatus(ImportBackupRequest.StatusCode.FAILED); // TODO reason bad seed
                         } else {
                             AccountSeed seed = new AccountSeed();
@@ -254,8 +254,6 @@ public class FileBackupManager implements FileServiceRequestsListener {
                                 account.setName(validatorRequest.getAccountName());
                                 BitsharesAccountManager bManger = new BitsharesAccountManager();
                                 bManger.importAccountFromSeed(account,request.getContext());
-
-
                                 request.setStatus(ImportBackupRequest.StatusCode.SUCCEEDED);
                             }else{
                                 request.setStatus(ImportBackupRequest.StatusCode.FAILED); //TODO reason couldn't insert seed

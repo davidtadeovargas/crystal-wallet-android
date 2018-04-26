@@ -237,43 +237,41 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      * Process the import account request
      */
     private void validateImportAccount(final ValidateImportBitsharesAccountRequest importRequest){
+        //TODO check internet and server status
         ApiRequest checkAccountName = new ApiRequest(0, new ApiRequestListener() {
             @Override
             public void success(Object answer, int idPetition) {
-                importRequest.setAccountExists(true);
                 ApiRequest getAccountInfo = new ApiRequest(1,new ApiRequestListener(){
                     @Override
                     public void success(Object answer, int idPetition) {
                         if(answer != null && answer instanceof AccountProperties) {
                             AccountProperties prop = (AccountProperties) answer;
-                            //TODO change the way to compare keys
                             BrainKey bk = new BrainKey(importRequest.getMnemonic(), 0);
                             for(PublicKey activeKey : prop.owner.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(bk.getPublicAddress("BTS").toString())){
-                                    System.out.println("Mnemonic brainkey correct");
                                     importRequest.setSeedType(SeedType.BRAINKEY);
-                                    importRequest.setMnemonicIsCorrect(true);
+                                    importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.SUCCEEDED);
                                     return;
                                 }
                             }
                             BIP39 bip39 = new BIP39(-1, importRequest.getMnemonic());
                             for(PublicKey activeKey : prop.active.getKeyAuthList()){
                                 if((new Address(activeKey.getKey(),"BTS")).toString().equals(new Address(ECKey.fromPublicOnly(bip39.getBitsharesActiveKey(0).getPubKey())).toString())){
-                                    System.out.println("Mnemonic BIP39 correct");
                                     importRequest.setSeedType(SeedType.BIP39);
-                                    importRequest.setMnemonicIsCorrect(true);
+                                    importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.SUCCEEDED);
                                     return;
                                 }
                             }
-                            System.out.println("Mnemonic incorrect");
-                            importRequest.setMnemonicIsCorrect(false);
+                            importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.BAD_SEED);
                         }
+                        importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.PETITION_FAILED);
 
                     }
 
                     @Override
                     public void fail(int idPetition) {
                         //
+                        importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.NO_ACCOUNT_DATA);
                     }
                 });
                 GrapheneApiGenerator.getAccountById((String)answer,getAccountInfo);
@@ -282,6 +280,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             @Override
             public void fail(int idPetition) {
                 //
+                importRequest.setStatus(ValidateImportBitsharesAccountRequest.StatusCode.ACCOUNT_DOESNT_EXIST);
             }
         });
 

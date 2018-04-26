@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.service;
 import android.arch.lifecycle.LifecycleService;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
@@ -29,8 +30,15 @@ public class EquivalencesThread extends Thread{
         super.run();
 
         while(this.keepLoadingEquivalences){
+            List<BitsharesAsset> queryAsset = new ArrayList<>();
+            for(BitsharesAsset asset : bitsharesAssets){
+                if(!asset.getName().equals(fromAsset)){
+                    queryAsset.add(asset);
+                }
+            }
             try {
-                GrapheneApiGenerator.getEquivalenValue(fromAsset, bitsharesAssets, this.service);
+                //GrapheneApiGenerator.getEquivalentValue(fromAsset, bitsharesAssets, this.service);
+                GrapheneApiGenerator.getEquivalentValue(fromAsset, queryAsset, this.service);
                 Log.i("Equivalences Thread", "In loop");
                 Thread.sleep(300000);
             } catch (InterruptedException e) {
