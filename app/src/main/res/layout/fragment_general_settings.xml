@@ -127,7 +127,7 @@
             app:layout_constraintEnd_toEndOf="@id/vPreferredLanguage"/>
 
         <TextView
-            android:id="@+id/tvSound"
+            android:id="@+id/tvReceiveFundsSound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -135,12 +135,12 @@
             app:layout_constraintTop_toBottomOf="@id/vDisplayDateTime"
             app:layout_constraintStart_toStartOf="@id/tvDisplayDateTime" />
 
-        <Spinner
-            android:id="@+id/spSound"
+        <TextView
+            android:id="@+id/tvReceiveFundsSoundValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/tvSound"
+            app:layout_constraintTop_toBottomOf="@id/tvReceiveFundsSound"
             app:layout_constraintStart_toStartOf="@id/spDisplayDateTime"
             app:layout_constraintEnd_toEndOf="@id/spDisplayDateTime"/>
 
@@ -150,7 +150,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
             android:background="@color/gray"
-            app:layout_constraintTop_toBottomOf="@id/spSound"
+            app:layout_constraintTop_toBottomOf="@id/tvReceiveFundsSoundValue"
             app:layout_constraintStart_toStartOf="@id/vDisplayDateTime"
             app:layout_constraintEnd_toEndOf="@id/vDisplayDateTime"/>
 
@@ -163,7 +163,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/vSound"
-            app:layout_constraintStart_toStartOf="@id/spSound" />
+            app:layout_constraintStart_toStartOf="@id/tvReceiveFundsSoundValue" />
 
         <Switch
             android:id="@+id/sCloseWalletTimer"

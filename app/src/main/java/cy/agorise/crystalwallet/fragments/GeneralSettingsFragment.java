@@ -15,8 +15,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.vincent.filepicker.Constant;
+import com.vincent.filepicker.activity.AudioPickActivity;
+import com.vincent.filepicker.filter.entity.AudioFile;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -29,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
@@ -36,6 +44,10 @@ import cy.agorise.crystalwallet.enums.Language;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 import cy.agorise.crystalwallet.views.TimeZoneAdapter;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.CONSUMER_IR_SERVICE;
+import static com.vincent.filepicker.activity.AudioPickActivity.IS_NEED_RECORDER;
 
 
 /**
@@ -57,6 +69,8 @@ public class GeneralSettingsFragment extends Fragment {
     Spinner spPreferredLanguage;
     @BindView (R.id.spDisplayDateTime)
     Spinner spDisplayDateTime;
+    @BindView (R.id.tvReceiveFundsSoundValue)
+    TextView tvReceiveFundsSound;
 
     public GeneralSettingsFragment() {
         this.spPreferredLanguageInitialized = false;
@@ -152,6 +166,20 @@ public class GeneralSettingsFragment extends Fragment {
         }
     }
 
+    public void initReceiveFundsSound(GeneralSetting receiveFundsSoundSetting){
+        if (receiveFundsSoundSetting != null){
+            if (receiveFundsSoundSetting.getValue().equals("")){
+                tvReceiveFundsSound.setText("Woohoo");
+            } else {
+                File audioFile = new File(receiveFundsSoundSetting.getValue());
+
+                tvReceiveFundsSound.setText(audioFile.getName());
+            }
+        } else {
+            tvReceiveFundsSound.setText("Woohoo");
+        }
+    }
+
     public GeneralSetting getSetting(String name){
         for (GeneralSetting generalSetting:this.generalSettingListLiveData.getValue()) {
             if (generalSetting.getName().equals(name)) {
@@ -160,6 +188,15 @@ public class GeneralSettingsFragment extends Fragment {
         }
 
         return null;
+    }
+
+
+    @OnClick(R.id.tvReceiveFundsSoundValue)
+    void onReceiveFundsSoundSelected(){
+        Intent intent3 = new Intent(this.getContext(), AudioPickActivity.class);
+        intent3.putExtra(IS_NEED_RECORDER, true);
+        intent3.putExtra(Constant.MAX_NUMBER, 1);
+        startActivityForResult(intent3, Constant.REQUEST_CODE_PICK_AUDIO);
     }
 
     @OnItemSelected(R.id.spTaxableCountry)
@@ -246,5 +283,32 @@ public class GeneralSettingsFragment extends Fragment {
         initPreferredCountry(getSetting(GeneralSetting.SETTING_NAME_PREFERRED_COUNTRY));
         initPreferredLanguage(getSetting(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE));
         initDateTimeFormat(getSetting(GeneralSetting.SETTING_NAME_TIME_ZONE));
+        initReceiveFundsSound(getSetting(GeneralSetting.SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == Constant.REQUEST_CODE_PICK_AUDIO){
+            if (resultCode == RESULT_OK) {
+                ArrayList<AudioFile> list = data.getParcelableArrayListExtra(Constant.RESULT_PICK_AUDIO);
+                if (list.size() > 0) {
+                    AudioFile audioSelected = list.get(0);
+                    String audioSelectedPath = audioSelected.getPath();
+
+                    GeneralSetting generalSettingReceivedFundsSoundPath = this.getSetting(GeneralSetting.SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH);
+
+                    if (generalSettingReceivedFundsSoundPath == null){
+                        generalSettingReceivedFundsSoundPath = new GeneralSetting();
+                        generalSettingReceivedFundsSoundPath.setName(GeneralSetting.SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH);
+                    }
+
+                    generalSettingReceivedFundsSoundPath.setValue(audioSelectedPath);
+                    this.generalSettingListViewModel.saveGeneralSettings(generalSettingReceivedFundsSoundPath);
+                    tvReceiveFundsSound.setText(audioSelected.getName());
+                }
+            }
+        }
     }
 }
