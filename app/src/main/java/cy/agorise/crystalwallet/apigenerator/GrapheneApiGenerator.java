@@ -22,6 +22,8 @@ import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.network.WebSocketThread;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetEvents;
+import cy.agorise.crystalwallet.requestmanagers.ReceivedFundsCryptoNetEvent;
 import cy.agorise.graphenej.Address;
 import cy.agorise.graphenej.Asset;
 import cy.agorise.graphenej.AssetAmount;
@@ -383,7 +385,7 @@ public abstract class GrapheneApiGenerator {
                                                         info.setCryptoCurrencyId(idCryptoCurrency);
                                                         asset.setId((int)idCryptoCurrency);
                                                         bitsharesAssetDao.insertBitsharesAssetInfo(info);
-                                                        saveTransaction(transaction,(int)info.getCryptoCurrencyId(),accountBitsharesId,tOperation,context);
+                                                        saveTransaction(transaction,cryptoCurrencyDao.getById(info.getCryptoCurrencyId()),accountBitsharesId,tOperation,context);
                                                     }
                                                 }
 
@@ -396,7 +398,7 @@ public abstract class GrapheneApiGenerator {
                                             assets.add(tOperation.getAssetAmount().getAsset().getObjectId());
                                             GrapheneApiGenerator.getAssetById(assets,assetRequest);
                                         }else{
-                                            saveTransaction(transaction,(int)info.getCryptoCurrencyId(),accountBitsharesId,tOperation,context);
+                                            saveTransaction(transaction,cryptoCurrencyDao.getById(info.getCryptoCurrencyId()),accountBitsharesId,tOperation,context);
                                         }
                                     }
                                 }
@@ -420,23 +422,26 @@ public abstract class GrapheneApiGenerator {
     }
 
     /**
-     * Fucniton to save a transaction retrieved from the update
+     * Function to save a transaction retrieved from the update
      * @param transaction The transaction db object
-     * @param currencyId The id of the currency on the database
+     * @param currency The currency of the transaccion
      * @param accountBitsharesId The id of the account in the bitshares network
      * @param tOperation The transfer operation fetched from the update
      * @param context The context of this app
      */
-    private static void saveTransaction(CryptoCoinTransaction transaction, int currencyId,
+    private static void saveTransaction(CryptoCoinTransaction transaction, CryptoCurrency currency,
                                         String accountBitsharesId, TransferOperation tOperation ,
                                         Context context){
-        transaction.setIdCurrency(currencyId);
+        transaction.setIdCurrency((int)currency.getId());
         transaction.setConfirmed(true); //graphene transaction are always confirmed
         transaction.setFrom(tOperation.getFrom().getObjectId());
         transaction.setInput(!tOperation.getFrom().getObjectId().equals(accountBitsharesId));
         transaction.setTo(tOperation.getTo().getObjectId());
         transaction.setDate(new Date());
         CrystalDatabase.getAppDatabase(context).transactionDao().insertTransaction(transaction);
+        if(transaction.getInput()){
+            CryptoNetEvents.getInstance().fireEvent(new ReceivedFundsCryptoNetEvent(transaction.getAccount(),currency,transaction.getAmount()));
+        }
     }
 
     /**

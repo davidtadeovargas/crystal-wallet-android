@@ -16,9 +16,15 @@ public class ReceivedFundsCryptoNetEvent extends CryptoNetEvent {
 
     private CryptoNetAccount account;
 
-    public ReceivedFundsCryptoNetEvent(CryptoCoin coin, CryptoNetAccount account) {
-        super(coin);
+    private CryptoCurrency currency;
+
+    private long amount;
+
+    public ReceivedFundsCryptoNetEvent(CryptoNetAccount account, CryptoCurrency currency, long amount) {
+        super(CryptoCoin.BITSHARES);
         this.account = account;
+        this.currency = currency;
+        this.amount = amount;
     }
 
     public CryptoNetAccount getAccount() {
@@ -27,6 +33,22 @@ public class ReceivedFundsCryptoNetEvent extends CryptoNetEvent {
 
     public void setAccount(CryptoNetAccount account) {
         this.account = account;
+    }
+
+    public CryptoCurrency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CryptoCurrency currency) {
+        this.currency = currency;
+    }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 }
 
