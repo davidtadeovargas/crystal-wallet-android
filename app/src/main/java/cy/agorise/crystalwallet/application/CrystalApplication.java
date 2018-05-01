@@ -17,6 +17,8 @@ import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.CryptoCurrencyEquivalence;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.network.CryptoNetManager;
+import cy.agorise.crystalwallet.notifiers.CrystalWalletNotifier;
+import cy.agorise.crystalwallet.requestmanagers.CryptoNetEvents;
 import cy.agorise.crystalwallet.service.CrystalWalletService;
 
 /**
@@ -82,6 +84,10 @@ public class CrystalApplication extends Application {
             db.bitsharesAssetDao().insertBitsharesAssetInfo(info);
 
         }
+
+        //The crystal notifier is initialized
+        CrystalWalletNotifier crystalWalletNotifier = new CrystalWalletNotifier(getApplicationContext());
+        CryptoNetEvents.getInstance().addListener(crystalWalletNotifier);
 
         //Next line is for use the bitshares main net
         //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
