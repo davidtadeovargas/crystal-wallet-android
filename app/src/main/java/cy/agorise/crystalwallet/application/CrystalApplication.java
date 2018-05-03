@@ -86,7 +86,7 @@ public class CrystalApplication extends Application {
         }
 
         //The crystal notifier is initialized
-        CrystalWalletNotifier crystalWalletNotifier = new CrystalWalletNotifier(getApplicationContext());
+        CrystalWalletNotifier crystalWalletNotifier = new CrystalWalletNotifier(this);
         CryptoNetEvents.getInstance().addListener(crystalWalletNotifier);
 
         //Next line is for use the bitshares main net
