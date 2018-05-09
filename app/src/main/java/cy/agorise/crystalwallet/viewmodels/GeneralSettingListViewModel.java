@@ -31,7 +31,7 @@ public class GeneralSettingListViewModel extends AndroidViewModel {
     }
 
     public void saveGeneralSetting(GeneralSetting generalSetting){
-        this.db.generalSettingDao().insertGeneralSetting(generalSetting);
+        this.db.generalSettingDao ().insertGeneralSetting(generalSetting);
     }
 
     public void saveGeneralSettings(GeneralSetting... generalSettings){

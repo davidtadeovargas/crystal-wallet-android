@@ -47,6 +47,9 @@
         <activity android:name=".activities.PinRequestActivity"
             android:noHistory="true">
         </activity>
+        <activity android:name=".activities.PatternRequestActivity"
+            android:noHistory="true">
+        </activity>
         <activity
             android:name=".activities.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"

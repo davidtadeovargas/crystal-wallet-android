@@ -100,8 +100,8 @@ public class SettingsActivity extends AppCompatActivity{
                     return new SecuritySettingsFragment();
                 case 2:
                     return new BackupsSettingsFragment();
-                case 3:
-                    return new AccountsSettingsFragment();
+                //case 3:
+                //    return new AccountsSettingsFragment();
             }
 
 
@@ -110,7 +110,7 @@ public class SettingsActivity extends AppCompatActivity{
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
     }
 

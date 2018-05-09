@@ -69,7 +69,7 @@ public class SecuritySettingsFragment extends Fragment {
                 case 1:
                     return new PinSecurityFragment();
                 case 2:
-                    return new BackupsSettingsFragment();
+                    return new PatternSecurityFragment();
             }
 
             return null; //new OnConstructionFragment();

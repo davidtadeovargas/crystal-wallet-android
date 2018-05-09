@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 
 import java.util.List;
 
+import cy.agorise.crystalwallet.activities.PatternRequestActivity;
 import cy.agorise.crystalwallet.activities.PinRequestActivity;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
@@ -24,6 +25,7 @@ import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 public class CrystalSecurityMonitor implements Application.ActivityLifecycleCallbacks {
     private int numStarted = 0;
     private String passwordEncrypted;
+    private String patternEncrypted;
 
     public CrystalSecurityMonitor(final FragmentActivity fragmentActivity){
         GeneralSettingListViewModel generalSettingListViewModel = ViewModelProviders.of(fragmentActivity).get(GeneralSettingListViewModel.class);
@@ -38,9 +40,14 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
                 if (generalSettings != null){
                     for (GeneralSetting generalSetting:generalSettings) {
                         if (generalSetting.getName().equals(GeneralSetting.SETTING_PASSWORD)){
-                            founded = true;
                             if (!generalSetting.getValue().isEmpty()){
                                 passwordEncrypted = generalSetting.getValue();
+                                callPasswordRequest(fragmentActivity);
+                            }
+                            break;
+                        } else if (generalSetting.getName().equals(GeneralSetting.SETTING_PATTERN)){
+                            if (!generalSetting.getValue().isEmpty()){
+                                patternEncrypted = generalSetting.getValue();
                                 callPasswordRequest(fragmentActivity);
                             }
                             break;
@@ -54,7 +61,10 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
     @Override
     public void onActivityStarted(Activity activity) {
         if (numStarted == 0) {
-            if ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals(""))) {
+            if (
+                    ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals("")))
+                || ((this.patternEncrypted != null) && (!this.patternEncrypted.equals("")))
+            ) {
                 callPasswordRequest(activity);
             }
         }
@@ -65,7 +75,10 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
     public void onActivityStopped(Activity activity) {
         numStarted--;
         if (numStarted == 0) {
-            if ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals(""))) {
+            if (
+                    ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals("")))
+                || ((this.patternEncrypted != null) && (!this.patternEncrypted.equals("")))
+            ) {
                 callPasswordRequest(activity);
             }
         }
@@ -73,9 +86,16 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
 
     public void callPasswordRequest(Activity activity){
         if ((!activity.getIntent().hasExtra("ACTIVITY_TYPE")) || (!activity.getIntent().getStringExtra("ACTIVITY_TYPE").equals("PASSWORD_REQUEST"))) {
-            Intent intent = new Intent(activity, PinRequestActivity.class);
-            intent.putExtra("ACTIVITY_TYPE", "PASSWORD_REQUEST");
-            activity.startActivity(intent);
+            Intent intent = null;
+            if ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals(""))) {
+                intent = new Intent(activity, PinRequestActivity.class);
+            } else if ((this.patternEncrypted != null) && (!this.patternEncrypted.equals(""))) {
+                intent = new Intent(activity, PatternRequestActivity.class);
+            }
+            if (intent != null) {
+                intent.putExtra("ACTIVITY_TYPE", "PASSWORD_REQUEST");
+                activity.startActivity(intent);
+            }
         }
     }
 

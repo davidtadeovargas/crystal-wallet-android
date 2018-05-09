@@ -20,6 +20,7 @@ public class GeneralSetting {
     public final static String SETTING_NAME_PREFERRED_LANGUAGE = "PREFERRED_LANGUAGE";
     public final static String SETTING_NAME_TIME_ZONE = "TIME_ZONE";
     public final static String SETTING_PASSWORD = "PASSWORD";
+    public final static String SETTING_PATTERN = "PATTERN";
     public final static String SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH = "RECEIVED_FUNDS_SOUND_PATH";
 
     /**

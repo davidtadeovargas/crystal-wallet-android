@@ -68,4 +68,5 @@ dependencies {
     implementation 'com.github.esafirm.android-image-picker:imagepicker:1.11.1'
     compile 'id.zelory:compressor:2.1.0'
     compile 'com.vincent.filepicker:MultiTypeFilePicker:1.0.7'
+    compile 'com.andrognito.patternlockview:patternlockview:1.0.0'
 }
