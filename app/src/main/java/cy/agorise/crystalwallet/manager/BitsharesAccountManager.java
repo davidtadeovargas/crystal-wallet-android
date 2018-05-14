@@ -23,6 +23,7 @@ import cy.agorise.crystalwallet.models.seed.BIP39;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetEquivalentRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestsListener;
+import cy.agorise.crystalwallet.requestmanagers.ValidateBitsharesLTMUpgradeRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateExistBitsharesAccountRequest;
@@ -227,6 +228,8 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.getEquivalentValue((CryptoNetEquivalentRequest) request);
         }else if (request instanceof ValidateCreateBitsharesAccountRequest){
             this.validateCreateAccount((ValidateCreateBitsharesAccountRequest) request);
+        }else if (request instanceof ValidateBitsharesLTMUpgradeRequest){
+            this.validateLTMAccountUpgrade((ValidateBitsharesLTMUpgradeRequest) request);
         }else{
             //TODO not implemented
             System.out.println("Error request not implemented " + request.getClass().getName());
@@ -434,6 +437,15 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             }
         });
 
+    }
+
+    /**
+     * Broadcast a transaction request
+     */
+    private void validateLTMAccountUpgrade(final ValidateBitsharesLTMUpgradeRequest sendRequest) {
+        //TODO check internet, server connection
+        sendRequest.setStatus(ValidateBitsharesLTMUpgradeRequest.StatusCode.PETITION_FAILED);
+        CrystalDatabase db = CrystalDatabase.getAppDatabase(sendRequest.getContext());
     }
 
     /**
