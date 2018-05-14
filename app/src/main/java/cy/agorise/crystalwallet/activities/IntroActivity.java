@@ -76,7 +76,7 @@ public class IntroActivity extends AppCompatActivity {
             }
         });
 
-        this.getApplication().registerActivityLifecycleCallbacks(new CrystalSecurityMonitor(this));
+        this.getApplication().registerActivityLifecycleCallbacks(CrystalSecurityMonitor.getInstance(this));
 
 
         //Checks if the user has any seed created
