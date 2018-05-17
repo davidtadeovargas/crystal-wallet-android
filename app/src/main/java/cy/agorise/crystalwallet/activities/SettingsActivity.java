@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.BuildConfig;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BalanceFragment;

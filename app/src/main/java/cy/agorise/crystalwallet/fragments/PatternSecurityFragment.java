@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.PasswordManager;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
@@ -35,10 +36,6 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.Validatio
  */
 
 public class PatternSecurityFragment extends Fragment {
-
-    GeneralSettingListViewModel generalSettingListViewModel;
-    GeneralSetting patternGeneralSetting;
-    //PatternSecurityValidator patternSecurityValidator;
 
     @BindView(R.id.patternLockView)
     PatternLockView patternLockView;
@@ -66,35 +63,7 @@ public class PatternSecurityFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_pattern_security, container, false);
         ButterKnife.bind(this, v);
 
-        generalSettingListViewModel = ViewModelProviders.of(this).get(GeneralSettingListViewModel.class);
-        LiveData<List<GeneralSetting>> generalSettingsLiveData = generalSettingListViewModel.getGeneralSettingList();
-
-        generalSettingsLiveData.observe(this, new Observer<List<GeneralSetting>>() {
-            @Override
-            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
-                boolean founded = false;
-
-                if (generalSettings != null){
-                    for (GeneralSetting generalSetting:generalSettings) {
-                        if (generalSetting.getName().equals(GeneralSetting.SETTING_PATTERN)){
-                            founded = true;
-                            if (!generalSetting.getValue().isEmpty()){
-                                patternGeneralSetting = generalSetting;
-                                showEnterPatternUI();
-                            } else {
-                                showNewPatternUI();
-                            }
-                            break;
-                        }
-                    }
-                    if (!founded){
-                        showNewPatternUI();
-                    }
-                } else {
-                    showNewPatternUI();
-                }
-            }
-        });
+        showNewPatternUI();
 
         return v;
     }
@@ -166,7 +135,7 @@ public class PatternSecurityFragment extends Fragment {
             public void onComplete(List<PatternLockView.Dot> pattern) {
                 if (patternEntered.equals(patternToString(pattern))){
                     savePattern(patternEntered);
-                    showEnterPatternUI();
+                    showNewPatternUI();
                 }
             }
 
@@ -180,44 +149,7 @@ public class PatternSecurityFragment extends Fragment {
 
     public void savePattern(String pattern){
         String patternEncripted = PasswordManager.encriptPassword(pattern);
-
-        if (patternGeneralSetting == null) {
-            patternGeneralSetting = new GeneralSetting();
-            patternGeneralSetting.setName(GeneralSetting.SETTING_PATTERN);
-        }
-
-        patternGeneralSetting.setValue(patternEncripted);
-        generalSettingListViewModel.saveGeneralSetting(patternGeneralSetting);
-    }
-
-    public void showEnterPatternUI(){
-        removePatternListener();
-        patternLockView.clearPattern();
-        tvPatternText.setText("Enter old pattern");
-
-        actualPatternListener = new PatternLockViewListener() {
-            @Override
-            public void onStarted() {
-
-            }
-
-            @Override
-            public void onProgress(List<PatternLockView.Dot> progressPattern) {
-
-            }
-
-            @Override
-            public void onComplete(List<PatternLockView.Dot> pattern) {
-                if (PasswordManager.checkPassword(patternGeneralSetting.getValue(),patternToString(pattern))){
-                    showNewPatternUI();
-                }
-            }
-
-            @Override
-            public void onCleared() {
-
-            }
-        };
-        patternLockView.addPatternLockListener(actualPatternListener);
+        CrystalSecurityMonitor.getInstance(null).setPatternEncrypted(patternEncripted);
+        CrystalSecurityMonitor.getInstance(null).callPasswordRequest(this.getActivity());
     }
 }

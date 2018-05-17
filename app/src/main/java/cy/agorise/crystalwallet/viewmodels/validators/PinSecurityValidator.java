@@ -14,9 +14,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinValida
 
 public class PinSecurityValidator extends UIValidator {
 
-    public PinSecurityValidator(Context context, EditText currentPinEdit, EditText newPinEdit, EditText newPinConfirmationEdit){
+    public PinSecurityValidator(Context context, EditText newPinEdit, EditText newPinConfirmationEdit){
         super(context);
-        this.addField(new CurrentPinValidationField(currentPinEdit));
         this.addField(new PinValidationField(newPinEdit));
         this.addField(new PinConfirmationValidationField(newPinEdit,newPinConfirmationEdit));
     }

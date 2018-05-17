@@ -45,4 +45,16 @@ public class GeneralSettingListViewModel extends AndroidViewModel {
     public LiveData<GeneralSetting> getGeneralSettingLiveDataByName(String name){
         return this.db.generalSettingDao().getByName(name);
     }
+
+    public void deleteGeneralSettings(GeneralSetting... generalSettings){
+        this.db.generalSettingDao().deleteGeneralSettings(generalSettings);
+    }
+
+    public void deleteGeneralSettingByName(String name){
+        this.db.generalSettingDao().deleteByName(name);
+    }
+
+    //public void addGeneralSetting(String name, String value){
+    //    this.db.generalSettingDao().addGeneralSetting(name,value);
+    //}
 }

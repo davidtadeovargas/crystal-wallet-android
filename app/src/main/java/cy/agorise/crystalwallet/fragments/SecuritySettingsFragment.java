@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.ChildViewPager;
 
 /**
@@ -46,6 +48,17 @@ public class SecuritySettingsFragment extends Fragment {
 
         securityPagerAdapter = new SecurityPagerAdapter(getChildFragmentManager());
         mPager.setAdapter(securityPagerAdapter);
+
+        switch(CrystalSecurityMonitor.getInstance(null).actualSecurity()) {
+            case GeneralSetting.SETTING_PASSWORD:
+                mPager.setCurrentItem(1);
+                break;
+            case GeneralSetting.SETTING_PATTERN:
+                mPager.setCurrentItem(2);
+                break;
+            default:
+                mPager.setCurrentItem(0);
+        }
         mPager.setSwipeLocked(true);
 
         TabLayout tabLayout = v.findViewById(R.id.tabs);
@@ -54,6 +67,14 @@ public class SecuritySettingsFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
 
         return v;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            CrystalSecurityMonitor.getInstance(null).callPasswordRequest(this.getActivity());
+        }
     }
 
     private class SecurityPagerAdapter extends FragmentPagerAdapter {

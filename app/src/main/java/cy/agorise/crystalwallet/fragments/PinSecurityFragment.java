@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CreateSeedActivity;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.PasswordManager;
@@ -36,17 +37,11 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.Validatio
 
 public class PinSecurityFragment extends Fragment implements UIValidatorListener {
 
-    @BindView(R.id.tvCurrentPin)
-    TextView tvCurrentPin;
-    @BindView(R.id.etCurrentPin)
-    EditText etCurrentPin;
     @BindView(R.id.etNewPin)
     EditText etNewPin;
     @BindView(R.id.etConfirmPin)
     EditText etConfirmPin;
 
-    @BindView(R.id.tvCurrentPinError)
-    TextView tvCurrentPinError;
     @BindView(R.id.tvNewPinError)
     TextView tvNewPinError;
     @BindView(R.id.tvConfirmPinError)
@@ -77,53 +72,10 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
         generalSettingListViewModel = ViewModelProviders.of(this).get(GeneralSettingListViewModel.class);
         LiveData<List<GeneralSetting>> generalSettingsLiveData = generalSettingListViewModel.getGeneralSettingList();
 
-        pinSecurityValidator = new PinSecurityValidator(this.getContext(), etCurrentPin, etNewPin, etConfirmPin);
+        pinSecurityValidator = new PinSecurityValidator(this.getContext(), etNewPin, etConfirmPin);
         pinSecurityValidator.setListener(this);
 
-        generalSettingsLiveData.observe(this, new Observer<List<GeneralSetting>>() {
-            @Override
-            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
-                boolean founded = false;
-
-                if (generalSettings != null){
-                    for (GeneralSetting generalSetting:generalSettings) {
-                        if (generalSetting.getName().equals(GeneralSetting.SETTING_PASSWORD)){
-                            founded = true;
-                            if (!generalSetting.getValue().isEmpty()){
-                                passwordGeneralSetting = generalSetting;
-                                showCurrentPinUI(true);
-                            } else {
-                                showCurrentPinUI(false);
-                            }
-                            break;
-                        }
-                    }
-                    if (!founded){
-                        showCurrentPinUI(false);
-                    }
-                } else {
-                    showCurrentPinUI(false);
-                }
-            }
-        });
-
         return v;
-    }
-
-    public void showCurrentPinUI(Boolean visible){
-        if (visible){
-            tvCurrentPin.setVisibility(View.VISIBLE);
-            etCurrentPin.setVisibility(View.VISIBLE);
-        } else {
-            tvCurrentPin.setVisibility(View.GONE);
-            etCurrentPin.setVisibility(View.GONE);
-        }
-    }
-
-    @OnTextChanged(value = R.id.etCurrentPin,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterCurrentPinChanged(Editable editable) {
-        this.pinSecurityValidator.validate();
     }
 
     @OnTextChanged(value = R.id.etNewPin,
@@ -139,9 +91,6 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
     }
 
     public void clearFields(){
-        if (!this.etCurrentPin.getText().toString().equals("")) {
-            this.etCurrentPin.setText("");
-        }
         if (!this.etNewPin.getText().toString().equals("")) {
             this.etNewPin.setText("");
         }
@@ -157,9 +106,7 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
 
-                if (field.getView() == etCurrentPin) {
-                    tvCurrentPinError.setText("");
-                } else if (field.getView() == etNewPin){
+                if (field.getView() == etNewPin){
                     tvNewPinError.setText("");
                 } else if (field.getView() == etConfirmPin){
                     tvConfirmPinError.setText("");
@@ -171,7 +118,6 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
 
                     Toast toast = Toast.makeText(getContext(), text, duration);
                     toast.show();
-                    //showCurrentPinUI(true);
 
                     savePassword(etNewPin.getText().toString());
 
@@ -184,14 +130,8 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
 
     public void savePassword(String password) {
         String passwordEncripted = PasswordManager.encriptPassword(password);
-
-        if (passwordGeneralSetting == null) {
-            passwordGeneralSetting = new GeneralSetting();
-            passwordGeneralSetting.setName(GeneralSetting.SETTING_PASSWORD);
-        }
-
-        passwordGeneralSetting.setValue(passwordEncripted);
-        generalSettingListViewModel.saveGeneralSetting(passwordGeneralSetting);
+        CrystalSecurityMonitor.getInstance(null).setPasswordSecurity(passwordEncripted);
+        CrystalSecurityMonitor.getInstance(null).callPasswordRequest(this.getActivity());
     }
 
     @Override
@@ -200,9 +140,7 @@ public class PinSecurityFragment extends Fragment implements UIValidatorListener
 
             @Override
             public void run() {
-                if (field.getView() == etCurrentPin) {
-                    tvCurrentPinError.setText(field.getMessage());
-                } else if (field.getView() == etNewPin){
+                if (field.getView() == etNewPin){
                     tvNewPinError.setText(field.getMessage());
                 } else if (field.getView() == etConfirmPin){
                     tvConfirmPinError.setText(field.getMessage());

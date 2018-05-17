@@ -16,6 +16,7 @@ import java.util.List;
 import cy.agorise.crystalwallet.activities.PatternRequestActivity;
 import cy.agorise.crystalwallet.activities.PinRequestActivity;
 import cy.agorise.crystalwallet.models.GeneralSetting;
+import cy.agorise.crystalwallet.notifiers.CrystalWalletNotifier;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 
 /**
@@ -27,44 +28,77 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
     private String passwordEncrypted;
     private String patternEncrypted;
 
-    public CrystalSecurityMonitor(final FragmentActivity fragmentActivity){
-        GeneralSettingListViewModel generalSettingListViewModel = ViewModelProviders.of(fragmentActivity).get(GeneralSettingListViewModel.class);
-        LiveData<List<GeneralSetting>> generalSettingsLiveData = generalSettingListViewModel.getGeneralSettingList();
+    private static CrystalSecurityMonitor instance;
+    private GeneralSettingListViewModel generalSettingListViewModel;
 
-        generalSettingsLiveData.observe(fragmentActivity, new Observer<List<GeneralSetting>>() {
-            @Override
-            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
-                boolean founded = false;
-                passwordEncrypted = "";
+    private CrystalSecurityMonitor(final FragmentActivity fragmentActivity){
+        //For security reasons, this code is not asynchronous because the pattern or password data
+        //must be retrieved before the principal activity starts
+        generalSettingListViewModel = ViewModelProviders.of(fragmentActivity).get(GeneralSettingListViewModel.class);
 
-                if (generalSettings != null){
-                    for (GeneralSetting generalSetting:generalSettings) {
-                        if (generalSetting.getName().equals(GeneralSetting.SETTING_PASSWORD)){
-                            if (!generalSetting.getValue().isEmpty()){
-                                passwordEncrypted = generalSetting.getValue();
-                                callPasswordRequest(fragmentActivity);
-                            }
-                            break;
-                        } else if (generalSetting.getName().equals(GeneralSetting.SETTING_PATTERN)){
-                            if (!generalSetting.getValue().isEmpty()){
-                                patternEncrypted = generalSetting.getValue();
-                                callPasswordRequest(fragmentActivity);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        });
+        this.passwordEncrypted = "";
+        this.patternEncrypted = "";
+        GeneralSetting passwordGeneralSetting = generalSettingListViewModel.getGeneralSettingByName(GeneralSetting.SETTING_PASSWORD);;
+        GeneralSetting patternGeneralSetting = generalSettingListViewModel.getGeneralSettingByName(GeneralSetting.SETTING_PATTERN);;
+
+        if (passwordGeneralSetting != null){
+            this.passwordEncrypted = passwordGeneralSetting.getValue();
+        }
+        if (patternGeneralSetting != null){
+            this.patternEncrypted = patternGeneralSetting.getValue();
+        }
+    }
+
+    public static CrystalSecurityMonitor getInstance(final FragmentActivity fragmentActivity){
+        if (instance == null){
+            instance = new CrystalSecurityMonitor(fragmentActivity);
+        }
+
+        return instance;
+    }
+
+    public void clearSecurity(){
+        this.patternEncrypted = "";
+        this.passwordEncrypted = "";
+
+        generalSettingListViewModel.deleteGeneralSettingByName(GeneralSetting.SETTING_PASSWORD);
+        generalSettingListViewModel.deleteGeneralSettingByName(GeneralSetting.SETTING_PATTERN);
+    }
+
+    public void setPasswordSecurity(String password){
+        clearSecurity();
+        this.passwordEncrypted = password;
+        GeneralSetting passwordGeneralSetting = new GeneralSetting();
+        passwordGeneralSetting.setName(GeneralSetting.SETTING_PASSWORD);
+        passwordGeneralSetting.setValue(password);
+
+        generalSettingListViewModel.saveGeneralSetting(passwordGeneralSetting);
+    }
+
+    public void setPatternEncrypted(String pattern){
+        clearSecurity();
+        this.patternEncrypted = pattern;
+        GeneralSetting patternGeneralSetting = new GeneralSetting();
+        patternGeneralSetting.setName(GeneralSetting.SETTING_PATTERN);
+        patternGeneralSetting.setValue(pattern);
+
+        generalSettingListViewModel.saveGeneralSetting(patternGeneralSetting);
+    }
+
+    public String actualSecurity(){
+        if ((this.patternEncrypted != null) && (!this.patternEncrypted.equals(""))){
+            return GeneralSetting.SETTING_PATTERN;
+        } else if ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals(""))){
+            return GeneralSetting.SETTING_PASSWORD;
+        }
+
+        return "";
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
         if (numStarted == 0) {
-            if (
-                    ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals("")))
-                || ((this.patternEncrypted != null) && (!this.patternEncrypted.equals("")))
-            ) {
+            if (!actualSecurity().equals("")){
                 callPasswordRequest(activity);
             }
         }
@@ -75,10 +109,7 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
     public void onActivityStopped(Activity activity) {
         numStarted--;
         if (numStarted == 0) {
-            if (
-                    ((this.passwordEncrypted != null) && (!this.passwordEncrypted.equals("")))
-                || ((this.patternEncrypted != null) && (!this.patternEncrypted.equals("")))
-            ) {
+            if (!actualSecurity().equals("")){
                 callPasswordRequest(activity);
             }
         }
