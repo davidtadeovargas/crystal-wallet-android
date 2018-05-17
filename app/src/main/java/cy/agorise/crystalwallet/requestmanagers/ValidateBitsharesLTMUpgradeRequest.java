@@ -33,6 +33,9 @@ public class ValidateBitsharesLTMUpgradeRequest extends CryptoNetInfoRequest {
     // The state of this request
     private StatusCode status = StatusCode.NOT_STARTED;
 
+    //TODO change asset
+    private String idAsset = "1.3.0"; //default to bTS
+
     public ValidateBitsharesLTMUpgradeRequest(Context context, GrapheneAccount sourceAccount) {
         super(CryptoCoin.BITSHARES);
         this.mContext = context;
@@ -46,6 +49,10 @@ public class ValidateBitsharesLTMUpgradeRequest extends CryptoNetInfoRequest {
 
     public GrapheneAccount getSourceAccount() {
         return mSourceAccount;
+    }
+
+    public String getIdAsset() {
+        return idAsset;
     }
 
     public void validate(){
