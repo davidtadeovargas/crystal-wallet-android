@@ -35,6 +35,11 @@ proguard/
 # Android Studio captures folder
 captures/
 
+# Local configuration file (sdk path, etc)
+.classpath
+.project
+.settings
+
 # Intellij
 *.iml
 

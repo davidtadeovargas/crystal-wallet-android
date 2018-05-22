@@ -18,6 +18,8 @@ import cy.agorise.crystalwallet.apigenerator.ApiRequest;
 import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.BitsharesFaucetApiGenerator;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
+import cy.agorise.crystalwallet.apigenerator.grapheneoperation.AccountUpgradeOperation;
+import cy.agorise.crystalwallet.apigenerator.grapheneoperation.AccountUpgradeOperationBuilder;
 import cy.agorise.crystalwallet.application.constant.BitsharesConstant;
 import cy.agorise.crystalwallet.models.seed.BIP39;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetEquivalentRequest;
@@ -444,8 +446,36 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
      */
     private void validateLTMAccountUpgrade(final ValidateBitsharesLTMUpgradeRequest sendRequest) {
         //TODO check internet, server connection
-        sendRequest.setStatus(ValidateBitsharesLTMUpgradeRequest.StatusCode.PETITION_FAILED);
+        Asset feeAsset = new Asset(sendRequest.getIdAsset());
+        UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
+
         CrystalDatabase db = CrystalDatabase.getAppDatabase(sendRequest.getContext());
+
+        AccountUpgradeOperationBuilder builder = new AccountUpgradeOperationBuilder()
+                .setAccountToUpgrade(fromUserAccount)
+                .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
+        ArrayList<BaseOperation> operationList = new ArrayList<>();
+        operationList.add(builder.build());
+
+        ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
+
+        Transaction transaction = new Transaction(privateKey, null, operationList);
+        transaction.setChainId(CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
+
+
+        ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
+            @Override
+            public void success(Object answer, int idPetition) {
+                sendRequest.setStatus(ValidateBitsharesLTMUpgradeRequest.StatusCode.SUCCEEDED);
+            }
+
+            @Override
+            public void fail(int idPetition) {
+                sendRequest.setStatus(ValidateBitsharesLTMUpgradeRequest.StatusCode.PETITION_FAILED);
+            }
+        });
+
+        GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
     }
 
     /**
