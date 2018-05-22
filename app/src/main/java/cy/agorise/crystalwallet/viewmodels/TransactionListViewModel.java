@@ -12,6 +12,7 @@ import java.util.List;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 import cy.agorise.crystalwallet.views.TransactionListView;
 
 /**
@@ -20,7 +21,7 @@ import cy.agorise.crystalwallet.views.TransactionListView;
 
 public class TransactionListViewModel extends AndroidViewModel {
 
-    private LiveData<PagedList<CryptoCoinTransaction>> transactionList;
+    private LiveData<PagedList<CryptoCoinTransactionExtended>> transactionList;
     private CrystalDatabase db;
 
     public TransactionListViewModel(Application application) {
@@ -35,25 +36,27 @@ public class TransactionListViewModel extends AndroidViewModel {
         );*/
     }
 
-    public void initTransactionList(String orderField){
-        LivePagedListProvider<Integer, CryptoCoinTransaction> livePagedListProvider = null;
+    public void initTransactionList(String orderField, String search){
+        LivePagedListProvider<Integer, CryptoCoinTransactionExtended> livePagedListProvider = null;
 
         switch (orderField){
             case "date":
-                livePagedListProvider = this.db.transactionDao().transactionsByDate();
+                livePagedListProvider = this.db.transactionDao().transactionsByDate(search);
                 break;
             case "amount":
-                livePagedListProvider = this.db.transactionDao().transactionsByAmount();
+                livePagedListProvider = this.db.transactionDao().transactionsByAmount(search);
                 break;
             case "is_input":
-                livePagedListProvider = this.db.transactionDao().transactionsByIsInput();
+                livePagedListProvider = this.db.transactionDao().transactionsByIsInput(search);
                 break;
             case "from":
-                livePagedListProvider = this.db.transactionDao().transactionsByFrom();
+                livePagedListProvider = this.db.transactionDao().transactionsByFrom(search);
                 break;
             case "to":
-                livePagedListProvider = this.db.transactionDao().transactionsByTo();
+                livePagedListProvider = this.db.transactionDao().transactionsByTo(search);
                 break;
+            default:
+                livePagedListProvider = this.db.transactionDao().transactionsByDate(search);
         }
         if (livePagedListProvider != null) {
             this.transactionList = livePagedListProvider.create(0,
@@ -68,7 +71,7 @@ public class TransactionListViewModel extends AndroidViewModel {
         }
     }
 
-    public LiveData<PagedList<CryptoCoinTransaction>> getTransactionList(){
+    public LiveData<PagedList<CryptoCoinTransactionExtended>> getTransactionList(){
         return this.transactionList;
     }
 }

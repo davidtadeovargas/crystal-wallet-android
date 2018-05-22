@@ -26,7 +26,8 @@
                 android:layout_width="40dip"
                 android:layout_height="40dip"
                 android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/spTransactionsOrder" />
+                android:layout_toStartOf="@+id/spTransactionsOrder"
+                android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/spTransactionsOrder"

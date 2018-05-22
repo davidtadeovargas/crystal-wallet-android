@@ -9,10 +9,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -20,8 +22,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
 import cy.agorise.crystalwallet.views.TransactionOrderSpinnerAdapter;
@@ -34,12 +38,15 @@ public class TransactionsFragment extends Fragment {
     @BindView(R.id.spTransactionsOrder)
     Spinner spTransactionsOrder;
 
+    @BindView(R.id.etTransactionSearch)
+    EditText etTransactionSearch;
+
     RecyclerView balanceRecyclerView;
     FloatingActionButton fabSend;
     FloatingActionButton fabReceive;
 
     TransactionListViewModel transactionListViewModel;
-    LiveData<PagedList<CryptoCoinTransaction>> transactionsLiveData;
+    LiveData<PagedList<CryptoCoinTransactionExtended>> transactionsLiveData;
 
     public TransactionsFragment() {
         // Required empty public constructor
@@ -108,16 +115,22 @@ public class TransactionsFragment extends Fragment {
         if (transactionsLiveData != null){
             transactionsLiveData.removeObservers(this);
         }
-        transactionListViewModel.initTransactionList(orderSelected.getField());
+        transactionListViewModel.initTransactionList(orderSelected.getField(),etTransactionSearch.getText().toString());
         transactionsLiveData = transactionListViewModel.getTransactionList();
 
         final Fragment fragment = this;
-        transactionsLiveData.observe(this, new Observer<PagedList<CryptoCoinTransaction>>() {
+        transactionsLiveData.observe(this, new Observer<PagedList<CryptoCoinTransactionExtended>>() {
             @Override
-            public void onChanged(@Nullable PagedList<CryptoCoinTransaction> cryptoCoinTransactions) {
+            public void onChanged(@Nullable PagedList<CryptoCoinTransactionExtended> cryptoCoinTransactions) {
                 transactionListView.setData(cryptoCoinTransactions, fragment);
             }
         });
+    }
+
+    @OnTextChanged(value = R.id.etTransactionSearch,
+            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void afterTransactionSearchChange(Editable editable) {
+        changeTransactionList();
     }
 
     public void initTransactionsOrderSpinner(){

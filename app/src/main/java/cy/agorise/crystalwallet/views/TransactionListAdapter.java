@@ -19,6 +19,7 @@ import java.util.List;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 
 /**
  * Created by Henry Varona on 11/9/2017.
@@ -29,12 +30,12 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
  * that will be extended with the scroll of the user
  */
 
-public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransaction, TransactionViewHolder> {
+public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransactionExtended, TransactionViewHolder> {
 
     Fragment fragment;
 
     public TransactionListAdapter(Fragment fragment) {
-        super(CryptoCoinTransaction.DIFF_CALLBACK);
+        super(CryptoCoinTransactionExtended.DIFF_CALLBACK);
         this.fragment = fragment;
     }
 
@@ -48,7 +49,7 @@ public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransacti
 
     @Override
     public void onBindViewHolder(TransactionViewHolder holder, int position) {
-        CryptoCoinTransaction transaction = getItem(position);
+        CryptoCoinTransactionExtended transaction = getItem(position);
         if (transaction != null) {
             holder.bindTo(transaction);
         } else {

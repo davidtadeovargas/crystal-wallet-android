@@ -25,11 +25,6 @@ import cy.agorise.crystalwallet.viewmodels.validators.PinSecurityValidator;
 
 public class NoneSecurityFragment extends Fragment {
 
-    GeneralSetting passwordGeneralSetting = new GeneralSetting();
-    GeneralSetting patternGeneralSetting = new GeneralSetting();
-
-    GeneralSettingListViewModel generalSettingListViewModel;
-
     public NoneSecurityFragment() {
         // Required empty public constructor
     }
@@ -48,24 +43,6 @@ public class NoneSecurityFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_none_security, container, false);
         ButterKnife.bind(this, v);
 
-        generalSettingListViewModel = ViewModelProviders.of(this).get(GeneralSettingListViewModel.class);
-        LiveData<List<GeneralSetting>> generalSettingsLiveData = generalSettingListViewModel.getGeneralSettingList();
-
-        generalSettingsLiveData.observe(this, new Observer<List<GeneralSetting>>() {
-            @Override
-            public void onChanged(@Nullable List<GeneralSetting> generalSettings) {
-                if (generalSettings != null){
-                    for (GeneralSetting generalSetting:generalSettings) {
-                        if (generalSetting.getName().equals(GeneralSetting.SETTING_PASSWORD)){
-                            passwordGeneralSetting = generalSetting;
-                        } else if (generalSetting.getName().equals(GeneralSetting.SETTING_PATTERN)){
-                            patternGeneralSetting = generalSetting;
-                        }
-                    }
-                }
-            }
-        });
-
         return v;
     }
 
@@ -73,14 +50,7 @@ public class NoneSecurityFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            setSecurityOff();
+            CrystalSecurityMonitor.getInstance(null).clearSecurity();
         }
-    }
-
-    public void setSecurityOff(){
-        generalSettingListViewModel.deleteGeneralSettings(passwordGeneralSetting,patternGeneralSetting);
-
-        CrystalSecurityMonitor.getInstance(null).setPasswordSecurity("");
-        CrystalSecurityMonitor.getInstance(null).setPatternEncrypted("");
     }
 }

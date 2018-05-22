@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.activities.CryptoCoinTransactionReceiptActivity;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GeneralSetting;
@@ -112,7 +113,7 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
     /*
      * Binds a transaction object with this element view
      */
-    public void bindTo(final CryptoCoinTransaction transaction/*, final OnTransactionClickListener listener*/) {
+    public void bindTo(final CryptoCoinTransactionExtended transaction/*, final OnTransactionClickListener listener*/) {
         if (transaction == null){
             clear();
         } else {
@@ -147,16 +148,24 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
 
             LiveData<CryptoNetAccount> cryptoNetAccountLiveData = cryptoNetAccountViewModel.getCryptoNetAccount();
 
-            cryptoNetAccountLiveData.observe(this.fragment, new Observer<CryptoNetAccount>() {
-                @Override
-                public void onChanged(@Nullable CryptoNetAccount cryptoNetAccount) {
+            //cryptoNetAccountLiveData.observe(this.fragment, new Observer<CryptoNetAccount>() {
+            //    @Override
+            //    public void onChanged(@Nullable CryptoNetAccount cryptoNetAccount) {
                     if (transaction.getInput()){
-                        tvTo.setText(cryptoNetAccount.getName());
+                        tvTo.setText(transaction.getUserAccountName());
+
+                        if ((transaction.getContactName() != null)&&(!transaction.equals(""))){
+                            tvFrom.setText(transaction.getContactName());
+                        }
                     } else {
-                        tvFrom.setText(cryptoNetAccount.getName());
+                        tvFrom.setText(transaction.getUserAccountName());
+
+                        if ((transaction.getContactName() != null)&&(!transaction.equals(""))){
+                            tvTo.setText(transaction.getContactName());
+                        }
                     }
-                }
-            });
+            //    }
+            //});
 
             String finalAmountText = "";
             if (transaction.getInput()) {

@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
+import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 
 /**
@@ -110,7 +111,7 @@ public class TransactionListView extends RelativeLayout {
      *
      * @param data the transactions that will be showed to the user
      */
-    public void setData(PagedList<CryptoCoinTransaction> data, Fragment fragment){
+    public void setData(PagedList<CryptoCoinTransactionExtended> data, Fragment fragment){
         //Initializes the adapter of the transaction list
         if (this.listAdapter == null) {
             this.listAdapter = new TransactionListAdapter(fragment);
