@@ -4,8 +4,11 @@ import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -31,9 +34,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import butterknife.OnClick;
+import cy.agorise.crystalwallet.util.CircularImageView;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
 import cy.agorise.crystalwallet.views.CryptoNetAccountAdapter;
 import cy.agorise.graphenej.Invoice;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +77,9 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
     ImageView ivQrCode;
     @BindView(R.id.tvCancel)
     TextView tvCancel;
+
+    @BindView(R.id.gravatar)
+    CircularImageView userImg;
 
     private Button btnShareQrCode;
     private Button btnClose;
@@ -182,6 +191,8 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
             }
         });
 
+
+        loadUserImage();
         return dialog;
     }
 
@@ -193,6 +204,7 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         Window dialogWindow = getDialog().getWindow();
         assert dialogWindow != null;
         dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadUserImage();
     }
 
     @Override
@@ -205,6 +217,21 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
                 fabReceive.show();
             }
         }, 400);
+    }
+
+    public void loadUserImage(){
+        //Search for a existing photo
+        ContextWrapper cw = new ContextWrapper(this.getActivity().getBaseContext());
+        File directory = cw.getDir("profile", Context.MODE_PRIVATE);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        File photoFile = new File(directory + File.separator + "photo.png");
+
+        if (photoFile.exists()){
+            Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getPath());
+            userImg.setImageBitmap(bitmap);
+        }
     }
 
     @OnItemSelected(R.id.spTo)

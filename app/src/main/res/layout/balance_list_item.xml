@@ -24,14 +24,18 @@
                 android:id="@+id/ivCryptoNetIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/icon_help" />
+                android:adjustViewBounds="true"
+                android:maxHeight="32dp"
+                android:maxWidth="32dp"
+                app:srcCompat="@drawable/bts" />
 
             <TextView
                 android:id="@+id/tvCryptoNetName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/ivCryptoNetIcon"
+                android:ems="10"
                 android:text="unknown coin" />
 
             <TextView
@@ -39,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:text="0.003€" />
 
             <Button

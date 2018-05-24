@@ -38,22 +38,24 @@
         android:layout_marginTop="24dp"
         android:text="@string/brainkey_description"
         android:textSize="15sp"
-        app:layout_constraintStart_toStartOf="@id/tvBinFile"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="@id/tvBinFile"
-        app:layout_constraintTop_toBottomOf="@id/btnBinFile"/>
+        app:layout_constraintStart_toStartOf="@id/tvBinFile"
+        app:layout_constraintTop_toBottomOf="@id/btnBinFile" />
 
     <Button
         android:id="@+id/btnBrainkey"
+        style="@style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        style="@style/Widget.Button"
-        android:text="@string/view_and_copy"
-        android:textStyle="bold"
-        android:textColor="@color/white"
         android:background="@color/colorPrimary"
+        android:text="@string/view_and_copy"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/btnBinFile"
-        app:layout_constraintTop_toBottomOf="@id/tvBrainkey"/>
+        app:layout_constraintTop_toBottomOf="@id/tvBrainkey" />
 
     <TextView
         android:id="@+id/tvWIFKey"
@@ -62,21 +64,23 @@
         android:layout_marginTop="24dp"
         android:text="@string/wif_key_description"
         android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@id/btnBrainkey"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/tvBrainkey"
         app:layout_constraintStart_toStartOf="@id/tvBrainkey"
-        app:layout_constraintEnd_toEndOf="@id/tvBrainkey" />
+        app:layout_constraintTop_toBottomOf="@id/btnBrainkey" />
 
     <Button
         android:id="@+id/btnWIFKey"
+        style="@style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        style="@style/Widget.Button"
-        android:text="@string/view_and_copy"
-        android:textStyle="bold"
-        android:textColor="@color/white"
         android:background="@color/colorPrimary"
+        android:text="@string/view_and_copy"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/btnBrainkey"
-        app:layout_constraintTop_toBottomOf="@id/tvWIFKey"/>
+        app:layout_constraintTop_toBottomOf="@id/tvWIFKey" />
 
 </android.support.constraint.ConstraintLayout>

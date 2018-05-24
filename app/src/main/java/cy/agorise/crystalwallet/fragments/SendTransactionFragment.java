@@ -4,8 +4,12 @@ import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -29,6 +33,7 @@ import android.widget.TextView;
 
 import com.google.zxing.Result;
 
+import java.io.File;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -51,6 +56,7 @@ import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCurrency;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
+import cy.agorise.crystalwallet.util.CircularImageView;
 import cy.agorise.crystalwallet.viewmodels.ContactViewModel;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.SendTransactionValidator;
@@ -93,6 +99,9 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @BindView(R.id.ivPeople)
     ImageView ivPeople;
     CryptoCurrencyAdapter assetAdapter;
+
+    @BindView(R.id.gravatar)
+    CircularImageView userImg;
 
     Button btnScanQrCode;
 
@@ -173,6 +182,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             // etFrom.setText(this.grapheneAccount.getName());
         }
 
+        loadUserImage();
         return builder.setView(view).create();
     }
 
@@ -190,6 +200,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         Window dialogWindow = getDialog().getWindow();
         assert dialogWindow != null;
         dialogWindow.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadUserImage();
     }
 
     @Override
@@ -202,6 +213,21 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
                 fabSend.show();
             }
         }, 400);
+    }
+
+    public void loadUserImage(){
+        //Search for a existing photo
+        ContextWrapper cw = new ContextWrapper(this.getActivity().getBaseContext());
+        File directory = cw.getDir("profile", Context.MODE_PRIVATE);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        File photoFile = new File(directory + File.separator + "photo.png");
+
+        if (photoFile.exists()){
+            Bitmap bitmap = BitmapFactory.decodeFile(photoFile.getPath());
+            userImg.setImageBitmap(bitmap);
+        }
     }
 
     @OnItemSelected(R.id.spFrom)
