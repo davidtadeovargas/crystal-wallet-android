@@ -22,6 +22,7 @@ public class GeneralSetting {
     public final static String SETTING_PASSWORD = "PASSWORD";
     public final static String SETTING_PATTERN = "PATTERN";
     public final static String SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH = "RECEIVED_FUNDS_SOUND_PATH";
+    public final static String SETTING_LAST_LICENSE_READ = "LAST_LICENSE_READ";
 
     /**
      * The id on the database

@@ -25,6 +25,7 @@ import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
+import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoCoinBalanceGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
@@ -79,21 +80,23 @@ public class IntroActivity extends AppCompatActivity {
         this.getApplication().registerActivityLifecycleCallbacks(CrystalSecurityMonitor.getInstance(this));
 
 
-        //Checks if the user has any seed created
-        AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
 
-        if (accountSeedListViewModel.accountSeedsCount() == 0){
-            //If the user doesn't have any seeds created, then
-            //send the user to create/import an account
-            //Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
-            //Intent intent = new Intent(this, ImportSeedActivity.class);
-            //Intent intent = new Intent(this, CreateSeedActivity.class);
-            //startActivity(intent);
-        } else {
-            //Intent intent = new Intent(this, CreateSeedActivity.class);
-            Intent intent = new Intent(this, BoardActivity.class);
-            startActivity(intent);
-        }
+
+            //Checks if the user has any seed created
+            AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
+
+            if (accountSeedListViewModel.accountSeedsCount() == 0) {
+                //If the user doesn't have any seeds created, then
+                //send the user to create/import an account
+                //Intent intent = new Intent(this, AccountSeedsManagementActivity.class);
+                //Intent intent = new Intent(this, ImportSeedActivity.class);
+                //Intent intent = new Intent(this, CreateSeedActivity.class);
+                //startActivity(intent);
+            } else {
+                //Intent intent = new Intent(this, CreateSeedActivity.class);
+                Intent intent = new Intent(this, BoardActivity.class);
+                startActivity(intent);
+            }
 
         /*CrystalDatabase db = CrystalDatabase.getAppDatabase(getApplicationContext());
         List<AccountSeed> seeds = RandomSeedGenerator.generateSeeds(2);
