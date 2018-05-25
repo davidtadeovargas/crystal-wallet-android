@@ -19,7 +19,7 @@
     <color name="greencolor">#70882E</color>
     <color name="red">#ff0000</color>
     <color name="pinkColor">#FF4081</color>
-    <color name="redcolor">#DD4739</color>
+    <color name="redColor">#DD4739</color>
 
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
@@ -27,7 +27,6 @@
 
     <color name="bottomBarColor">#dddddd</color>
 
-    <color name="blackColor">#000000</color>
     <color name="whiteColor">#ffffff</color>
     <color name="receive_amount">#669900</color>
     <color name="receive_amount_light">#c5e1a5</color>

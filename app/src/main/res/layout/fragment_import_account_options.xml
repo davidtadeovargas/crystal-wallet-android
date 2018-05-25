@@ -56,7 +56,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:background="@color/redcolor"
+        android:background="@color/redColor"
         android:text="@string/dialog_cancel"
         android:textAllCaps="false"
         android:textColor="@color/white"

@@ -16,14 +16,16 @@
         android:supportsRtl="true"
         android:configChanges="locale"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.IntroActivity"
-
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".activities.LicenseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.IntroActivity"
+
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activities.BoardActivity"
             android:theme="@style/AppTheme.NoActionBar" >

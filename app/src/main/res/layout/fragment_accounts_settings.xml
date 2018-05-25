@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@color/redcolor"
+            android:background="@color/redColor"
             android:text="@string/remove"
             android:textColor="@color/white"
             android:textStyle="bold"
