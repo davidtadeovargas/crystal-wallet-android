@@ -21,6 +21,7 @@ public class GrapheneAccount extends CryptoNetAccount {
     public static int subclass = 1;
     protected String name;
     protected String accountId;
+    protected boolean upgradedToLtm;
 
     public GrapheneAccount() {
     }
@@ -32,6 +33,7 @@ public class GrapheneAccount extends CryptoNetAccount {
     public void loadInfo(GrapheneAccountInfo info){
         this.name = info.getName();
         this.accountId = info.getAccountId();
+        this.upgradedToLtm = info.getUpgradedToLtm();
     }
 
     public String getName() {
@@ -48,6 +50,14 @@ public class GrapheneAccount extends CryptoNetAccount {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public boolean getUpgradedToLtm() {
+        return this.upgradedToLtm;
+    }
+
+    public void setUpgradedToLtm(boolean upgradedToLtm){
+        this.upgradedToLtm = upgradedToLtm;
     }
 
     /**

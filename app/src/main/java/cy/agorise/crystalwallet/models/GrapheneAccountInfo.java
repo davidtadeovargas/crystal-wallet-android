@@ -37,6 +37,12 @@ public class GrapheneAccountInfo {
     protected String accountId;
 
     /**
+     * If the bitshares account is upgraded to LTM
+     */
+    @ColumnInfo(name = "upgraded_to_ltm")
+    protected boolean upgradedToLtm;
+
+    /**
      * Baisc constructor
      * @param cryptoNetAccountId The database ud of the CryptoNetAccount
      */
@@ -76,5 +82,13 @@ public class GrapheneAccountInfo {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public boolean getUpgradedToLtm(){
+        return this.upgradedToLtm;
+    }
+
+    public void setUpgradedToLtm(boolean upgradedToLtm){
+        this.upgradedToLtm = upgradedToLtm;
     }
 }

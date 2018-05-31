@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "22cb2a56b28a9f7088ec98d6a72f9f67",
+    "identityHash": "14fe802949d125dda3e3c476a34481d7",
     "entities": [
       {
         "tableName": "account_seed",
@@ -478,7 +478,7 @@
       },
       {
         "tableName": "graphene_account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`crypto_net_account_id` INTEGER NOT NULL, `account_name` TEXT, `account_id` TEXT, PRIMARY KEY(`crypto_net_account_id`), FOREIGN KEY(`crypto_net_account_id`) REFERENCES `crypto_net_account`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`crypto_net_account_id` INTEGER NOT NULL, `account_name` TEXT, `account_id` TEXT, `upgraded_to_ltm` INTEGER NOT NULL, PRIMARY KEY(`crypto_net_account_id`), FOREIGN KEY(`crypto_net_account_id`) REFERENCES `crypto_net_account`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "cryptoNetAccountId",
@@ -497,6 +497,12 @@
             "columnName": "account_id",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "upgradedToLtm",
+            "columnName": "upgraded_to_ltm",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -692,7 +698,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"22cb2a56b28a9f7088ec98d6a72f9f67\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"14fe802949d125dda3e3c476a34481d7\")"
     ]
   }
 }
