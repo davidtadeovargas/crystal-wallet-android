@@ -7,8 +7,8 @@ android {
         applicationId "cy.agorise.crystalwallet"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "0.1t.alpha"
+        versionCode 2
+        versionName "0.2t.alpha"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -25,6 +25,21 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    productFlavors {
+    }
+
+    lintOptions {
+        disable 'MissingTranslation','ExtraTranslation'
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    android.packagingOptions {
+        exclude 'lib/x86_64/darwin/libscrypt.dylib'
+        exclude 'lib/x86_64/freebsd/libscrypt.so'
+        exclude 'lib/x86_64/linux/libscrypt.so'
     }
 }
 
