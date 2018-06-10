@@ -4,6 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.DataSource;
+import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.LivePagedListProvider;
 import android.arch.paging.PagedList;
 import android.content.Context;
@@ -37,35 +39,35 @@ public class TransactionListViewModel extends AndroidViewModel {
     }
 
     public void initTransactionList(String orderField, String search){
-        LivePagedListProvider<Integer, CryptoCoinTransactionExtended> livePagedListProvider = null;
+        DataSource.Factory<Integer, CryptoCoinTransactionExtended> dataSource = null;
 
         switch (orderField){
             case "date":
-                livePagedListProvider = this.db.transactionDao().transactionsByDate(search);
+                dataSource = this.db.transactionDao().transactionsByDate(search);
                 break;
             case "amount":
-                livePagedListProvider = this.db.transactionDao().transactionsByAmount(search);
+                dataSource = this.db.transactionDao().transactionsByAmount(search);
                 break;
             case "is_input":
-                livePagedListProvider = this.db.transactionDao().transactionsByIsInput(search);
+                dataSource = this.db.transactionDao().transactionsByIsInput(search);
                 break;
             case "from":
-                livePagedListProvider = this.db.transactionDao().transactionsByFrom(search);
+                dataSource = this.db.transactionDao().transactionsByFrom(search);
                 break;
             case "to":
-                livePagedListProvider = this.db.transactionDao().transactionsByTo(search);
+                dataSource = this.db.transactionDao().transactionsByTo(search);
                 break;
             default:
-                livePagedListProvider = this.db.transactionDao().transactionsByDate(search);
+                dataSource = this.db.transactionDao().transactionsByDate(search);
         }
-        if (livePagedListProvider != null) {
-            this.transactionList = livePagedListProvider.create(0,
+        if (dataSource != null) {
+            this.transactionList = new LivePagedListBuilder(dataSource,
                     new PagedList.Config.Builder()
                             .setEnablePlaceholders(true)
                             .setPageSize(10)
                             .setPrefetchDistance(10)
                             .build()
-            );
+            ).build();
         } else {
             this.transactionList = null;
         }

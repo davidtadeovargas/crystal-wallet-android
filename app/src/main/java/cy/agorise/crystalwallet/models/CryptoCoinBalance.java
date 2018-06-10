@@ -7,7 +7,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 
@@ -72,7 +72,7 @@ public class CryptoCoinBalance {
         this.mBalance = balance;
     }
 
-    public static final DiffCallback<CryptoCoinBalance> DIFF_CALLBACK = new DiffCallback<CryptoCoinBalance>() {
+    public static final DiffUtil.ItemCallback<CryptoCoinBalance> DIFF_CALLBACK = new DiffUtil.ItemCallback<CryptoCoinBalance>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoCoinBalance oldBalance, @NonNull CryptoCoinBalance newBalance) {

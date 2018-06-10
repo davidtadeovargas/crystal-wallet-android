@@ -5,7 +5,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 
 import cy.agorise.crystalwallet.enums.SeedType;
 
@@ -67,7 +67,7 @@ public class GeneralSetting {
         this.mValue = mValue;
     }
 
-    public static final DiffCallback<GeneralSetting> DIFF_CALLBACK = new DiffCallback<GeneralSetting>() {
+    public static final DiffUtil.ItemCallback<GeneralSetting> DIFF_CALLBACK = new DiffUtil.ItemCallback<GeneralSetting>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull GeneralSetting oldSetting, @NonNull GeneralSetting newSetting) {

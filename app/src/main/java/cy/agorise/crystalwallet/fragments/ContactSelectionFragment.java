@@ -77,7 +77,7 @@ public class ContactSelectionFragment extends DialogFragment implements ContactS
             contactsLiveData.observe(this, new Observer<PagedList<Contact>>() {
                 @Override
                 public void onChanged(@Nullable PagedList<Contact> contacts) {
-                    contactSelectionListAdapter.setList(contacts);
+                    contactSelectionListAdapter.submitList(contacts);
                 }
             });
         }

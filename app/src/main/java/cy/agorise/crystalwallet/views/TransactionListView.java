@@ -120,7 +120,7 @@ public class TransactionListView extends RelativeLayout {
 
         //Sets the data of the transaction list
         if (data != null) {
-            this.listAdapter.setList(data);
+            this.listAdapter.submitList(data);
         }
     }
 

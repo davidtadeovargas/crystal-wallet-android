@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.dao;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.arch.paging.LivePagedListProvider;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -28,19 +29,19 @@ public interface TransactionDao {
     LiveData<List<CryptoCoinTransaction>> getAll();
 
     @Query(transactionsQuery + " ORDER BY date DESC")
-    LivePagedListProvider<Integer, CryptoCoinTransactionExtended>  transactionsByDate(String search);
+    DataSource.Factory<Integer, CryptoCoinTransactionExtended> transactionsByDate(String search);
 
     @Query(transactionsQuery + " ORDER BY amount DESC")
-    LivePagedListProvider<Integer, CryptoCoinTransactionExtended>  transactionsByAmount(String search);
+    DataSource.Factory<Integer, CryptoCoinTransactionExtended>  transactionsByAmount(String search);
 
     @Query(transactionsQuery + " ORDER BY is_input DESC")
-    LivePagedListProvider<Integer, CryptoCoinTransactionExtended>  transactionsByIsInput(String search);
+    DataSource.Factory<Integer, CryptoCoinTransactionExtended>  transactionsByIsInput(String search);
 
     @Query(transactionsQuery + " ORDER BY `from` DESC")
-    LivePagedListProvider<Integer, CryptoCoinTransactionExtended>  transactionsByFrom(String search);
+    DataSource.Factory<Integer, CryptoCoinTransactionExtended>  transactionsByFrom(String search);
 
     @Query(transactionsQuery + " ORDER BY `to` DESC")
-    LivePagedListProvider<Integer, CryptoCoinTransactionExtended>  transactionsByTo(String search);
+    DataSource.Factory<Integer, CryptoCoinTransactionExtended>  transactionsByTo(String search);
 
     @Query("SELECT * FROM crypto_coin_transaction WHERE account_id = :idAccount ORDER BY date DESC")
     LiveData<List<CryptoCoinTransaction>> getByIdAccountLiveData(long idAccount);

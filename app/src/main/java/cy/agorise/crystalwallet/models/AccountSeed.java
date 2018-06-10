@@ -7,7 +7,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
@@ -86,7 +86,7 @@ public class AccountSeed {
         this.type = type;
     }
 
-    public static final DiffCallback<AccountSeed> DIFF_CALLBACK = new DiffCallback<AccountSeed>() {
+    public static final DiffUtil.ItemCallback<AccountSeed> DIFF_CALLBACK = new DiffUtil.ItemCallback<AccountSeed>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull AccountSeed oldAccountSeed, @NonNull AccountSeed newAccountSeed) {

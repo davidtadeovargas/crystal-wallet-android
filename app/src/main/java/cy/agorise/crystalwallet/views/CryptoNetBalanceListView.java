@@ -99,7 +99,7 @@ public class CryptoNetBalanceListView extends RelativeLayout {
 
         //sets the data of the list adapter
         if (data != null) {
-            this.listAdapter.setList(data);
+            this.listAdapter.submitList(data);
         }
     }
 

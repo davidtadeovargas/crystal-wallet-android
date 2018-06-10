@@ -65,7 +65,7 @@ public class AccountSeedListView extends RelativeLayout {
         }
 
         if (data != null) {
-            this.listAdapter.setList(data);
+            this.listAdapter.submitList(data);
         }
     }
 
