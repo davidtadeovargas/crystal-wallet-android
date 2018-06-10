@@ -52,6 +52,10 @@
         <activity android:name=".activities.PatternRequestActivity"
             android:noHistory="true">
         </activity>
+        <activity android:name=".activities.CryptoNetAccountSettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
         <activity
             android:name=".activities.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar"

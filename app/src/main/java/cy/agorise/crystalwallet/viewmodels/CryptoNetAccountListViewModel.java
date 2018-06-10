@@ -26,4 +26,8 @@ public class CryptoNetAccountListViewModel extends AndroidViewModel {
     public List<CryptoNetAccount> getCryptoNetAccountList(){
         return this.db.cryptoNetAccountDao().getAllCryptoNetAccount();
     }
+
+    public LiveData<List<CryptoNetAccount>> getCryptoNetAccounts(){
+        return this.db.cryptoNetAccountDao().getAll();
+    }
 }

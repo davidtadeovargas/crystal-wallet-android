@@ -33,8 +33,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedListViewModel;
+import cy.agorise.crystalwallet.viewmodels.CryptoNetAccountListViewModel;
 import cy.agorise.crystalwallet.views.AccountSeedListView;
+import cy.agorise.crystalwallet.views.CryptoNetAccountListView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
@@ -51,8 +54,8 @@ public class AccountsActivity extends AppCompatActivity {
     @BindView(R.id.tvClose)
     TextView tvClose;
 
-    @BindView(R.id.vAccountSeedList)
-    AccountSeedListView vAccountSeedList;
+    @BindView(R.id.vAccountList)
+    CryptoNetAccountListView vAccountList;
 
     @BindView(R.id.user_img)
     CircleImageView userImg;
@@ -67,14 +70,14 @@ public class AccountsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_accounts);
         ButterKnife.bind(this);
 
-        AccountSeedListViewModel accountSeedListViewModel = ViewModelProviders.of(this).get(AccountSeedListViewModel.class);
-        LiveData<List<AccountSeed>> accountSeedData = accountSeedListViewModel.getAccountSeedList();
-        vAccountSeedList.setData(null);
+        CryptoNetAccountListViewModel crytpoNetAccountListViewModel = ViewModelProviders.of(this).get(CryptoNetAccountListViewModel.class);
+        LiveData<List<CryptoNetAccount>> accountData = crytpoNetAccountListViewModel.getCryptoNetAccounts();
+        vAccountList.setData(null);
 
-        accountSeedData.observe(this, new Observer<List<AccountSeed>>() {
+        accountData.observe(this, new Observer<List<CryptoNetAccount>>() {
             @Override
-            public void onChanged(List<AccountSeed> accountSeeds) {
-                vAccountSeedList.setData(accountSeeds);
+            public void onChanged(List<CryptoNetAccount> cryptoNetAccounts) {
+                vAccountList.setData(cryptoNetAccounts);
             }
         });
 

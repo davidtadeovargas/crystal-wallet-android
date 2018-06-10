@@ -1,9 +1,11 @@
 package cy.agorise.crystalwallet.dao;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 
 import cy.agorise.crystalwallet.dao.converters.Converters;
@@ -36,7 +38,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         BitsharesAssetInfo.class,
         CryptoCurrencyEquivalence.class,
         GeneralSetting.class
-}, version = 2)
+}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
@@ -59,8 +61,16 @@ public abstract class CrystalDatabase extends RoomDatabase {
                     Room.databaseBuilder(context,
                             CrystalDatabase.class, "CrystalWallet.db")
                             .allowMainThreadQueries()
+                            .addMigrations(MIGRATION_2_3)
                             .build();
         }
         return instance;
     }
+
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE graphene_account ADD COLUMN upgraded_to_ltm INTEGER NOT NULL DEFAULT 0");
+        }
+    };
 }
