@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vincent.filepicker.Constant;
 import com.vincent.filepicker.activity.AudioPickActivity;
@@ -125,13 +126,35 @@ public class BitsharesSettingsFragment extends Fragment {
         request.setListener(new CryptoNetInfoRequestListener() {
             @Override
             public void onCarryOut() {
-                switch (request.getStatus()){
-                    case SUCCEEDED:
-                        tvUpgradeToLtm.setVisibility(View.GONE);
-                        btnUpgradeToLtm.setVisibility(View.GONE);
-                        tvAlreadyLtm.setVisibility(View.VISIBLE);
-                        break;
-                }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast toast;
+
+                        switch (request.getStatus()){
+                            case SUCCEEDED:
+                                tvUpgradeToLtm.setVisibility(View.GONE);
+                                btnUpgradeToLtm.setVisibility(View.GONE);
+                                tvAlreadyLtm.setVisibility(View.VISIBLE);
+                                break;
+                            case NO_INTERNET:
+                            case NO_SERVER_CONNECTION:
+                                toast = Toast.makeText(getContext(), "There was an error connecting to the server. Please try again.", Toast.LENGTH_SHORT);
+                                toast.show();
+                                break;
+                            case NO_FUNDS:
+                                toast = Toast.makeText(getContext(), "Not enough funds to make the upgrade.", Toast.LENGTH_SHORT);
+                                toast.show();
+                                break;
+                            case NO_ASSET_INFO_DB:
+                            case NO_ASSET_INFO:
+                            case PETITION_FAILED:
+                            default:
+                                toast = Toast.makeText(getContext(), "There was an error with the request. Please try again.", Toast.LENGTH_SHORT);
+                                toast.show();
+                        }
+                    }
+                });
             }
         });
 
