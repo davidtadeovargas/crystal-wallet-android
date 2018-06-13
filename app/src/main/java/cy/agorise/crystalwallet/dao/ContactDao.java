@@ -1,6 +1,7 @@
 package cy.agorise.crystalwallet.dao;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.arch.paging.LivePagedListProvider;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -25,10 +26,10 @@ public interface ContactDao {
     LiveData<List<Contact>> getAll();
 
     @Query("SELECT * FROM contact ORDER BY name ASC")
-    LivePagedListProvider<Integer, Contact>  contactsByName();
+    DataSource.Factory<Integer, Contact>  contactsByName();
 
     @Query("SELECT c.* FROM contact c WHERE c.id IN (SELECT DISTINCT(ca.contact_id) FROM contact_address ca WHERE ca.crypto_net == :cryptoNet) ORDER BY name ASC, email ASC")
-    LivePagedListProvider<Integer, Contact>  contactsByNameAndCryptoNet(String cryptoNet);
+    DataSource.Factory<Integer, Contact>  contactsByNameAndCryptoNet(String cryptoNet);
 
     @Query("SELECT * FROM contact WHERE id = :id")
     LiveData<Contact> getById(long id);

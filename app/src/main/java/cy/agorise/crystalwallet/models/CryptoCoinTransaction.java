@@ -7,7 +7,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 
 import java.util.Date;
 
@@ -157,7 +157,7 @@ public class CryptoCoinTransaction {
     public void setIdCurrency(int idCurrency) { this.idCurrency = idCurrency; }
 
 
-    public static final DiffCallback<CryptoCoinTransaction> DIFF_CALLBACK = new DiffCallback<CryptoCoinTransaction>() {
+    public static final DiffUtil.ItemCallback<CryptoCoinTransaction> DIFF_CALLBACK = new DiffUtil.ItemCallback<CryptoCoinTransaction>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoCoinTransaction oldTransaction, @NonNull CryptoCoinTransaction newTransaction) {

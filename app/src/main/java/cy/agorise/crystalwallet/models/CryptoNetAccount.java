@@ -8,7 +8,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
+
 
 import cy.agorise.crystalwallet.enums.CryptoNet;
 
@@ -111,7 +112,7 @@ public class CryptoNetAccount {
         return this.getName();
     }
 
-    public static final DiffCallback<CryptoNetAccount> DIFF_CALLBACK = new DiffCallback<CryptoNetAccount>() {
+    public static final DiffUtil.ItemCallback<CryptoNetAccount> DIFF_CALLBACK = new DiffUtil.ItemCallback<CryptoNetAccount>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull CryptoNetAccount oldAccount, @NonNull CryptoNetAccount newAccount) {

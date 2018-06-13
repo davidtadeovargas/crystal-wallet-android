@@ -97,7 +97,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                             @Override
                             public void onChanged(@Nullable List<ContactAddress> contactAddresses) {
                                 contactAddressList = contactAddresses;
-                                listAdapter.setList(contactAddressList);
+                                listAdapter.submitList(contactAddressList);
                                 listAdapter.notifyDataSetChanged();
                             }
                         });
@@ -113,7 +113,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
             });
         } else {
             contactAddressList = new ArrayList<ContactAddress>();
-            listAdapter.setList(contactAddressList);
+            listAdapter.submitList(contactAddressList);
             createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName,etEmail);
             createContactValidator.setListener(this);
 

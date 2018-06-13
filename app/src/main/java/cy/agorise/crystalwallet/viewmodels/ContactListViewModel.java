@@ -3,6 +3,7 @@ package cy.agorise.crystalwallet.viewmodels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
@@ -22,33 +23,33 @@ public class ContactListViewModel extends AndroidViewModel {
     public ContactListViewModel(Application application) {
         super(application);
         this.db = CrystalDatabase.getAppDatabase(application.getApplicationContext());
-        contactList = this.db.contactDao().contactsByName().create(0,
+        contactList = new LivePagedListBuilder(this.db.contactDao().contactsByName(),
                 new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
                         .setPageSize(10)
                         .setPrefetchDistance(10)
                         .build()
-        );
+        ).build();
     }
 
     public void init(){
-        contactList = this.db.contactDao().contactsByName().create(0,
+        contactList = new LivePagedListBuilder(this.db.contactDao().contactsByName(),
                 new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
                         .setPageSize(10)
                         .setPrefetchDistance(10)
                         .build()
-        );
+        ).build();
     }
 
     public void init(CryptoNet cryptoNet){
-        contactList = this.db.contactDao().contactsByNameAndCryptoNet(cryptoNet.name()).create(0,
+        contactList = new LivePagedListBuilder(this.db.contactDao().contactsByNameAndCryptoNet(cryptoNet.name()),
                 new PagedList.Config.Builder()
                         .setEnablePlaceholders(true)
                         .setPageSize(10)
                         .setPrefetchDistance(10)
                         .build()
-        );
+        ).build();
     }
 
     public LiveData<PagedList<Contact>> getContactList(){

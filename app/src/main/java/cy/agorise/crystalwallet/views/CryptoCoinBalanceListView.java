@@ -93,7 +93,7 @@ public class CryptoCoinBalanceListView extends RelativeLayout {
         //sets the data of the list adapter
         if (data != null) {
             this.listAdapter.setCryptoNetBalanceViewHolder(cryptoNetBalanceViewHolder);
-            this.listAdapter.setList(data);
+            this.listAdapter.submitList(data);
         }
     }
 

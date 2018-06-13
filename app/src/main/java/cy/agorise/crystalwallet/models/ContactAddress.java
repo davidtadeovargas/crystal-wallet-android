@@ -6,7 +6,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.support.v7.recyclerview.extensions.DiffCallback;
+import android.support.v7.util.DiffUtil;
 
 import cy.agorise.crystalwallet.enums.CryptoNet;
 
@@ -72,7 +72,7 @@ public class ContactAddress {
         this.mAddress = address;
     }
 
-   public static final DiffCallback<ContactAddress> DIFF_CALLBACK = new DiffCallback<ContactAddress>() {
+   public static final DiffUtil.ItemCallback<ContactAddress> DIFF_CALLBACK = new DiffUtil.ItemCallback<ContactAddress>() {
         @Override
         public boolean areItemsTheSame(
                 @NonNull ContactAddress oldContactAddress, @NonNull ContactAddress newContactAddress) {
