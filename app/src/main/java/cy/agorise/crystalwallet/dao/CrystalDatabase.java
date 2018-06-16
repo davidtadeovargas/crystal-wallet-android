@@ -10,6 +10,7 @@ import android.content.Context;
 
 import cy.agorise.crystalwallet.dao.converters.Converters;
 import cy.agorise.crystalwallet.models.AccountSeed;
+import cy.agorise.crystalwallet.models.BitsharesAccountNameCache;
 import cy.agorise.crystalwallet.models.BitsharesAssetInfo;
 import cy.agorise.crystalwallet.models.Contact;
 import cy.agorise.crystalwallet.models.ContactAddress;
@@ -36,9 +37,10 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         CryptoCoinBalance.class,
         GrapheneAccountInfo.class,
         BitsharesAssetInfo.class,
+        BitsharesAccountNameCache.class,
         CryptoCurrencyEquivalence.class,
         GeneralSetting.class
-}, version = 3)
+}, version = 4)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
@@ -62,6 +64,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
                             CrystalDatabase.class, "CrystalWallet.db")
                             .allowMainThreadQueries()
                             .addMigrations(MIGRATION_2_3)
+                            .addMigrations(MIGRATION_3_4)
                             .build();
         }
         return instance;
@@ -71,6 +74,20 @@ public abstract class CrystalDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE graphene_account ADD COLUMN upgraded_to_ltm INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE bitshares_account_name_cache ("
+                    +"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                    +"account_id TEXT UNIQUE NOT NULL,"
+                    +"name TEXT)");
+
+            database.execSQL("CREATE UNIQUE INDEX index_bitshares_account_name_cache_account_id ON bitshares_account_name_cache (account_id)");
+
+
         }
     };
 }
