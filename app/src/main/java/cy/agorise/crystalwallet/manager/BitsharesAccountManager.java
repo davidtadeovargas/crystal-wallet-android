@@ -1,6 +1,5 @@
 package cy.agorise.crystalwallet.manager;
 
-import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
@@ -18,9 +17,9 @@ import cy.agorise.crystalwallet.apigenerator.ApiRequest;
 import cy.agorise.crystalwallet.apigenerator.ApiRequestListener;
 import cy.agorise.crystalwallet.apigenerator.BitsharesFaucetApiGenerator;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
-import cy.agorise.crystalwallet.apigenerator.grapheneoperation.AccountUpgradeOperation;
 import cy.agorise.crystalwallet.apigenerator.grapheneoperation.AccountUpgradeOperationBuilder;
 import cy.agorise.crystalwallet.application.constant.BitsharesConstant;
+import cy.agorise.crystalwallet.models.BitsharesAccountNameCache;
 import cy.agorise.crystalwallet.models.seed.BIP39;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetEquivalentRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequest;
@@ -389,56 +388,87 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         }
     }
 
+    /**
+     * Broadcast a send asset request, the idAsset is already fetched
+     * @param sendRequest The petition for transfer
+     * @param idAsset The Bitshares Asset's id
+     */
     private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest , final String idAsset){
         final Asset feeAsset = new Asset(idAsset);
         final UserAccount fromUserAccount =new UserAccount(sendRequest.getSourceAccount().getAccountId());
 
-        //TODO cached to accounts
-        this.getAccountInfoByName(sendRequest.getToAccount(), new ManagerRequest() {
+        final CrystalDatabase db = CrystalDatabase.getAppDatabase(sendRequest.getContext());
+        BitsharesAccountNameCache cacheAccount = db.bitsharesAccountNameCacheDao().getByAccountName(sendRequest.getToAccount());
+        if(cacheAccount == null) {
+            this.getAccountInfoByName(sendRequest.getToAccount(), new ManagerRequest() {
 
-            @Override
-            public void success(Object answer) {
-                GrapheneAccount toUserGrapheneAccount = (GrapheneAccount) answer;
-                UserAccount toUserAccount = new UserAccount(toUserGrapheneAccount.getAccountId());
-                TransferOperationBuilder builder = new TransferOperationBuilder()
-                        .setSource(fromUserAccount)
-                        .setDestination(toUserAccount)
-                        .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(idAsset)))
-                        .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
-                if(sendRequest.getMemo() != null) {
-                    //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
-                    //TODO memo
-                    System.out.println("transaction has memo");
+                @Override
+                public void success(Object answer) {
+                    GrapheneAccount toUserGrapheneAccount = (GrapheneAccount) answer;
+                    UserAccount toUserAccount = new UserAccount(toUserGrapheneAccount.getAccountId());
+                    try {
+                        BitsharesAccountNameCache cacheAccount = new BitsharesAccountNameCache();
+                        cacheAccount.setName(sendRequest.getToAccount());
+                        cacheAccount.setAccountId(toUserAccount.getObjectId());
+                        db.bitsharesAccountNameCacheDao().insertBitsharesAccountNameCache(cacheAccount);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    validateSendRequest(sendRequest,fromUserAccount,toUserAccount,feeAsset,idAsset);
                 }
-                ArrayList<BaseOperation> operationList = new ArrayList<>();
-                operationList.add(builder.build());
 
-                ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
+                @Override
+                public void fail() {
+                    sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.NO_TO_USER_INFO);
+                }
+            });
+        }else {
+            UserAccount toUserAccount = new UserAccount(cacheAccount.getAccountId());
+            this.validateSendRequest(sendRequest,fromUserAccount,toUserAccount,feeAsset,idAsset);
+        }
+    }
 
-                Transaction transaction = new Transaction(privateKey, null, operationList);
-                transaction.setChainId(CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
+    /**
+     * Broadcast a transaction request
+     * @param sendRequest The petition for transfer operation
+     * @param fromUserAccount The source account
+     * @param toUserAccount The receiver account
+     * @param feeAsset The Fee Asset
+     * @param idAsset The id of the asset to be used on the operation
+     */
+    private void validateSendRequest(final ValidateBitsharesSendRequest sendRequest, UserAccount fromUserAccount,
+                                     UserAccount toUserAccount, Asset feeAsset, String idAsset){
+        TransferOperationBuilder builder = new TransferOperationBuilder()
+                .setSource(fromUserAccount)
+                .setDestination(toUserAccount)
+                .setTransferAmount(new AssetAmount(UnsignedLong.valueOf(sendRequest.getAmount()), new Asset(idAsset)))
+                .setFee(new AssetAmount(UnsignedLong.valueOf(0), feeAsset));
+        if (sendRequest.getMemo() != null) {
+            //builder.setMemo(new Memo(fromUserAccount,toUserAccount,0,sendRequest.getMemo().getBytes()));
+            //TODO memo
+            System.out.println("transaction has memo");
+        }
+        ArrayList<BaseOperation> operationList = new ArrayList<>();
+        operationList.add(builder.build());
 
-                ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
-                    @Override
-                    public void success(Object answer, int idPetition) {
-                        sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.SUCCEEDED);
-                    }
+        ECKey privateKey = sendRequest.getSourceAccount().getActiveKey(sendRequest.getContext());
 
-                    @Override
-                    public void fail(int idPetition) {
-                        sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.PETITION_FAILED);
-                    }
-                });
+        Transaction transaction = new Transaction(privateKey, null, operationList);
+        transaction.setChainId(CryptoNetManager.getChaindId(CryptoNet.BITSHARES));
 
-                GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
+        ApiRequest transactionRequest = new ApiRequest(0, new ApiRequestListener() {
+            @Override
+            public void success(Object answer, int idPetition) {
+                sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.SUCCEEDED);
             }
 
             @Override
-            public void fail() {
-                sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.NO_TO_USER_INFO);
+            public void fail(int idPetition) {
+                sendRequest.setStatus(ValidateBitsharesSendRequest.StatusCode.PETITION_FAILED);
             }
         });
 
+        GrapheneApiGenerator.broadcastTransaction(transaction, feeAsset, transactionRequest);
     }
 
     /**
@@ -667,7 +697,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             GrapheneApiGenerator.getEquivalentValue(fromAsset.getBitsharesId(),toAsset.getBitsharesId(), getEquivalentRequest);
         }else{
             //TODO error
-            System.out.println("Equivalen Value error ");
+            System.out.println("Equivalent Value error ");
         }
     }
 
