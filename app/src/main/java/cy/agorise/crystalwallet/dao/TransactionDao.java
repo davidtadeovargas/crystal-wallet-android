@@ -20,9 +20,10 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 @Dao
 public interface TransactionDao {
 
-    static final String transactionsQuery = "SELECT cct.*, cna.name AS user_account_name, c.name AS contact_name FROM crypto_coin_transaction cct " +
+    static final String transactionsQuery = "SELECT cct.*, cna.name AS user_account_name, c.name AS contact_name, banc.name AS bitshares_account_name FROM crypto_coin_transaction cct " +
             "LEFT JOIN crypto_net_account cna ON cct.account_id = cna.id " +
             "LEFT JOIN contact c ON c.id =  (SELECT ca.contact_id FROM contact_address ca WHERE ca.address LIKE (CASE is_input WHEN 1 THEN cct.\"from\" ELSE cct.\"to\" END) LIMIT 1) " +
+            "LEFT JOIN bitshares_account_name_cache banc ON banc.account_id =  (CASE is_input WHEN 1 THEN cct.\"from\" ELSE cct.\"to\" END) " +
             "WHERE user_account_name LIKE '%'||:search||'%' OR contact_name LIKE '%'||:search||'%' OR cct.\"from\" LIKE '%'||:search||'%' OR cct.\"to\" LIKE '%'||:search||'%'";
 
     @Query("SELECT * FROM crypto_coin_transaction")

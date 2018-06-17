@@ -29,12 +29,19 @@ public class CryptoCoinTransactionExtended {
     @ColumnInfo(name="contact_name")
     public String contactName;
 
+    @ColumnInfo(name="bitshares_account_name")
+    public String bitsharesAccountName;
+
     public String getUserAccountName(){
         return this.userAccountName;
     }
 
     public String getContactName(){
         return this.contactName;
+    }
+
+    public String getBitsharesAccountName(){
+        return this.bitsharesAccountName;
     }
 
     public String getFrom() { return this.cryptoCoinTransaction.getFrom(); }

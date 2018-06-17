@@ -156,12 +156,16 @@ public class TransactionViewHolder extends RecyclerView.ViewHolder {
 
                         if ((transaction.getContactName() != null)&&(!transaction.equals(""))){
                             tvFrom.setText(transaction.getContactName());
+                        } else if ((transaction.getBitsharesAccountName() != null)&&(!transaction.equals(""))){
+                            tvFrom.setText(transaction.getBitsharesAccountName());
                         }
                     } else {
                         tvFrom.setText(transaction.getUserAccountName());
 
                         if ((transaction.getContactName() != null)&&(!transaction.equals(""))){
                             tvTo.setText(transaction.getContactName());
+                        } else if ((transaction.getBitsharesAccountName() != null)&&(!transaction.equals(""))){
+                            tvTo.setText(transaction.getBitsharesAccountName());
                         }
                     }
             //    }

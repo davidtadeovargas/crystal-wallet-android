@@ -54,6 +54,7 @@ public abstract class CrystalDatabase extends RoomDatabase {
     public abstract CryptoCoinBalanceDao cryptoCoinBalanceDao();
     public abstract CryptoCurrencyDao cryptoCurrencyDao();
     public abstract BitsharesAssetDao bitsharesAssetDao();
+    public abstract BitsharesAccountNameCacheDao bitsharesAccountNameCacheDao();
     public abstract CryptoCurrencyEquivalenceDao cryptoCurrencyEquivalenceDao();
     public abstract GeneralSettingDao generalSettingDao();
 
