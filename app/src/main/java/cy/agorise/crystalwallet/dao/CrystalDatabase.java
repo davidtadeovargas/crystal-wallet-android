@@ -40,7 +40,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
         BitsharesAccountNameCache.class,
         CryptoCurrencyEquivalence.class,
         GeneralSetting.class
-}, version = 4)
+}, version = 4, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class CrystalDatabase extends RoomDatabase {
 
