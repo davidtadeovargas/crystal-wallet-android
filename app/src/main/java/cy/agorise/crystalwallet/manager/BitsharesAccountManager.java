@@ -93,7 +93,7 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
 
                         @Override
                         public void fail() {
-                            //TODO get account data fail
+                            request.fail();
                         }
                     });
 

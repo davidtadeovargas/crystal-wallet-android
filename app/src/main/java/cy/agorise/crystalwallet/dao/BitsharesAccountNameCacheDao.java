@@ -24,7 +24,7 @@ public interface BitsharesAccountNameCacheDao {
     @Query("SELECT * FROM bitshares_account_name_cache WHERE account_id = :account_id")
     BitsharesAccountNameCache getByAccountId(String account_id);
 
-    @Query("SELECT * FROM bitshares_account_name_cache WHERE account_name = :name")
+    @Query("SELECT * FROM bitshares_account_name_cache WHERE name = :account_name")
     BitsharesAccountNameCache getByAccountName(String account_name);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
