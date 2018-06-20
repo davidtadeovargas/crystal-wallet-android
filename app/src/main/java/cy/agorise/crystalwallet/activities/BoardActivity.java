@@ -5,15 +5,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.FileObserver;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -30,9 +26,9 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import com.sjaramillo10.animatedtablayout.AnimatedTabLayout;
+
 import java.io.File;
-import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +48,9 @@ import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
  */
 
 public class BoardActivity  extends AppCompatActivity {
+
+    @BindView(R.id.tabLayout)
+    public TabLayout tabLayout;
 
     @BindView(R.id.pager)
     public ViewPager mPager;
@@ -123,11 +122,7 @@ public class BoardActivity  extends AppCompatActivity {
 
         boardAdapter = new BoardPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(boardAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-
-        mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
+        tabLayout.setupWithViewPager(mPager);
 
         fabReceive.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,6 +289,9 @@ public class BoardActivity  extends AppCompatActivity {
             super(fm);
         }
 
+        // Titles of the tabs
+        int[] tabTitles = {R.string.balances, R.string.transactions, R.string.contacts};
+
         @Override
         public Fragment getItem(int position) {
             switch (position){
@@ -307,6 +305,11 @@ public class BoardActivity  extends AppCompatActivity {
 
 
             return null; //new OnConstructionFragment();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return getString(tabTitles[position]);
         }
 
         @Override
