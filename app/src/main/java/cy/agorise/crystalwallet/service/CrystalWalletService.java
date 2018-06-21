@@ -15,7 +15,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.manager.FileBackupManager;
+import cy.agorise.crystalwallet.models.BitsharesAccountNameCache;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
@@ -29,6 +31,7 @@ import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.models.GrapheneAccountInfo;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequest;
 import cy.agorise.crystalwallet.requestmanagers.FileServiceRequests;
+import cy.agorise.crystalwallet.requestmanagers.GetBitsharesAccountNameCacheRequest;
 
 /**
  * Created by Henry Varona on 3/10/2017.
@@ -41,6 +44,7 @@ public class CrystalWalletService extends LifecycleService {
     private ServiceHandler mServiceHandler;
     private BitsharesAccountManager  bitsharesAccountManager;
     private Thread LoadAccountTransactionsThread;
+    private Thread LoadBitsharesAccountNamesThread;
     private EquivalencesThread LoadEquivalencesThread;
     private boolean keepLoadingAccountTransactions;
     private boolean keepLoadingEquivalences;
@@ -62,6 +66,23 @@ public class CrystalWalletService extends LifecycleService {
             }
             stopSelf(msg.arg1);
         }
+    }
+
+    public void loadBitsharesAccountNames(){
+        final LifecycleService service = this;
+        final LiveData<List<BitsharesAccountNameCache>> uncachedBitsharesAccountNames =
+                CrystalDatabase.getAppDatabase(service).bitsharesAccountNameCacheDao().getUncachedBitsharesAccountName();
+
+        uncachedBitsharesAccountNames.observe(service, new Observer<List<BitsharesAccountNameCache>>() {
+            @Override
+            public void onChanged(@Nullable List<BitsharesAccountNameCache> bitsharesAccountNameCacheList) {
+                for (BitsharesAccountNameCache nextAccountId : bitsharesAccountNameCacheList){
+                    GetBitsharesAccountNameCacheRequest request = new GetBitsharesAccountNameCacheRequest(service, nextAccountId.getAccountId());
+
+                    CryptoNetInfoRequests.getInstance().addRequest(request);
+                }
+            }
+        });
     }
 
     public void loadEquivalentsValues(){
@@ -189,16 +210,16 @@ public class CrystalWalletService extends LifecycleService {
             };
             LoadAccountTransactionsThread.start();
         }
-
-        //if (LoadEquivalencesThread == null) {
-        //    LoadEquivalencesThread = new EquivalencesThread() {
-        //        @Override
-        //        public void run() {
-                    loadEquivalentsValues();
-        //        }
-        //    };
-        //    LoadEquivalencesThread.start();
-       // }
+        if (LoadBitsharesAccountNamesThread == null) {
+            LoadBitsharesAccountNamesThread = new Thread() {
+                @Override
+                public void run() {
+                    loadBitsharesAccountNames();
+                }
+            };
+            LoadBitsharesAccountNamesThread.start();
+        }
+        loadEquivalentsValues();
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
