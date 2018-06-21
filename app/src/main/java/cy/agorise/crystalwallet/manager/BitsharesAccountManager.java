@@ -24,6 +24,7 @@ import cy.agorise.crystalwallet.models.seed.BIP39;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetEquivalentRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequest;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestsListener;
+import cy.agorise.crystalwallet.requestmanagers.GetBitsharesAccountNameCacheRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateBitsharesLTMUpgradeRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateBitsharesSendRequest;
 import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
@@ -231,7 +232,10 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
             this.validateCreateAccount((ValidateCreateBitsharesAccountRequest) request);
         }else if (request instanceof ValidateBitsharesLTMUpgradeRequest){
             this.validateLTMAccountUpgrade((ValidateBitsharesLTMUpgradeRequest) request);
+        }else if (request instanceof GetBitsharesAccountNameCacheRequest){
+            this.getBitsharesAccountNameCacheRequest((GetBitsharesAccountNameCacheRequest) request);
         }else{
+
             //TODO not implemented
             System.out.println("Error request not implemented " + request.getClass().getName());
         }
@@ -506,6 +510,32 @@ public class BitsharesAccountManager implements CryptoAccountManager, CryptoNetI
         });
 
         GrapheneApiGenerator.broadcastTransaction(transaction,feeAsset, transactionRequest);
+    }
+
+    private void getBitsharesAccountNameCacheRequest(final GetBitsharesAccountNameCacheRequest request){
+        final CrystalDatabase db = CrystalDatabase.getAppDatabase(request.getContext());
+        BitsharesAccountNameCache cacheAccount = db.bitsharesAccountNameCacheDao().getByAccountId(request.getAccountId());
+        if(cacheAccount == null) {
+            this.getAccountInfoById(request.getAccountId(), new ManagerRequest() {
+
+                @Override
+                public void success(Object answer) {
+                    GrapheneAccount userGrapheneAccount = (GrapheneAccount) answer;
+                    BitsharesAccountNameCache cacheAccount = new BitsharesAccountNameCache();
+                    cacheAccount.setName(userGrapheneAccount.getName());
+                    cacheAccount.setAccountId(request.getAccountId());
+                    db.bitsharesAccountNameCacheDao().insertBitsharesAccountNameCache(cacheAccount);
+                    request.setAccountName(userGrapheneAccount.getName());
+                }
+
+                @Override
+                public void fail() {
+                    //TODO error
+                }
+            });
+        }else {
+            request.setAccountName(cacheAccount.getName());
+        }
     }
 
     /**

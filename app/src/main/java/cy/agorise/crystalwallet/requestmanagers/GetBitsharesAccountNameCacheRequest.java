@@ -12,11 +12,13 @@ public class GetBitsharesAccountNameCacheRequest extends CryptoNetInfoRequest {
 
     private String accountId;
     private String accountName;
+    private Context context;
 
     public GetBitsharesAccountNameCacheRequest(Context context, String accountId) {
         super(CryptoCoin.BITSHARES);
         this.accountId = accountId;
         this.accountName = "";
+        this.context = context;
     }
 
     public void setAccountName(String accountName){
@@ -30,5 +32,15 @@ public class GetBitsharesAccountNameCacheRequest extends CryptoNetInfoRequest {
         }
     }
 
+    public Context getContext() {
+        return context;
+    }
 
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
 }
