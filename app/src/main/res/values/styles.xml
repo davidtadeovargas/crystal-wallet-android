@@ -27,20 +27,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:homeAsUpIndicator">@drawable/back_button_image</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
         <item name="android:colorButtonNormal">@color/white</item>
         <item name="android:fontFamily">@font/opensans</item>
         <item name="fontFamily">@font/opensans</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
         <!-- enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
-
-        <!-- specify shared element transitions
-        <item name="android:windowSharedElementEnterTransition">
-            @transition/change_image_transform</item>
-        <item name="android:windowSharedElementExitTransition">
-            @transition/change_image_transform</item> -->
-
     </style>
 
     <style name="ActivityDialog" parent="Theme.AppCompat.Light.NoActionBar">
