@@ -58,7 +58,7 @@
                         android:layout_marginStart="8dp"
                         android:text="@string/settings2"
                         android:textStyle="bold"
-                        android:textColor="@color/gray"
+                        android:textColor="@color/semiTransparentWhite"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
