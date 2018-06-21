@@ -2,7 +2,6 @@ package cy.agorise.crystalwallet.activities;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -14,15 +13,13 @@ import android.view.SurfaceView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sjaramillo10.animatedtablayout.AnimatedTabLayout;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cy.agorise.crystalwallet.BuildConfig;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
-import cy.agorise.crystalwallet.fragments.AccountsSettingsFragment;
 import cy.agorise.crystalwallet.fragments.BackupsSettingsFragment;
-import cy.agorise.crystalwallet.fragments.BalanceFragment;
 import cy.agorise.crystalwallet.fragments.GeneralSettingsFragment;
 import cy.agorise.crystalwallet.fragments.SecuritySettingsFragment;
 
@@ -35,6 +32,9 @@ public class SettingsActivity extends AppCompatActivity{
 
     @BindView(R.id.ivGoBack)
     public ImageView ivGoBack;
+
+    @BindView(R.id.tabLayout)
+    public AnimatedTabLayout tabLayout;
 
     @BindView(R.id.pager)
     public ViewPager mPager;
@@ -80,17 +80,16 @@ public class SettingsActivity extends AppCompatActivity{
 
         settingsPagerAdapter = new SettingsPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(settingsPagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-
-        mPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mPager));
+        tabLayout.setupWithViewPager(mPager);
     }
 
     private class SettingsPagerAdapter extends FragmentStatePagerAdapter {
         SettingsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
+        int[] tabTitles = {R.string.general, R.string.security, R.string.backups,
+                R.string.accounts};
 
         @Override
         public Fragment getItem(int position) {
@@ -107,6 +106,11 @@ public class SettingsActivity extends AppCompatActivity{
 
 
             return null; //new OnConstructionFragment();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return getString(tabTitles[position]);
         }
 
         @Override

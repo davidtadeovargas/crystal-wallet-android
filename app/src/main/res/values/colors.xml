@@ -10,6 +10,7 @@
     <color name="pink">#f0006b</color>
     <color name="transparent">#00ffffff</color>
     <color name="colorPrimaryTransparent">#330099d6</color>
+    <color name="semiTransparentWhite">#8fff</color>
 
     <color name="green">#147b00</color>
 
