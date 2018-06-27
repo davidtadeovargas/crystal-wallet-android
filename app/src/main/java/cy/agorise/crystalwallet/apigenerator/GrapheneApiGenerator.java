@@ -413,10 +413,18 @@ public abstract class GrapheneApiGenerator {
         currentBitsharesListener.put(accountId,balanceListener);
         bitsharesSubscriptionHub.addSubscriptionListener(balanceListener);
 
-        if(!subscriptionThread.isConnected()){
-            subscriptionThread.start();
+        if(!subscriptionThread.isConnected() && !subscriptionThread.isAlive()){
+            try {
+                subscriptionThread.start();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }else if(!bitsharesSubscriptionHub.isSubscribed()){
-            bitsharesSubscriptionHub.resubscribe();
+            try {
+                bitsharesSubscriptionHub.resubscribe();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
         }
     }
