@@ -302,6 +302,15 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
             Log.e("ReceiveFragment","Amount casting error.");
         }
 
+        CryptoNetAccount toAccountSelected = (CryptoNetAccount) spTo.getSelectedItem();
+
+        /*
+         * this is only for graphene accounts.
+         *
+         **/
+        GrapheneAccount grapheneAccountSelected = new GrapheneAccount(toAccountSelected);
+        grapheneAccountSelected.loadInfo(db.grapheneAccountInfoDao().getByAccountId(toAccountSelected.getId()));
+
 
         this.invoiceItems.clear();
         this.invoiceItems.add(
@@ -311,7 +320,7 @@ public class ReceiveTransactionFragment extends DialogFragment implements UIVali
         LineItem items[] = new LineItem[this.invoiceItems.size()];
         items = this.invoiceItems.toArray(items);
         this.invoice.setLineItems(items);
-        this.invoice.setTo(this.grapheneAccount.getName());
+        this.invoice.setTo(grapheneAccountSelected.getName());
         this.invoice.setCurrency(this.cryptoCurrency.getName());
 
         try {

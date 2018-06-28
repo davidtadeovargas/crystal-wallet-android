@@ -311,13 +311,25 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @OnClick(R.id.btnSend)
     public void sendTransaction(){
         if (this.sendTransactionValidator.isValid()) {
+            CryptoNetAccount fromAccountSelected = (CryptoNetAccount) spFrom.getSelectedItem();
+
+
+            /*
+             * this is only for graphene accounts.
+             *
+             **/
+            GrapheneAccount grapheneAccountSelected = new GrapheneAccount(fromAccountSelected);
+            grapheneAccountSelected.loadInfo(db.grapheneAccountInfoDao().getByAccountId(fromAccountSelected.getId()));
+
+
+
             //TODO convert the amount to long type using the precision of the currency
             Long amountFromEditText = Long.parseLong(this.etAmount.getText().toString());
             Long amount = amountFromEditText*Math.round(Math.pow(10,((CryptoCurrency)spAsset.getSelectedItem()).getPrecision()));
 
             final ValidateBitsharesSendRequest sendRequest = new ValidateBitsharesSendRequest(
                 this.getContext(),
-                this.grapheneAccount,
+                grapheneAccountSelected,
                 this.etTo.getText().toString(),
                 amount,
                 ((CryptoCurrency)spAsset.getSelectedItem()).getName(),

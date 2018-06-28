@@ -16,6 +16,7 @@ import android.os.FileObserver;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
@@ -59,6 +60,9 @@ public class AccountsActivity extends AppCompatActivity {
 
     @BindView(R.id.user_img)
     CircleImageView userImg;
+
+    @BindView(R.id.fabAddAccount)
+    FloatingActionButton fabAddAccount;
 
     static final int NEW_PICTURE_REQUEST_CODE = 1;
 
@@ -123,6 +127,12 @@ public class AccountsActivity extends AppCompatActivity {
         ImagePicker.create(this)
                 .single()
                 .start();
+    }
+
+    @OnClick(R.id.fabAddAccount)
+    public void goToAddAccount(){
+        Intent intent = new Intent(this, CreateSeedActivity.class);
+        startActivity(intent);
     }
 
     @Override
