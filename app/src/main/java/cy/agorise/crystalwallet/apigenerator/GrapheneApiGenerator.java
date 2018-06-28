@@ -419,7 +419,7 @@ public abstract class GrapheneApiGenerator {
             }catch(Exception e){
                 e.printStackTrace();
             }
-        }else if(!bitsharesSubscriptionHub.isSubscribed()){
+        }else if(bitsharesSubscriptionHub!= null && !bitsharesSubscriptionHub.isSubscribed()){
             try {
                 bitsharesSubscriptionHub.resubscribe();
             }catch(Exception e){
