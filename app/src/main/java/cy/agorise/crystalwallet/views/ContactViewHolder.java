@@ -78,7 +78,8 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
 
                 Picasso.with(this.context)
                         .load(gravatarUrl)
-                        .transform(new CircleTransformation())
+                        .placeholder(R.drawable.avatar_placeholder)
+                        //.transform(new CircleTransformation())
                         .into(ivThumbnail);
             }
 
