@@ -1,111 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="5dp">
+    android:layout_gravity="center"
+    card_view:cardElevation="4dp"
+    card_view:cardCornerRadius="4dp"
+    android:layout_margin="4dp">
 
-    <RelativeLayout
-        android:id="@+id/rlTransactionItem"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/transaction_list_item_background">
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/firstVerticalGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/secondVerticalGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/thirdVerticalGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/fourthVerticalGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/centeredVerticalGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.50"/>
+
+        <View
+            android:id="@+id/vPaymentDirection"
+            android:layout_width="8dp"
+            android:layout_height="0dp"
+            android:background="@color/receiveAmount"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
-            android:id="@+id/fromText"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvFrom"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toStartOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:inputType="text"
-            android:text="from" />
+            android:layout_marginTop="16dp"
+            android:maxLines="1"
+            tools:text="denzel-washington"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/firstVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/secondVerticalGuideline"/>
 
         <ImageView
-            android:id="@+id/ivArrowFromTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:tint="@color/black"
-            app:srcCompat="@drawable/ic_arrow_forward" />
+            android:id="@+id/ivDirectionArrow"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_arrow_forward_receive"
+            app:layout_constraintTop_toTopOf="@id/tvFrom"
+            app:layout_constraintBottom_toBottomOf="@id/tvFrom"
+            app:layout_constraintStart_toEndOf="@id/secondVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/thirdVerticalGuideline"
+            tools:ignore="ContentDescription" />
 
         <TextView
-            android:id="@+id/toText"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTo"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_toEndOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:inputType="text"
-            android:text="to"
-            android:textAlignment="textEnd" />
-
-        <Space
-            android:id="@+id/sAfterFromTo"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fromText"/>
-
-        <TextView
-            android:id="@+id/tvTransactionDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/sAfterFromTo"
-            android:layout_marginLeft="5dp"
-            android:layout_toStartOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:text="02 Oct"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvTransactionHour"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvTransactionDate"
-            android:layout_marginLeft="5dp"
-            android:layout_toStartOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:text="15:01:18 CET" />
-
-        <TextView
-            android:id="@+id/tvAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignWithParentIfMissing="false"
-            android:layout_below="@id/sAfterFromTo"
-            android:layout_toEndOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:inputType="text"
-            android:text="+ 1 BTS"
+            android:maxLines="1"
+            tools:text="joes-grocery-13"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="@color/gray"
             android:textAlignment="textEnd"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            app:layout_constraintTop_toTopOf="@id/tvFrom"
+            app:layout_constraintStart_toEndOf="@id/thirdVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/fourthVerticalGuideline"/>
+
+        <View
+            android:id="@+id/vSeparator"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/lightGray"
+            app:layout_constraintTop_toBottomOf="@id/tvFrom"
+            app:layout_constraintStart_toEndOf="@id/firstVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/fourthVerticalGuideline" />
+
+        <LinearLayout
+            android:id="@+id/llMemo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            card_view:layout_constraintTop_toBottomOf="@id/vSeparator"
+            card_view:layout_constraintStart_toEndOf="@id/firstVerticalGuideline"
+            card_view:layout_constraintEnd_toStartOf="@id/fourthVerticalGuideline">
+
+            <TextView
+                android:id="@+id/tvMemo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:maxLines="2"
+                android:textAppearance="@android:style/TextAppearance.Material.Caption"
+                tools:text="Here is a memo if exists and can span up to 2 lines, if it get lager we will have problems with the rendering"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/lightGray"/>
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tvEquivalent"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvDate"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignWithParentIfMissing="false"
-            android:layout_below="@id/tvAmount"
-            android:layout_toEndOf="@+id/ivArrowFromTo"
-            android:ems="10"
-            android:inputType="text"
-            android:text="0.005€"
-            android:textAlignment="textEnd" />
+            android:layout_marginTop="12dp"
+            android:maxLines="1"
+            tools:text="02 Oct"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.Body1"
+            app:layout_constraintTop_toBottomOf="@id/llMemo"
+            app:layout_constraintStart_toEndOf="@id/firstVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/centeredVerticalGuideline"/>
 
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            tools:text="15:01:18 CET"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toBottomOf="@+id/tvDate"
+            app:layout_constraintStart_toEndOf="@id/firstVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/centeredVerticalGuideline"/>
 
+        <TextView
+            android:id="@+id/tvCryptoAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            tools:text="1234567.1234 BTS"
+            android:textAppearance="@style/TextAppearance.Body1"
+            android:textStyle="bold"
+            android:textAlignment="textEnd"
+            app:layout_constraintTop_toTopOf="@id/tvDate"
+            app:layout_constraintStart_toEndOf="@id/centeredVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/fourthVerticalGuideline" />
 
-    </RelativeLayout>
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvFiatEquivalent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:maxLines="1"
+            tools:text="4119.75 $"
+            android:textAppearance="@style/TextAppearance.Body2"
+            android:textColor="@color/gray"
+            android:textAlignment="textEnd"
+            app:layout_constraintTop_toBottomOf="@+id/tvCryptoAmount"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/centeredVerticalGuideline"
+            app:layout_constraintEnd_toStartOf="@id/fourthVerticalGuideline"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

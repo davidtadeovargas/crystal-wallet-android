@@ -1,46 +1,14 @@
 <resources>
-
-    <style name="stylishDialog" parent="android:Theme.Dialog">
-        <item name="android:windowBackground">@color/whiteColor</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
-
-    </style>
-
-    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <item name="android:dialogTheme">@style/CustomDialog</item>
-    </style>
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:homeAsUpIndicator">@drawable/back_button_image</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
         <item name="android:colorButtonNormal">@color/white</item>
         <item name="android:fontFamily">@font/opensans</item>
-        <item name="fontFamily">@font/opensans</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
         <!-- enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
-
-        <!-- specify shared element transitions
-        <item name="android:windowSharedElementEnterTransition">
-            @transition/change_image_transform</item>
-        <item name="android:windowSharedElementExitTransition">
-            @transition/change_image_transform</item> -->
-
     </style>
 
     <style name="ActivityDialog" parent="Theme.AppCompat.Light.NoActionBar">
@@ -56,28 +24,17 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" >
-    </style>
-
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="splashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:background">@color/white</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
 
     <style name="CustomDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <!-- TODO use pendingTransition instead -->
     <style name="SendTransactionTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowAnimationStyle">@style/SendTransactionAnimation.Window</item>
     </style>
-
     <style name="SendTransactionAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/send_transaction_in</item>
         <item name="android:windowExitAnimation">@anim/send_transaction_out</item>
@@ -86,7 +43,6 @@
     <style name="ReceiveTransactionTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowAnimationStyle">@style/ReceiveTransactionAnimation.Window</item>
     </style>
-
     <style name="ReceiveTransactionAnimation.Window" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/receive_transaction_in</item>
         <item name="android:windowExitAnimation">@anim/receive_transaction_out</item>
@@ -97,6 +53,7 @@
         <item name="android:windowExitAnimation">@anim/accounts_out</item>
     </style>
 
+    <!-- TODO Remove this style and use the other button styles -->
     <style name="Widget.Button" parent="android:Widget.Button">
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -119,4 +76,10 @@
         <item name="colorButtonNormal">@color/gray</item>
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
     </style>
+
+    <!-- Text styles -->
+    <style name="TextAppearance.Body1" parent="Base.TextAppearance.AppCompat.Body1" >
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.Body2" parent="Base.TextAppearance.AppCompat.Body2" />
 </resources>

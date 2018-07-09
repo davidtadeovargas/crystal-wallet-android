@@ -25,7 +25,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@color/white"
-                android:src="@drawable/share"
+                android:src="@drawable/share_icon"
                 android:text="@string/email_pdf" />
 
             <ProgressBar

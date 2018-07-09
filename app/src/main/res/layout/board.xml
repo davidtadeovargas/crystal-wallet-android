@@ -65,7 +65,7 @@
                         android:layout_width="?attr/actionBarSize"
                         android:layout_height="?attr/actionBarSize"
                         android:layout_marginEnd="32dp"
-                        android:src="@drawable/gravtr"
+                        android:src="@drawable/avatar_placeholder"
                         android:transitionName="gravatarTransition"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
