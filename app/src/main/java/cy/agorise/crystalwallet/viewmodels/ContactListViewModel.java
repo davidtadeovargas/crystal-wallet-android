@@ -32,16 +32,6 @@ public class ContactListViewModel extends AndroidViewModel {
         ).build();
     }
 
-    public void init(){
-        contactList = new LivePagedListBuilder(this.db.contactDao().contactsByName(),
-                new PagedList.Config.Builder()
-                        .setEnablePlaceholders(true)
-                        .setPageSize(10)
-                        .setPrefetchDistance(10)
-                        .build()
-        ).build();
-    }
-
     public void init(CryptoNet cryptoNet){
         contactList = new LivePagedListBuilder(this.db.contactDao().contactsByNameAndCryptoNet(cryptoNet.name()),
                 new PagedList.Config.Builder()

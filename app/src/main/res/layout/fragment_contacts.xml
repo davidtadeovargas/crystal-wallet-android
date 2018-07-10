@@ -4,9 +4,10 @@
     android:layout_height="match_parent"
     tools:context="cy.agorise.crystalwallet.fragments.ContactsFragment">
 
-    <cy.agorise.crystalwallet.views.ContactListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/vContactListView" />
+        tools:listitem="@layout/contact_list_item" />
 
 </FrameLayout>
