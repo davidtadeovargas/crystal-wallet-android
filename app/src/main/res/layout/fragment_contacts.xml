@@ -5,7 +5,7 @@
     tools:context="cy.agorise.crystalwallet.fragments.ContactsFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewContacts"
+        android:id="@+id/rvContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/contact_list_item" />
