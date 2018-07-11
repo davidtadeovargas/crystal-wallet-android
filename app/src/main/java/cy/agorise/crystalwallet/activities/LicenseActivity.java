@@ -37,6 +37,7 @@ public class LicenseActivity extends AppCompatActivity {
         if ((generalSettingLastLicenseRead != null) && (Integer.parseInt(generalSettingLastLicenseRead.getValue()) >= licenseVersion)) {
             Intent intent = new Intent(this, IntroActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -52,6 +53,7 @@ public class LicenseActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, IntroActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @OnClick(R.id.btnDisAgree)
