@@ -7,6 +7,7 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,8 @@ public class ContactsFragment extends Fragment {
     RecyclerView rvContacts;
 
     ContactListAdapter adapter;
+
+    FloatingActionButton fabAddContact;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -55,6 +58,24 @@ public class ContactsFragment extends Fragment {
         rvContacts.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ContactListAdapter();
         rvContacts.setAdapter(adapter);
+
+        fabAddContact = getActivity().findViewById(R.id.fabAddContact);
+
+        // Hides the fab when scrolling down
+        rvContacts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // Scroll down
+                if(dy > 0 && fabAddContact.isShown())
+                    fabAddContact.hide();
+
+                // Scroll up
+                if(dy < 0 && !fabAddContact.isShown())
+                    fabAddContact.show();
+            }
+        });
 
         // Gets contacts LiveData instance from ContactsViewModel
         ContactListViewModel contactListViewModel =

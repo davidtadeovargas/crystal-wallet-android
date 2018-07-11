@@ -26,8 +26,6 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import com.sjaramillo10.animatedtablayout.AnimatedTabLayout;
-
 import java.io.File;
 
 import butterknife.BindView;
