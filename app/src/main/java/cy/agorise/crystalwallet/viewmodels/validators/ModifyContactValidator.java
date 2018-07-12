@@ -13,9 +13,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.EmailVali
 
 public class ModifyContactValidator extends UIValidator {
 
-    public ModifyContactValidator(Context context, Contact contact, EditText nameEdit, EditText emailEdit){
+    public ModifyContactValidator(Context context, Contact contact, EditText nameEdit){
         super(context);
         this.addField(new ContactNameValidationField(nameEdit, contact));
-        this.addField(new EmailValidationField(emailEdit));
     }
 }

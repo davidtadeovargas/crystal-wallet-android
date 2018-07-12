@@ -4,15 +4,14 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,20 +32,14 @@ import cy.agorise.crystalwallet.views.ContactAddressListAdapter;
 
 public class CreateContactActivity extends AppCompatActivity implements UIValidatorListener {
 
-    @BindView(R.id.etName)
-    EditText etName;
-    @BindView(R.id.tvNameError)
-    TextView tvNameError;
-    @BindView(R.id.etEmail)
-    EditText etEmail;
-    @BindView(R.id.tvEmailError)
-    TextView tvEmailError;
+    @BindView(R.id.tilName)
+    TextInputLayout tilName;
+    @BindView(R.id.tietName)
+    TextInputEditText tietName;
     @BindView(R.id.btnCancel)
     Button btnCancel;
     @BindView(R.id.btnCreate)
     Button btnCreate;
-    @BindView(R.id.btnModify)
-    Button btnModify;
     @BindView(R.id.rvContactAddresses)
     RecyclerView rvContactAddresses;
     @BindView(R.id.btnAddAddress)
@@ -58,6 +51,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
     ModifyContactValidator modifyContactValidator;
 
     Contact contact;
+
+    long contactId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +66,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         rvContactAddresses.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         rvContactAddresses.setAdapter(listAdapter);
 
-        long contactId = this.getIntent().getLongExtra("CONTACT_ID",-1);
-
-        btnCreate.setVisibility(View.GONE);
-        btnModify.setVisibility(View.GONE);
+        contactId = getIntent().getLongExtra("CONTACT_ID",-1);
 
         if (contactId >= 0){
             final ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
@@ -88,8 +80,7 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                 public void onChanged(@Nullable Contact contactChanged) {
                     if (contactChanged != null){
                         contact = contactChanged;
-                        etName.setText(contact.getName());
-                        etEmail.setText(contact.getEmail());
+                        tietName.setText(contact.getName());
 
                         LiveData<List<ContactAddress>> contactAddresses = contactViewModel.getContactAddresses();
 
@@ -102,9 +93,10 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                             }
                         });
 
-                        modifyContactValidator = new ModifyContactValidator(thisActivity.getApplicationContext(),contact,etName,etEmail);
+                        modifyContactValidator = new ModifyContactValidator(
+                                thisActivity.getApplicationContext(), contact, tietName);
                         modifyContactValidator.setListener(thisActivity);
-                        btnModify.setVisibility(View.VISIBLE);
+                        btnCreate.setText(R.string.modify);
                     } else {
                         //No contact was found, this will exit the activity
                         finish();
@@ -112,9 +104,9 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
                 }
             });
         } else {
-            contactAddressList = new ArrayList<ContactAddress>();
+            contactAddressList = new ArrayList<>();
             listAdapter.submitList(contactAddressList);
-            createContactValidator = new CreateContactValidator(this.getApplicationContext(),etName,etEmail);
+            createContactValidator = new CreateContactValidator(this.getApplicationContext(),tietName);
             createContactValidator.setListener(this);
 
             btnCreate.setVisibility(View.VISIBLE);
@@ -139,18 +131,11 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         return false;
     }
 
-    @OnTextChanged(value = R.id.etName,
+    @OnTextChanged(value = R.id.tietName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterContactNameChanged(Editable editable) {
+    void afterContactNameChanged() {
         this.validate();
     }
-
-    @OnTextChanged(value = R.id.etEmail,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterEmailChanged(Editable editable) {
-        this.validate();
-    }
-
 
     @OnClick(R.id.btnAddAddress)
     public void addAddress(){
@@ -164,42 +149,43 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         this.finish();
     }
 
-    @OnClick(R.id.btnModify)
-    public void modifyContact(){
-        if (this.modifyContactValidator.isValid()) {
-            this.contact.setName(etName.getText().toString());
-            this.contact.setEmail(etEmail.getText().toString());
-            this.contact.clearAddresses();
-
-            for (ContactAddress contactAddress : contactAddressList){
-                this.contact.addAddress(contactAddress);
-            }
-
-            ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
-            if (contactViewModel.modifyContact(this.contact)){
-                this.finish();
-            } else {
-                this.modifyContactValidator.validate();
-            }
-        }
-    }
-
     @OnClick(R.id.btnCreate)
-    public void createContact(){
-        if (this.createContactValidator.isValid()) {
-            Contact newContact = new Contact();
-            newContact.setName(etName.getText().toString());
-            newContact.setEmail(etEmail.getText().toString());
+    public void createOrModifyContact(){
+        if(contactId >= 0) {
+            // Modifying existing contact
 
-            for (ContactAddress contactAddress : contactAddressList){
-                newContact.addAddress(contactAddress);
+            if (this.modifyContactValidator.isValid()) {
+                this.contact.setName(tietName.getText().toString());
+                this.contact.clearAddresses();
+
+                for (ContactAddress contactAddress : contactAddressList){
+                    this.contact.addAddress(contactAddress);
+                }
+
+                ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+                if (contactViewModel.modifyContact(this.contact)){
+                    this.finish();
+                } else {
+                    this.modifyContactValidator.validate();
+                }
             }
+        } else {
+            // Creating a new contact
 
-            ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
-            if (contactViewModel.addContact(newContact)){
-                this.finish();
-            } else {
-                createContactValidator.validate();
+            if (this.createContactValidator.isValid()) {
+                Contact newContact = new Contact();
+                newContact.setName(tietName.getText().toString());
+
+                for (ContactAddress contactAddress : contactAddressList){
+                    newContact.addAddress(contactAddress);
+                }
+
+                ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+                if (contactViewModel.addContact(newContact)){
+                    this.finish();
+                } else {
+                    createContactValidator.validate();
+                }
             }
         }
     }
@@ -211,10 +197,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
         activity.runOnUiThread(new Runnable() {
             public void run() {
 
-                if (field.getView() == etName) {
-                    tvNameError.setText("");
-                } else if (field.getView() == etEmail) {
-                    tvEmailError.setText("");
+                if (field.getView() == tietName) {
+                    tilName.setError("");
                 }
 
                 if (activity.isValid()){
@@ -232,10 +216,8 @@ public class CreateContactActivity extends AppCompatActivity implements UIValida
 
             @Override
             public void run() {
-                if (field.getView() == etName) {
-                    tvNameError.setText(field.getMessage());
-                } else if (field.getView() == etEmail) {
-                    tvEmailError.setText(field.getMessage());
+                if (field.getView() == tietName) {
+                    tilName.setError(field.getMessage());
                 }
             }
         });

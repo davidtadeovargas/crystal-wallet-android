@@ -15,9 +15,8 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.PinValida
 
 public class CreateContactValidator extends UIValidator {
 
-    public CreateContactValidator(Context context, EditText nameEdit, EditText emailEdit){
+    public CreateContactValidator(Context context, EditText nameEdit){
         super(context);
         this.addField(new ContactNameValidationField(nameEdit));
-        this.addField(new EmailValidationField(emailEdit));
     }
 }

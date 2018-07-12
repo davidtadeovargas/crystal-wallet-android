@@ -106,47 +106,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/tilAccountName"
         app:layout_constraintTop_toTopOf="@id/btnCancel" />
-<!--
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@color/bottomBarColor"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tvAppVersion_brain_key_activity"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/v_1_0_beta" />
-
-        <TextView
-            android:id="@+id/tvBlockNumberHead_brain_key_activity"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/block_number" />
-
-        <ImageView
-            android:id="@+id/ivSocketConnected_brain_key_activity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.5" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.5"
-            android:src="@drawable/icon_setting"
-            android:visibility="invisible" />
-    </LinearLayout>
--->
     <cy.agorise.crystalwallet.util.BottomStatusBar
         android:id="@+id/bottomStatusBar"
         android:layout_width="match_parent"

@@ -63,18 +63,20 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="BlueButton" parent="Theme.AppCompat">
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+    <style name="BaseButton" parent="Theme.AppCompat">
+        <item name="android:textColor">@android:color/white</item>
         <item name="colorButtonNormal">@color/gray</item>
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
     </style>
 
-    <style name="RedButton" parent="Theme.AppCompat">
+    <style name="BlueButton" parent="BaseButton">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="RedButton" parent="BaseButton">
         <item name="colorAccent">@color/red</item>
         <item name="colorControlHighlight">@color/redColor</item>
-        <item name="colorButtonNormal">@color/gray</item>
-        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
     </style>
 
     <!-- Text styles -->

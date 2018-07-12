@@ -486,7 +486,7 @@
     <string name="remove">Remove</string>
     <string name="user_name_password_placeholder">user_name Password</string>
     <string name="version_placeholder">v1.0</string>
-    <string name="block_number_placeholder">block# 14966596</string>
+    <string name="block_number_placeholder">block# -----</string>
     <string name="current_pin">Current PIN</string>
     <string name="new_pin">New PIN</string>
     <string name="confirm_pin">Confirm PIN</string>
@@ -506,4 +506,6 @@
     <string name="import_account_backup">Import Account Backup</string>
     <string name="disagree">Disagree</string>
     <string name="agree">Agree</string>
+    <string name="add">Add</string>
+    <string name="modify">Modify</string>
 </resources>
