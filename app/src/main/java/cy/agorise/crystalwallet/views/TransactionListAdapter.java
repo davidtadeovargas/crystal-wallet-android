@@ -32,9 +32,9 @@ import cy.agorise.crystalwallet.models.CryptoCoinTransactionExtended;
 
 public class TransactionListAdapter extends PagedListAdapter<CryptoCoinTransactionExtended, TransactionViewHolder> {
 
-    Fragment fragment;
+    private Fragment fragment;
 
-    public TransactionListAdapter(Fragment fragment) {
+    TransactionListAdapter(Fragment fragment) {
         super(CryptoCoinTransactionExtended.DIFF_CALLBACK);
         this.fragment = fragment;
     }

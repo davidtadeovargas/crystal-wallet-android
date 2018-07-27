@@ -85,7 +85,7 @@ public class ContactListView extends RelativeLayout {
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         this.listView.setLayoutManager(linearLayoutManager);
         //Prevents the list to start again when scrolling to the end
-        this.listView.setNestedScrollingEnabled(false);
+        //this.listView.setNestedScrollingEnabled(false);
 
     }
 

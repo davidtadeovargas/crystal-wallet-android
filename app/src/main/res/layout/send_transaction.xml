@@ -40,7 +40,7 @@
             android:layout_height="60dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="90dp"
-            android:src="@drawable/gravtr"
+            android:src="@drawable/avatar_placeholder"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
