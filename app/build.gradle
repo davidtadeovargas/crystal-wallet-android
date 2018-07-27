@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -79,4 +80,6 @@ dependencies {
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.vincent.filepicker:MultiTypeFilePicker:1.0.7'
     implementation 'com.andrognito.patternlockview:patternlockview:1.0.0'
+    implementation 'commons-codec:commons-codec:1.11'
+
 }

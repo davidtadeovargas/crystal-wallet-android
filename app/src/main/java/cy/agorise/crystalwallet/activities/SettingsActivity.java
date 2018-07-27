@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.activities;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,8 @@ public class SettingsActivity extends AppCompatActivity{
 
     @BindView(R.id.tvBuildVersion)
     public TextView tvBuildVersion;
+
+    private SecuritySettingsFragment securitySettingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +100,8 @@ public class SettingsActivity extends AppCompatActivity{
                 case 0:
                     return new GeneralSettingsFragment();
                 case 1:
-                    return new SecuritySettingsFragment();
+                    securitySettingsFragment = new SecuritySettingsFragment();
+                    return securitySettingsFragment;
                 case 2:
                     return new BackupsSettingsFragment();
                 //case 3:
@@ -122,5 +126,13 @@ public class SettingsActivity extends AppCompatActivity{
     @OnClick(R.id.ivGoBack)
     public void goBack(){
         onBackPressed();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (this.securitySettingsFragment != null){
+            this.securitySettingsFragment.onNewIntent(intent);
+        }
     }
 }
