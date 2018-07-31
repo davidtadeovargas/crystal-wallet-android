@@ -15,6 +15,7 @@ import android.view.Display;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,8 +40,8 @@ public class BackupSeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.backup_seed);
 
-        /* Note: Test porpouses
-        final TextView textView = findViewById(R.id.backup_seed_view_textview_brainkey);
+        //Note: Test porpouses
+        /*final TextView textView = findViewById(R.id.backup_seed_view_textview_brainkey);
             textView.setText("sakk902909321o p3k21kldsa0'dsa90'e930eidakdñsakdñlsakdi90i03 2i90idopsasakk902909321op3k21 kldsa0'dsa90'e930eid akdñsakdñlsakdi90i032i90idopsa");
         */
 
@@ -87,5 +88,6 @@ public class BackupSeedActivity extends AppCompatActivity {
         /*
          * Success message
          * */
+        Toast.makeText(this.getBaseContext(),getResources().getString(R.string.window_seed_toast_clipboard), Toast.LENGTH_SHORT).show();
     }
 }

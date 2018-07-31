@@ -23,6 +23,7 @@
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/tietPin"
+            android:maxLength="32"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/txt_6_digits_pin"
@@ -45,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/txt_6_digits_pin_confirm"
+            android:maxLength="32"
             android:inputType="number"
             android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>

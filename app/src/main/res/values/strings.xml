@@ -33,7 +33,11 @@
     <string name="account_label">Choose File</string>
     <string name="loading_msg">Please wait until Balances are loading</string>
 
+    <string name="window_create_seed_DialogTittle"></string>
+    <string name="window_create_seed_DialogMessage">Creating New Account ...</string>
+
     <string name="window_seed_backup">Backup brainkey</string>
+    <string name="window_seed_toast_clipboard">Brainkey copied to clipboard!</string>
     <string name="window_seed_copy">Copy</string>
     <string name="window_seed_leyend_backup">IMPORTANT: Print this out, or write it down. Anyone with access to your recovery key will have access to funds within this wallet</string>
 

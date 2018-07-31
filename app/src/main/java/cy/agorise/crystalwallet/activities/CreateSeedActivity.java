@@ -11,12 +11,15 @@ import android.text.Editable;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dialogs.ProgressCreatingAccountDialog;
+import cy.agorise.crystalwallet.dialogs.material.CreatingAccountMaterialDialog;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
@@ -143,18 +146,17 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
 
             //DTVV: Friday 27 July 2018
             //Makes dialog to tell the user that the account is been created
-            final ProgressCreatingAccountDialog progressCreatingAccountDialog = new ProgressCreatingAccountDialog(CreateSeedActivity.this);
-            progressCreatingAccountDialog.show();
+            final CreatingAccountMaterialDialog creatingAccountMaterialDialog = new CreatingAccountMaterialDialog(this);
             CreateSeedActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    progressCreatingAccountDialog.show();
+                    creatingAccountMaterialDialog.show();
                 }
             });
             request.setListener(new CryptoNetInfoRequestListener() {
                 @Override
                 public void onCarryOut() {
-                    progressCreatingAccountDialog.dismiss();
+                    creatingAccountMaterialDialog.dismiss();
                     if (request.getStatus().equals(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
                         GrapheneAccount accountSeed = request.getAccount();
                         Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
