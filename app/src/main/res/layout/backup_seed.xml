@@ -1,52 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     android:paddingBottom="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/tvMnemonicTitle"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="10dp"
-        android:text="@string/seed_words"
-        android:textStyle="bold" />
+        android:layout_centerInParent="true">
 
-    <TextView
-        android:id="@+id/tvMnemonic"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:background="@drawable/edittext_bg"
-        android:inputType="number"
-        android:maxLines="1"
-        android:textColor="@color/black" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnOk"
+        <TextView
+            android:id="@+id/tvMnemonicTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:background="@color/pink"
-            android:text="@string/ok"
-            android:textColor="@color/white" />
-    </LinearLayout>
-</LinearLayout>
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/window_seed_backup"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/backup_seed_view_textview_brainkey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvMnemonicTitle"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:background="@drawable/edittext_bg"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/black"
+            android:layout_marginBottom="20dp"/>
+
+        <ImageView
+            android:id="@+id/backup_seeed_imageview_warning"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="35dp"
+            android:layout_alignTop="@+id/backup_seed_textview_leyend_backup"
+            android:background="@drawable/warning" />
+
+        <TextView
+            android:id="@+id/backup_seed_textview_leyend_backup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="70dp"
+            android:textColor="@color/send_strong_orange"
+            android:layout_marginRight="70dp"
+            android:text="@string/window_seed_leyend_backup"
+            android:textSize="14dp"
+            android:layout_below="@+id/backup_seed_view_textview_brainkey"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/backup_seed_textview_leyend_backup"
+            android:layout_centerHorizontal="true"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnOk"
+                android:layout_weight="1"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ok"/>
+
+            <Button
+                android:id="@+id/backup_seed_view_button_copy"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="@string/window_seed_copy"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

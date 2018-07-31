@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.dialogs.ProgressCreatingAccountDialog;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
@@ -24,6 +25,35 @@ import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
 import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
 import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+
+
+
+/*
+*   Commented code backup
+*
+*
+*   alertBuilder.setTitle("Processing");
+    alertBuilder.setMessage("Creating Bitshares Account");
+
+    ------
+
+    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CreateSeedActivity.this,R.style.AppTheme);
+            alertBuilder.setView(R.layout.progress_creating_account);
+            final AlertDialog processDialog = alertBuilder.create();
+            CreateSeedActivity.this.runOnUiThread(new Runnable() { //Run on UI Thread
+                @Override
+                public void run() {
+                    processDialog.setCancelable(false);
+                    processDialog.show();
+                    processDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            });
+
+ */
+
+
+
+
 
 public class CreateSeedActivity extends AppCompatActivity implements UIValidatorListener {
 
@@ -111,25 +141,20 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                     new ValidateCreateBitsharesAccountRequest(tietAccountName.getText().toString(), getApplicationContext());
 
 
+            //DTVV: Friday 27 July 2018
             //Makes dialog to tell the user that the account is been created
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CreateSeedActivity.this,R.style.AppTheme);
-            alertBuilder.setView(R.layout.progress_creating_account);
-            //alertBuilder.setTitle("Processing");
-            //alertBuilder.setMessage("Creating Bitshares Account");
-            final AlertDialog processDialog = alertBuilder.create();
+            final ProgressCreatingAccountDialog progressCreatingAccountDialog = new ProgressCreatingAccountDialog(CreateSeedActivity.this);
+            progressCreatingAccountDialog.show();
             CreateSeedActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    processDialog.setCancelable(false);
-                    processDialog.show();
-                    processDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    progressCreatingAccountDialog.show();
                 }
             });
-
             request.setListener(new CryptoNetInfoRequestListener() {
                 @Override
                 public void onCarryOut() {
-                    processDialog.dismiss();
+                    progressCreatingAccountDialog.dismiss();
                     if (request.getStatus().equals(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
                         GrapheneAccount accountSeed = request.getAccount();
                         Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
