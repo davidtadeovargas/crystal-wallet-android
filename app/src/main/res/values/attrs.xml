@@ -18,15 +18,15 @@
         <attr name="civ_selectorStrokeColor" format="color"/>
         <!-- The selector stroke drawn around the image upon touch events this pixels wide. (if enabled) -->
         <attr name="civ_selectorStrokeWidth" format="dimension"/>
-        <!-- Whether or not to draw a shadow around your circular image. -->
+        <!-- Whether or not to draw a disable_style around your circular image. -->
         <attr name="civ_shadow" format="boolean"/>
-        <!-- The radius for the shadow to extend to. (if enabled) -->
+        <!-- The radius for the disable_style to extend to. (if enabled) -->
         <attr name="civ_shadowRadius" format="float"/>
-        <!-- Horizontal shadow offset. (if enabled) -->
+        <!-- Horizontal disable_style offset. (if enabled) -->
         <attr name="civ_shadowDx" format="float"/>
-        <!-- Vertical shadow offset. (if enabled) -->
+        <!-- Vertical disable_style offset. (if enabled) -->
         <attr name="civ_shadowDy" format="float"/>
-        <!-- The color of the shadow drawn around your circular image. (if enabled) -->
+        <!-- The color of the disable_style drawn around your circular image. (if enabled) -->
         <attr name="civ_shadowColor" format="color"/>
     </declare-styleable>
 

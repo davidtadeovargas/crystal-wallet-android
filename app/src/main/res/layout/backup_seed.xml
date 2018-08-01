@@ -28,7 +28,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/backup_seed_view_textview_brainkey"
+            android:id="@+id/tvBrainKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvMnemonicTitle"
@@ -58,7 +58,7 @@
             android:layout_marginRight="70dp"
             android:text="@string/window_seed_leyend_backup"
             android:textSize="14dp"
-            android:layout_below="@+id/backup_seed_view_textview_brainkey"/>
+            android:layout_below="@+id/tvBrainKey"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                 android:background="@drawable/ok"/>
 
             <Button
-                android:id="@+id/backup_seed_view_button_copy"
+                android:id="@+id/btnCopy"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -1,14 +1,19 @@
 package cy.agorise.crystalwallet.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -16,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.dialogs.ProgressCreatingAccountDialog;
@@ -90,11 +96,15 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     @BindView(R.id.btnCancel)
     Button btnCancel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_seed);
         ButterKnife.bind(this);
+
+        /*This button should not be enabled till all the fields be correctly filled*/
+        disableCreate();
 
         tilPin.setErrorEnabled(true);
         tilPinConfirmation.setErrorEnabled(true);
@@ -104,6 +114,13 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
         accountSeedViewModel = ViewModelProviders.of(this).get(AccountSeedViewModel.class);
         createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),tietPin,tietPinConfirmation,tietAccountName);
         createSeedValidator.setListener(this);
+
+        /*
+        * Set the focus on the fisrt field and show keyboard
+        * */
+        tilPin.requestFocus();
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(tilPin, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @OnTextChanged(value = R.id.tietPin,
@@ -212,6 +229,9 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
 
     @Override
     public void onValidationFailed(final ValidationField field) {
+
+        disableCreate(); //Can not create account yet
+
         runOnUiThread(new Runnable() {
 
             @Override
@@ -227,5 +247,111 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
                 //}
             }
         });
+    }
+
+
+    @OnFocusChange(R.id.tietPin)
+    public void onFocusChangePIN(View v, boolean hasFocus){
+
+        /*
+        * On lost focus
+        * */
+        if(!hasFocus){
+
+            /*
+             * Validate continue to create account
+             * */
+            if(validateFieldsToContinue()){
+                enableCreate();
+            }
+            else {
+                disableCreate();
+            }
+        }
+    }
+    @OnFocusChange(R.id.tietPinConfirmation)
+    public void onFocusChangePINConfirmation(View v, boolean hasFocus){
+
+        /*
+         * On lost focus
+         * */
+        if(!hasFocus){
+
+            /*
+             * Validate continue to create account
+             * */
+            if(validateFieldsToContinue()){
+                enableCreate();
+            }
+            else {
+                disableCreate();
+            }
+        }
+    }
+    @OnFocusChange(R.id.tietAccountName)
+    public void onFocusChangeAccountName(View v, boolean hasFocus){
+
+        /*
+         * On lost focus
+         * */
+        if(!hasFocus){
+
+            /*
+             * Validate continue to create account
+             * */
+            if(validateFieldsToContinue()){
+                enableCreate();
+            }
+            else {
+                disableCreate();
+            }
+        }
+    }
+
+
+    /*
+    * Validate that all is complete to continue to create
+    * */
+    private boolean validateFieldsToContinue(){
+
+        /*
+        * Get the value of the fields
+        * */
+        final String pin = tilPin.getEditText().getText().toString().trim();
+        final String pinConfirmation = tilPinConfirmation.getEditText().getText().toString().trim();
+        final String accountName = tilAccountName.getEditText().getText().toString().trim();
+
+        final String pinError = tilPin.getError()==null?"":tilPin.getError().toString().trim();
+        final String pinConfirmationError = tietPinConfirmation.getError()==null?"":tietPinConfirmation.getError().toString().trim();
+        final String accountNameError = tietAccountName.getError()==null?"":tietAccountName.getError().toString().trim();
+
+        boolean result = false; //Contains the final result
+
+        if(!pin.isEmpty() && !pinConfirmation.isEmpty() && !accountName.isEmpty()) {
+            if(pinError.isEmpty() && pinConfirmationError.isEmpty() && accountNameError.isEmpty()){
+                result = true;
+            }
+        }
+
+        /*
+        * If the result is true so the user can continue to the creation of the account
+        * */
+        return result;
+    }
+
+    /*
+    * Enable create button
+    * */
+    private void enableCreate(){
+        btnCreate.setEnabled(true);
+        btnCreate.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    /*
+     * Disable create button
+     * */
+    private void disableCreate(){
+        btnCreate.setEnabled(false);
+        btnCreate.setBackground(getResources().getDrawable(R.drawable.disable_style));
     }
 }

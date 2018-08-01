@@ -23,16 +23,16 @@ import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
-
+//tvBrainKey
 public class BackupSeedActivity extends AppCompatActivity {
 
     AccountSeedViewModel accountSeedViewModel;
 
-    @BindView(R.id.backup_seed_view_textview_brainkey)
+    @BindView(R.id.tvBrainKey)
     TextView textfieldBrainkey;
     @BindView(R.id.btnOk)
     Button btnOk;
-    @BindView(R.id.backup_seed_view_button_copy)
+    @BindView(R.id.btnCopy)
     Button btnCopy;
 
     @Override
@@ -41,7 +41,7 @@ public class BackupSeedActivity extends AppCompatActivity {
         setContentView(R.layout.backup_seed);
 
         //Note: Test porpouses
-        /*final TextView textView = findViewById(R.id.backup_seed_view_textview_brainkey);
+        /*final TextView textView = findViewById(R.id.tvBrainKey);
             textView.setText("sakk902909321o p3k21kldsa0'dsa90'e930eidakdñsakdñlsakdi90i03 2i90idopsasakk902909321op3k21 kldsa0'dsa90'e930eid akdñsakdñlsakdi90i032i90idopsa");
         */
 
@@ -75,7 +75,7 @@ public class BackupSeedActivity extends AppCompatActivity {
     /*
      *   Clic on button copy to clipboard
      * */
-    @OnClick(R.id.backup_seed_view_button_copy)
+    @OnClick(R.id.btnCopy)
     public void btnCopyClick(){
 
         /*

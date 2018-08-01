@@ -36,6 +36,8 @@
     <string name="window_create_seed_DialogTittle"></string>
     <string name="window_create_seed_DialogMessage">Creating New Account ...</string>
 
+    <string name="window_create_seed_Info">You will use your PIN yo make transactions between accounts</string>
+
     <string name="window_seed_backup">Backup brainkey</string>
     <string name="window_seed_toast_clipboard">Brainkey copied to clipboard!</string>
     <string name="window_seed_copy">Copy</string>
