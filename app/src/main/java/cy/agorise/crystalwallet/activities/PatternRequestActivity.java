@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.PasswordManager;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
@@ -69,7 +70,11 @@ public class PatternRequestActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(List<PatternLockView.Dot> pattern) {
                                         if (PasswordManager.checkPassword(patternEncrypted,patternToString(pattern))){
-                                            thisActivity.finish();
+                                            if (CrystalSecurityMonitor.getInstance(null).is2ndFactorSet()) {
+                                                CrystalSecurityMonitor.getInstance(null).call2ndFactor(thisActivity);
+                                            } else {
+                                                thisActivity.finish();
+                                            }
                                         } else {
                                             patternLockView.clearPattern();
                                             patternLockView.requestFocus();

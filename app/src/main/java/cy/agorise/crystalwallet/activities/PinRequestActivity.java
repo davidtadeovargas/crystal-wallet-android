@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.PasswordManager;
@@ -66,7 +67,11 @@ public class PinRequestActivity extends AppCompatActivity {
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterPasswordChanged(Editable editable) {
         if (PasswordManager.checkPassword(passwordEncrypted, etPassword.getText().toString())) {
-            this.finish();
+            if (CrystalSecurityMonitor.getInstance(null).is2ndFactorSet()) {
+                CrystalSecurityMonitor.getInstance(null).call2ndFactor(this);
+            } else {
+                this.finish();
+            }
         }
     }
 }
