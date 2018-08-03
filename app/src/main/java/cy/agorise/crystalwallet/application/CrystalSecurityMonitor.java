@@ -15,6 +15,7 @@ import java.util.List;
 
 import cy.agorise.crystalwallet.activities.PatternRequestActivity;
 import cy.agorise.crystalwallet.activities.PinRequestActivity;
+import cy.agorise.crystalwallet.activities.PocketRequestActivity;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.notifiers.CrystalWalletNotifier;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
@@ -111,6 +112,10 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
         return "";
     }
 
+    public boolean is2ndFactorSet(){
+        return !this.yubikeyOathTotpPasswordEncrypted.equals("");
+    }
+
     public void setYubikeyOathTotpSecurity(String name, String password){
         this.yubikeyOathTotpPasswordEncrypted = password;
         GeneralSetting yubikeyOathTotpSetting = new GeneralSetting();
@@ -153,6 +158,19 @@ public class CrystalSecurityMonitor implements Application.ActivityLifecycleCall
                 activity.startActivity(intent);
             }
         }
+    }
+
+    public void call2ndFactor(Activity activity){
+        Intent intent = null;
+        if ((this.yubikeyOathTotpPasswordEncrypted != null) && (!this.yubikeyOathTotpPasswordEncrypted.equals(""))) {
+            intent = new Intent(activity, PocketRequestActivity.class);
+            //intent.putExtra("ACTIVITY_TYPE", "PASSWORD_REQUEST");
+            activity.startActivity(intent);
+        }
+    }
+
+    public String get2ndFactorValue(){
+        return this.yubikeyOathTotpPasswordEncrypted;
     }
 
     @Override

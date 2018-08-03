@@ -201,12 +201,12 @@ public class SecuritySettingsFragment extends Fragment {
 
             if ((encodedSecret != null) && (!encodedSecret.equals("")) && decoder.isInAlphabet(encodedSecret)) {
                 byte[] secret = decoder.decode(encodedSecret);
-                YkOathApi ykOathApi = new YkOathApi();
                 tagIsoDep.connect();
                 tagIsoDep.setTimeout(15000);
+                YkOathApi ykOathApi = new YkOathApi(tagIsoDep);
 
                 try {
-                    ykOathApi.putCode(tagIsoDep, serviceName, secret, OathType.TOTP, Algorithm.SHA256, (byte) 6, 0, false);
+                    ykOathApi.putCode(serviceName, secret, OathType.TOTP, Algorithm.SHA256, (byte) 6, 0, false);
                     CrystalSecurityMonitor.getInstance(null).setYubikeyOathTotpSecurity(CrystalSecurityMonitor.getServiceName(),encodedSecret);
                 } catch(IOException e) {
                     Toast.makeText(this.getContext(), "There's no space for new credentials!", Toast.LENGTH_LONG).show();

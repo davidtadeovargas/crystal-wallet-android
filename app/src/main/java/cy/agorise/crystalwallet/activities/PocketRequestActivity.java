@@ -26,15 +26,19 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import org.apache.commons.codec.binary.Base32;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
 import cy.agorise.crystalwallet.models.GeneralSetting;
 import cy.agorise.crystalwallet.util.PasswordManager;
 import cy.agorise.crystalwallet.util.yubikey.Algorithm;
 import cy.agorise.crystalwallet.util.yubikey.OathType;
+import cy.agorise.crystalwallet.util.yubikey.TOTP;
 import cy.agorise.crystalwallet.util.yubikey.YkOathApi;
 import cy.agorise.crystalwallet.viewmodels.GeneralSettingListViewModel;
 
@@ -60,6 +64,26 @@ public class PocketRequestActivity extends AppCompatActivity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         this.configureForegroundDispatch();
+
+
+        String clave = "12345678901234567890";
+
+        char[] ch = clave.toCharArray();
+
+        StringBuilder builder = new StringBuilder();
+        for (char c : ch) {
+            String hexCode=String.format("%H", c);
+            builder.append(hexCode);
+        }
+        String claveHex = String.format("%040x", new BigInteger(1, clave.getBytes()));
+
+
+        long time = 1111111109/30;
+        String steps = Long.toHexString(time).toUpperCase();
+        while(steps.length() < 16) steps = "0" + steps;
+        Log.i("TEST", TOTP.generateTOTP(
+                claveHex,
+                steps, "6", "HmacSHA1"));
     }
 
     public void configureForegroundDispatch(){
@@ -100,29 +124,29 @@ public class PocketRequestActivity extends AppCompatActivity {
         Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         IsoDep tagIsoDep = IsoDep.get(tagFromIntent);
         Log.i("Tag from nfc","New Intent");
+        String yubikeySecret = CrystalSecurityMonitor.getInstance(null).get2ndFactorValue();
+
         try {
+            tagIsoDep.connect();
+            YkOathApi ykOathApi = new YkOathApi(tagIsoDep);
 
-            String encodedSecret = "hola";
-            Base32 decoder = new Base32();
+            /*long unixTime = System.currentTimeMillis() / 1000L;
+            byte[] timeStep = ByteBuffer.allocate(8).putLong(unixTime / 30L).array();
+            byte[] response;
+            response = ykOathApi.calculate("cy.agorise.crystalwallet",timeStep,true);
+            response[0].
+            private fun formatTruncated(data: ByteArray): String {
+                return with(ByteBuffer.wrap(data)) {
+                    val digits = get().toInt()
+                    int.toString().takeLast(digits).padStart(digits, '0')
+                }
+            }*/
 
-            if ((encodedSecret != null) && (!encodedSecret.equals("")) && decoder.isInAlphabet(encodedSecret)) {
-                byte[] secret = decoder.decode(encodedSecret);
-                YkOathApi ykOathApi = new YkOathApi();
-                tagIsoDep.connect();
-                tagIsoDep.setTimeout(15000);
-
-                //byte[] keyBytes = {0x68,0x6f,0x6c,0x61};
-                ykOathApi.putCode(tagIsoDep,"prueba",secret, OathType.TOTP, Algorithm.SHA256,(byte)6,0,false);
-                tagIsoDep.close();
-
-                Toast.makeText(this, "Credential saved!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Invalid password for credential", Toast.LENGTH_LONG).show();
-            }
+            tagIsoDep.close();
+            //ykOathApi.
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(this, "Tag from nfc: "+tagFromIntent, Toast.LENGTH_LONG).show();
     }
 
 }
