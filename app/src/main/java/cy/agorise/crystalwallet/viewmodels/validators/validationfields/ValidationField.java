@@ -18,6 +18,10 @@ public abstract class ValidationField {
     protected UIValidator validator;
     protected View view;
 
+
+
+
+
     public ValidationField(View view){
         this.lastValue = "";
         this.message = "";

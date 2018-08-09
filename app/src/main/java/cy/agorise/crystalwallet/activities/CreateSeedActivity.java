@@ -3,37 +3,29 @@ package cy.agorise.crystalwallet.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-
-import com.afollestad.materialdialogs.MaterialDialog;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import cy.agorise.crystalwallet.R;
-import cy.agorise.crystalwallet.dialogs.ProgressCreatingAccountDialog;
-import cy.agorise.crystalwallet.dialogs.material.CreatingAccountMaterialDialog;
+import cy.agorise.crystalwallet.dialogs.material.LoadingDialog;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.requestmanagers.ValidateCreateBitsharesAccountRequest;
 import cy.agorise.crystalwallet.models.GrapheneAccount;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
-import cy.agorise.crystalwallet.viewmodels.validators.CreateSeedValidator;
-import cy.agorise.crystalwallet.viewmodels.validators.UIValidatorListener;
-import cy.agorise.crystalwallet.viewmodels.validators.validationfields.ValidationField;
+import cy.agorise.crystalwallet.viewmodels.validators.customImpl.interfaces.UIValidatorListener;
+import cy.agorise.crystalwallet.viewmodels.validators.customImpl.validationFields.BitsharesAccountNameValidation;
+import cy.agorise.crystalwallet.viewmodels.validators.customImpl.validationFields.CustomValidationField;
+import cy.agorise.crystalwallet.viewmodels.validators.customImpl.validationFields.PinDoubleConfirmationValidationField;
+import cy.agorise.crystalwallet.views.natives.CustomTextInputEditText;
 
 
 
@@ -64,31 +56,27 @@ import cy.agorise.crystalwallet.viewmodels.validators.validationfields.Validatio
 
 
 
-public class CreateSeedActivity extends AppCompatActivity implements UIValidatorListener {
+public class CreateSeedActivity extends CustomActivity {
 
     AccountSeedViewModel accountSeedViewModel;
-    CreateSeedValidator createSeedValidator;
 
     @BindView(R.id.tilPin)
     TextInputLayout tilPin;
 
     @BindView(R.id.tietPin)
-    TextInputEditText tietPin;
+    CustomTextInputEditText tietPin;
 
     @BindView(R.id.tilPinConfirmation)
     TextInputLayout tilPinConfirmation;
 
     @BindView(R.id.tietPinConfirmation)
-    TextInputEditText tietPinConfirmation;
-
-    //@BindView(R.id.tvSeedWords)
-    //TextView tvSeedWords;
+    CustomTextInputEditText tietPinConfirmation;
 
     @BindView(R.id.tilAccountName)
     TextInputLayout tilAccountName;
 
     @BindView (R.id.tietAccountName)
-    TextInputEditText tietAccountName;
+    CustomTextInputEditText tietAccountName;
 
     @BindView(R.id.btnCreate)
     Button btnCreate;
@@ -97,23 +85,113 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     Button btnCancel;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_seed);
+
+        /*
+        * Initialice butterknife MVC
+        * */
         ButterKnife.bind(this);
 
         /*This button should not be enabled till all the fields be correctly filled*/
         disableCreate();
 
-        tilPin.setErrorEnabled(true);
-        tilPinConfirmation.setErrorEnabled(true);
-        tilAccountName.setErrorEnabled(true);
+        /*
+         * Add the controls to the validator
+         * */
+        this.fieldsValidator.add(tietPin);
+        this.fieldsValidator.add(tietPinConfirmation);
+        this.fieldsValidator.add(tietAccountName);
 
-        btnCreate.setEnabled(false);
+        /*
+        * Validations listener
+        * */
+        final UIValidatorListener uiValidatorListener = new UIValidatorListener() {
+
+            @Override
+            public void onValidationSucceeded(final CustomValidationField customValidationField) {
+
+                try{
+
+                    /*
+                     * Remove error
+                     * */
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            final CustomTextInputEditText customTextInputEditText = (CustomTextInputEditText) customValidationField.getCurrentView();
+                            customTextInputEditText.setError(null);
+                        }
+                    });
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+                /*
+                 * Validate if can continue
+                 * */
+                validateFieldsToContinue();
+            }
+
+            @Override
+            public void onValidationFailed(final CustomValidationField customValidationField) {
+
+                /*
+                 * Set error label
+                 * */
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        final CustomTextInputEditText customTextInputEditText = (CustomTextInputEditText) customValidationField.getCurrentView();
+                        customTextInputEditText.setError(customTextInputEditText.getFieldValidatorModel().getMessage());
+                    }
+                });
+            }
+        };
+
+        /*
+        * Create the pin double validation
+        * */
+        final PinDoubleConfirmationValidationField pinDoubleConfirmationValidationField = new PinDoubleConfirmationValidationField(this,tietPin,tietPinConfirmation,uiValidatorListener);
+
+        /*
+        * Listener for the validation for success or fail
+        * */
+        tietPin.setUiValidator(pinDoubleConfirmationValidationField); //Validator for the field
+        tietPinConfirmation.setUiValidator(pinDoubleConfirmationValidationField); //Validator for the field
+
+        /*
+        * Account name validator
+        * */
+        final BitsharesAccountNameValidation bitsharesAccountNameValidation = new BitsharesAccountNameValidation(this,tietAccountName,uiValidatorListener);
+        bitsharesAccountNameValidation.setOnAccountExist(new BitsharesAccountNameValidation.OnAccountExist() {
+            @Override
+            public void onAccountExists() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(globalActivity,getResources().getString(R.string.account_name_already_exist), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+        tietAccountName.setUiValidator(bitsharesAccountNameValidation);
+
+        /*
+        * This button initially is not enabled til all the field validation be ok
+        * */
+        disableCreate();
+
         accountSeedViewModel = ViewModelProviders.of(this).get(AccountSeedViewModel.class);
-        createSeedValidator = new CreateSeedValidator(this.getApplicationContext(),tietPin,tietPinConfirmation,tietAccountName);
-        createSeedValidator.setListener(this);
 
         /*
         * Set the focus on the fisrt field and show keyboard
@@ -126,218 +204,120 @@ public class CreateSeedActivity extends AppCompatActivity implements UIValidator
     @OnTextChanged(value = R.id.tietPin,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterPinChanged(Editable editable) {
-        this.createSeedValidator.validate();
-    }
+        this.fieldsValidator.validate();
 
+        /*
+         * Validate continue to create account
+         * */
+        validateFieldsToContinue();
+    }
     @OnTextChanged(value = R.id.tietPinConfirmation,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterPinConfirmationChanged(Editable editable) {
-        this.createSeedValidator.validate();
-    }
+        this.fieldsValidator.validate();
 
-    /*@OnTextChanged(value = R.id.etSeedWords,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    void afterSeedWordsChanged(Editable editable) {
-        this.createSeedValidator.validate();
+        /*
+         * Validate continue to create account
+         * */
+        validateFieldsToContinue();
     }
-*/
-
     @OnTextChanged(value = R.id.tietAccountName,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     void afterAccountNameChanged(Editable editable) {
-        this.createSeedValidator.validate();
+        this.fieldsValidator.validate();
+
+        /*
+         * Always disable till the server response comes
+         * */
+        disableCreate();
     }
+
 
     @OnClick(R.id.btnCancel)
     public void cancel(){
+
+        /*
+        * Exit of the activity
+        * */
         this.finish();
     }
 
     @OnClick(R.id.btnCreate)
     public void createSeed(){
-        if (this.createSeedValidator.isValid()) {
-            // Make request to create a bitshare account
-            final ValidateCreateBitsharesAccountRequest request =
-                    new ValidateCreateBitsharesAccountRequest(tietAccountName.getText().toString(), getApplicationContext());
+
+        // Make request to create a bitshare account
+        final ValidateCreateBitsharesAccountRequest request =
+                new ValidateCreateBitsharesAccountRequest(tietAccountName.getText().toString(), getApplicationContext());
 
 
-            //DTVV: Friday 27 July 2018
-            //Makes dialog to tell the user that the account is been created
-            final CreatingAccountMaterialDialog creatingAccountMaterialDialog = new CreatingAccountMaterialDialog(this);
-            CreateSeedActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    creatingAccountMaterialDialog.show();
-                }
-            });
-            request.setListener(new CryptoNetInfoRequestListener() {
-                @Override
-                public void onCarryOut() {
-                    creatingAccountMaterialDialog.dismiss();
-                    if (request.getStatus().equals(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
-                        GrapheneAccount accountSeed = request.getAccount();
-                        Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
-                        intent.putExtra("SEED_ID", accountSeed.getId());
-                        startActivity(intent);
-                    } else {
-                        createSeedValidator.validate();
-                    }
-                }
-            });
-
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    CryptoNetInfoRequests.getInstance().addRequest(request);
-                }
-            };
-
-            thread.start();
-
-
-
-            //this.finish();
-        }
-    }
-
-    @Override
-    public void onValidationSucceeded(final ValidationField field) {
-        final CreateSeedActivity activity = this;
-
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-
-                if (field.getView() == tietPin) {
-                    tilPin.setError("");
-                } else if (field.getView() == tietPinConfirmation){
-                    tilPinConfirmation.setError("");
-                } else if (field.getView() == tietAccountName){
-                    tilAccountName.setError("");
-                } //else if (field.getView() == etSeedWords){
-                //    tvSeedWordsError.setText("");
-                //}
-
-                if (activity.createSeedValidator.isValid()){
-                    btnCreate.setEnabled(true);
-                } else {
-                    btnCreate.setEnabled(false);
-                }
-
-            }
-        });
-    }
-
-    @Override
-    public void onValidationFailed(final ValidationField field) {
-
-        disableCreate(); //Can not create account yet
-
-        runOnUiThread(new Runnable() {
-
+        //DTVV: Friday 27 July 2018
+        //Makes dialog to tell the user that the account is been created
+        final LoadingDialog creatingAccountMaterialDialog = new LoadingDialog(this);
+        creatingAccountMaterialDialog.setMessage(this.getResources().getString(R.string.window_create_seed_DialogMessage));
+        creatingAccountMaterialDialog.build();
+        CreateSeedActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (field.getView() == tietPin) {
-                    tilPin.setError(field.getMessage());
-                } else if (field.getView() == tietPinConfirmation){
-                    tilPinConfirmation.setError(field.getMessage());
-                } else if (field.getView() == tietAccountName){
-                    tilAccountName.setError(field.getMessage());
-                } //else if (field.getView() == etSeedWords){
-                //    tvSeedWordsError.setText(field.getMessage());
-                //}
+                creatingAccountMaterialDialog.show();
             }
         });
+        request.setListener(new CryptoNetInfoRequestListener() {
+            @Override
+            public void onCarryOut() {
+                creatingAccountMaterialDialog.dismiss();
+                if (request.getStatus().equals(ValidateCreateBitsharesAccountRequest.StatusCode.SUCCEEDED)) {
+                    GrapheneAccount accountSeed = request.getAccount();
+                    Intent intent = new Intent(getApplicationContext(), BackupSeedActivity.class);
+                    intent.putExtra("SEED_ID", accountSeed.getId());
+                    startActivity(intent);
+                } else {
+                    fieldsValidator.validate();
+                }
+            }
+        });
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                CryptoNetInfoRequests.getInstance().addRequest(request);
+            }
+        };
+
+        thread.start();
     }
 
-
-    @OnFocusChange(R.id.tietPin)
-    public void onFocusChangePIN(View v, boolean hasFocus){
-
-        /*
-        * On lost focus
-        * */
-        if(!hasFocus){
-
-            /*
-             * Validate continue to create account
-             * */
-            if(validateFieldsToContinue()){
-                enableCreate();
-            }
-            else {
-                disableCreate();
-            }
-        }
-    }
-    @OnFocusChange(R.id.tietPinConfirmation)
-    public void onFocusChangePINConfirmation(View v, boolean hasFocus){
-
-        /*
-         * On lost focus
-         * */
-        if(!hasFocus){
-
-            /*
-             * Validate continue to create account
-             * */
-            if(validateFieldsToContinue()){
-                enableCreate();
-            }
-            else {
-                disableCreate();
-            }
-        }
-    }
-    @OnFocusChange(R.id.tietAccountName)
-    public void onFocusChangeAccountName(View v, boolean hasFocus){
-
-        /*
-         * On lost focus
-         * */
-        if(!hasFocus){
-
-            /*
-             * Validate continue to create account
-             * */
-            if(validateFieldsToContinue()){
-                enableCreate();
-            }
-            else {
-                disableCreate();
-            }
-        }
-    }
 
 
     /*
     * Validate that all is complete to continue to create
     * */
-    private boolean validateFieldsToContinue(){
-
-        /*
-        * Get the value of the fields
-        * */
-        final String pin = tilPin.getEditText().getText().toString().trim();
-        final String pinConfirmation = tilPinConfirmation.getEditText().getText().toString().trim();
-        final String accountName = tilAccountName.getEditText().getText().toString().trim();
-
-        final String pinError = tilPin.getError()==null?"":tilPin.getError().toString().trim();
-        final String pinConfirmationError = tietPinConfirmation.getError()==null?"":tietPinConfirmation.getError().toString().trim();
-        final String accountNameError = tietAccountName.getError()==null?"":tietAccountName.getError().toString().trim();
+    private void validateFieldsToContinue(){
 
         boolean result = false; //Contains the final result
 
-        if(!pin.isEmpty() && !pinConfirmation.isEmpty() && !accountName.isEmpty()) {
-            if(pinError.isEmpty() && pinConfirmationError.isEmpty() && accountNameError.isEmpty()){
-                result = true;
-            }
+        boolean pinValid = this.tietPin.getFieldValidatorModel().isValid();
+        boolean pinConfirmationValid = this.tietPinConfirmation.getFieldValidatorModel().isValid();
+        boolean pinAccountNameValid = this.tietAccountName.getFieldValidatorModel().isValid();
+
+        if(pinValid &&
+                pinConfirmationValid &&
+                pinAccountNameValid){
+            result = true; //Validation is correct
         }
+
+
 
         /*
         * If the result is true so the user can continue to the creation of the account
         * */
-        return result;
+        if(result){
+            enableCreate();
+        }
+        else{
+            disableCreate();
+        }
     }
+
 
     /*
     * Enable create button

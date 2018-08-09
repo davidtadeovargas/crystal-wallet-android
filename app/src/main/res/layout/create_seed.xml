@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed">
 
-        <android.support.design.widget.TextInputEditText
+        <cy.agorise.crystalwallet.views.natives.CustomTextInputEditText
             android:id="@+id/tietPin"
             android:maxLength="32"
             android:layout_width="match_parent"
@@ -52,7 +52,7 @@
         app:layout_constraintStart_toStartOf="@id/tilPin"
         app:layout_constraintEnd_toEndOf="@id/tilPin">
 
-        <android.support.design.widget.TextInputEditText
+        <cy.agorise.crystalwallet.views.natives.CustomTextInputEditText
             android:id="@+id/tietPinConfirmation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,11 +73,12 @@
         app:layout_constraintStart_toStartOf="@id/tilPinConfirmation"
         app:layout_constraintEnd_toEndOf="@id/tilPinConfirmation">
 
-        <android.support.design.widget.TextInputEditText
+        <cy.agorise.crystalwallet.views.natives.CustomTextInputEditText
             android:id="@+id/tietAccountName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/txt_account_name"
+            android:digits="abcdefghijklmnopqrstuvwxyz1234567890 -"
             android:inputType="textMultiLine"
             android:maxLength="255"
             android:singleLine="true" />

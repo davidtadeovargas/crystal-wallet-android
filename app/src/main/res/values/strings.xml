@@ -35,6 +35,7 @@
 
     <string name="window_create_seed_DialogTittle"></string>
     <string name="window_create_seed_DialogMessage">Creating New Account ...</string>
+    <string name="window_create_seed_Server_validation">Validating With Server ...</string>
 
     <string name="window_create_seed_Info">You will use your PIN yo make transactions between accounts</string>
 
@@ -129,7 +130,7 @@
     <string name="txt_validating_account">Validating account...</string>
     <string name="validating_account">Validating Account...</string>
     <string name="account_name_should_be_longer">Account name should be longer</string>
-    <string name="account_name_already_exist">Account Name %s already exist</string>
+    <string name="account_name_already_exist">Account Name already exist</string>
     <string name="account_name_not_exist">Account Name %s does not exist</string>
     <string name="account_already_exist">Account already exist</string>
     <string name="add_contact">Add</string>
