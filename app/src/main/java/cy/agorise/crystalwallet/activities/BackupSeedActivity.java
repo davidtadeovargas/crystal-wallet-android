@@ -7,13 +7,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +20,7 @@ import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedViewModel;
+
 //tvBrainKey
 public class BackupSeedActivity extends AppCompatActivity {
 

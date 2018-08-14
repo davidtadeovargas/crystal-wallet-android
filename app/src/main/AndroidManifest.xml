@@ -31,12 +31,11 @@
         <activity android:name=".activities.BoardActivity"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity android:name=".activities.CreateSeedActivity" >
+        </activity>
         <activity android:name=".activities.AccountSeedsManagementActivity" >
         </activity>
         <activity android:name=".activities.ImportSeedActivity" >
-        </activity>
-        <activity android:name=".activities.CreateSeedActivity"
-            android:noHistory="true">
         </activity>
         <activity android:name=".activities.SendTransactionActivity" >
         </activity>
