@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -19,23 +20,29 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
+import cy.agorise.crystalwallet.application.CrystalApplication;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.dialogs.material.ToastIt;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.fragments.ImportAccountOptionsFragment;
 import cy.agorise.crystalwallet.models.AccountSeed;
 import cy.agorise.crystalwallet.models.CryptoCoinBalance;
 import cy.agorise.crystalwallet.models.CryptoCoinTransaction;
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.models.GeneralSetting;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoCoinBalanceGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomCryptoNetAccountGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomSeedGenerator;
 import cy.agorise.crystalwallet.randomdatagenerators.RandomTransactionsGenerator;
 import cy.agorise.crystalwallet.application.CrystalSecurityMonitor;
+import cy.agorise.crystalwallet.util.NetworkUtility;
 import cy.agorise.crystalwallet.viewmodels.AccountSeedListViewModel;
 import cy.agorise.crystalwallet.viewmodels.TransactionListViewModel;
 import cy.agorise.crystalwallet.views.TransactionListView;
 
-public class IntroActivity extends AppCompatActivity {
+public class IntroActivity extends CustomActivity {
 
     TransactionListViewModel transactionListViewModel;
     TransactionListView transactionListView;
@@ -53,7 +60,15 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+
         ButterKnife.bind(this);
+
+
+
+        /*
+        * Test connection with server
+        * */
+        NetworkUtility.testServerConnnection(this);
 
         // Appbar animation
         mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -136,21 +151,56 @@ public class IntroActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnCreateAccount)
     public void createAccount() {
-        Intent intent = new Intent(this, CreateSeedActivity.class);
-        startActivity(intent);
+
+        /*
+         * Test connection with server, if no conection user can not continue
+         *
+         * */
+        final GrapheneApiGenerator.OnResponsesWebSocket onResponsesWebSocket = new GrapheneApiGenerator.OnResponsesWebSocket() {
+            @Override
+            public void onSuccess() {
+
+                /*
+                 * Open the window to create seed and account
+                 * */
+                Intent intent = new Intent(globalActivity, CreateSeedActivity.class);
+                startActivity(intent);
+            }
+            @Override
+            public void onError(Exception exception) {
+                //Nothing to implement, internally the user will see a toast
+            }
+        };
+        NetworkUtility.testServerConnnectionNormalError(this,onResponsesWebSocket);
     }
 
     @OnClick(R.id.btnImportAccount)
     public void importAccount() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("importAccountOptions");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
 
-        // Create and show the dialog.
-        ImportAccountOptionsFragment newFragment = ImportAccountOptionsFragment.newInstance();
-        newFragment.show(ft, "importAccountOptions");
+        /*
+         * Test connection with server, if no conection user can not continue
+         *
+         * */
+        final GrapheneApiGenerator.OnResponsesWebSocket onResponsesWebSocket = new GrapheneApiGenerator.OnResponsesWebSocket() {
+            @Override
+            public void onSuccess() {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Fragment prev = getSupportFragmentManager().findFragmentByTag("importAccountOptions");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                // Create and show the dialog.
+                ImportAccountOptionsFragment newFragment = ImportAccountOptionsFragment.newInstance();
+                newFragment.show(ft, "importAccountOptions");
+            }
+            @Override
+            public void onError(Exception exception) {
+                //Nothing to implement, internally the user will see a toast
+            }
+        };
+        NetworkUtility.testServerConnnectionNormalError(this,onResponsesWebSocket);
     }
 }

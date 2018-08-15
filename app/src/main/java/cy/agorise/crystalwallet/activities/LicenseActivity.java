@@ -10,8 +10,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.application.CrystalApplication;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
+import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.GeneralSetting;
+import cy.agorise.crystalwallet.network.CryptoNetManager;
 
 public class LicenseActivity extends AppCompatActivity {
 
@@ -23,6 +26,7 @@ public class LicenseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_license);
+
         ButterKnife.bind(this);
 
         // TODO check if license has been agreed

@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.application;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,6 +12,7 @@ import com.idescout.sql.SqlScoutServer;
 import java.util.Locale;
 
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.dao.CrystalDatabase;
 import cy.agorise.crystalwallet.enums.CryptoNet;
 import cy.agorise.crystalwallet.models.BitsharesAsset;
@@ -60,7 +62,7 @@ public class CrystalApplication extends Application {
         SqlScoutServer.create(this, getPackageName());
 
         //Using Bitshares Agorise Testnet
-        CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_TESTNET_URL);
+        //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_TESTNET_URL);
 
         //This is for testing the equivalent values on the testnet TODO remove
         if(db.bitsharesAssetDao().getBitsharesAssetInfoById(bitEURAsset.getBitsharesId())== null){

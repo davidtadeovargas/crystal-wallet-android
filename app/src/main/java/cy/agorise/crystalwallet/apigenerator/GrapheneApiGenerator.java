@@ -1,5 +1,6 @@
 package cy.agorise.crystalwallet.apigenerator;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.io.Serializable;
@@ -80,6 +81,30 @@ public abstract class GrapheneApiGenerator {
      * This is used for manager each listener in the subscription thread
      */
     private static HashMap<Long, SubscriptionListener> currentBitsharesListener = new HashMap<>();
+
+    /*
+    *
+    *  To present erros to user
+    * */
+    private static Activity activity;
+
+
+    /*
+     *
+     * Interface to catch only errors in connection with sockets
+     * */
+    private static GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker;
+
+    /*
+     *
+     * Interface to catch both errors and success in connection with sockets
+     * */
+    private static OnResponsesWebSocket onResponsesWebSocker;
+
+
+
+
+
 
     /**
      * Retrieves the data of an account searching by it's id
@@ -221,6 +246,8 @@ public abstract class GrapheneApiGenerator {
                         request.getListener().fail(request.getId());
                     }
                 }), CryptoNetManager.getURL(CryptoNet.BITSHARES));
+        thread.setActivity(activity); //To catch websocket errors to user interface
+        thread.setOnErrorWebSocker(onErrorWebSocker); //To deliver websocket errors to user interface
         thread.start();
     }
 
@@ -701,6 +728,37 @@ public abstract class GrapheneApiGenerator {
         public void onError(BaseResponse.Error error) {
 
         }
+    }
+
+
+    public static void setActivity(Activity activity) {
+        GrapheneApiGenerator.activity = activity;
+    }
+
+
+    public static void setOnResponsesWebSocker(OnResponsesWebSocket onResponsesWebSocker) {
+        GrapheneApiGenerator.onResponsesWebSocker = onResponsesWebSocker;
+    }
+
+    public static void setOnErrorWebSocker(OnErrorWebSocker onErrorWebSocker) {
+        GrapheneApiGenerator.onErrorWebSocker = onErrorWebSocker;
+    }
+
+    /*
+     *
+     * Interface to catch errors in connection with sockets
+     * */
+    public interface OnErrorWebSocker{
+        void onError(Exception exception);
+    }
+
+    /*
+     *
+     * Interface to catch succesfully connection with sockets
+     * */
+    public interface OnResponsesWebSocket {
+        void onSuccess();
+        void onError(Exception exception);
     }
 
 }

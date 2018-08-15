@@ -1,5 +1,7 @@
 package cy.agorise.crystalwallet.requestmanagers;
 
+import android.app.Activity;
+
 import cy.agorise.crystalwallet.enums.CryptoCoin;
 
 /**
@@ -19,6 +21,13 @@ public abstract class CryptoNetInfoRequest {
      */
     protected CryptoNetInfoRequestListener listener;
 
+
+
+
+
+
+
+
     protected CryptoNetInfoRequest(CryptoCoin coin){
         this.coin = coin;
     }
@@ -31,4 +40,5 @@ public abstract class CryptoNetInfoRequest {
         listener.onCarryOut();
         CryptoNetInfoRequests.getInstance().removeRequest(this);
     }
+
 }
