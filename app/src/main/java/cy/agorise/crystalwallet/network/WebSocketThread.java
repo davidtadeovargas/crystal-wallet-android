@@ -12,6 +12,7 @@ import com.neovisionaries.ws.client.WebSocketListener;
 import java.io.IOException;
 import java.util.HashMap;
 
+import cy.agorise.crystalwallet.activities.LoadingActivity;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
 import cy.agorise.crystalwallet.dialogs.material.DialogMaterial;
 
@@ -157,6 +158,13 @@ public class WebSocketThread extends Thread {
 
         canChange = false;
 
+        /*
+        * Show the loading activity so user can see the progress
+        * */
+        if(activity!=null){
+            LoadingActivity.show(activity);
+        }
+
         // Moves the current Thread into the background
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
@@ -175,6 +183,13 @@ public class WebSocketThread extends Thread {
             mWebSocket.connect();
 
             /*
+             * Hide the loading activity, now it is not more necesary
+             * */
+            if(activity!=null){
+                LoadingActivity.dismiss();
+            }
+
+            /*
             *
             * Websocket success response
             * */
@@ -184,6 +199,11 @@ public class WebSocketThread extends Thread {
 
         } catch (final Exception e) {
             Log.e(TAG, "WebSocketException. Msg: "+e.getMessage());
+
+            /*
+             * Hide the loading activity, now it is not more necesary
+             * */
+            LoadingActivity.dismiss();
 
             //Deliver error to user
             if(activity!=null){

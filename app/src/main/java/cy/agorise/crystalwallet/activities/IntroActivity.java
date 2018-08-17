@@ -63,8 +63,6 @@ public class IntroActivity extends CustomActivity {
 
         ButterKnife.bind(this);
 
-
-
         /*
         * Test connection with server
         * */

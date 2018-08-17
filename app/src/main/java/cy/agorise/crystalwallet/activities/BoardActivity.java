@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +21,19 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sjaramillo10.animatedtablayout.AnimatedTabLayout;
 
@@ -47,7 +56,7 @@ import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
  *
  */
 
-public class BoardActivity  extends AppCompatActivity {
+public class BoardActivity  extends CustomActivity {
 
     @BindView(R.id.tabLayout)
     public TabLayout tabLayout;
@@ -97,6 +106,54 @@ public class BoardActivity  extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /*
+        * Listener tabLayout to resalt text when clicked
+        * */
+        final TabLayout tabLayoutFinal = tabLayout;
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(final TabLayout.Tab tab) {
+
+                globalActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        LinearLayout tabLayout = (LinearLayout)((ViewGroup) tabLayoutFinal.getChildAt(0)).getChildAt(tab.getPosition());
+                        TextView tabTextView = (TextView) tabLayout.getChildAt(1);
+                        //tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP ,50);
+                        Spannable WordtoSpan = new SpannableString(tabTextView.getText());
+                        WordtoSpan.setSpan(new ForegroundColorSpan(Color.WHITE), 0, tabTextView.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        tabTextView.setText(WordtoSpan);
+                        tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.BOLD);
+                    }
+                });
+            }
+
+            @Override
+            public void onTabUnselected(final TabLayout.Tab tab) {
+
+                globalActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        LinearLayout tabLayout = (LinearLayout)((ViewGroup) tabLayoutFinal.getChildAt(0)).getChildAt(tab.getPosition());
+                        TextView tabTextView = (TextView) tabLayout.getChildAt(1);
+                        //tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP ,50);
+                        Spannable WordtoSpan = new SpannableString(tabTextView.getText());
+                        WordtoSpan.setSpan(new ForegroundColorSpan(globalActivity.getResources().getColor(R.color.whiteclear)), 0, tabTextView.getText().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        tabTextView.setText(WordtoSpan);
+                        tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.NORMAL);
+                    }
+                });
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+
+            }
+        });
 
         // Appbar animation
         mSurfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {

@@ -101,7 +101,10 @@
                 android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:tabSelectedTextColor="@color/white"
                 app:layout_collapseMode="pin"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                app:tabTextColor="@color/whiteclear"
                 android:animateLayoutChanges="true" />
 
         </android.support.design.widget.CollapsingToolbarLayout>

@@ -192,7 +192,14 @@ public class CryptoNetBalanceViewHolder extends RecyclerView.ViewHolder {
         } else {
             final CryptoNetBalanceViewHolder thisViewHolder = this;
             this.cryptoNetAccountId = balance.getAccountId();
-            cryptoNetName.setText(balance.getCryptoNet().getLabel());
+
+            /*
+            * The first letter should be in mayus
+            * */
+            final String crypto = balance.getCryptoNet().getLabel().toString().toLowerCase();
+            final String upperString = crypto.substring(0,1).toUpperCase() + crypto.substring(1);
+
+            cryptoNetName.setText(upperString);
 
             //Loads the crypto coin balance list of this account using a ViewModel and retrieving a LiveData List
             CryptoCoinBalanceListViewModel cryptoCoinBalanceListViewModel = ViewModelProviders.of(this.fragment).get(CryptoCoinBalanceListViewModel.class);
