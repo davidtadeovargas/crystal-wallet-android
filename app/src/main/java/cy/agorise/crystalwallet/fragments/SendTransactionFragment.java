@@ -32,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.zxing.Result;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.io.File;
 import java.math.RoundingMode;
@@ -73,7 +74,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     SendTransactionValidator sendTransactionValidator;
 
     @BindView(R.id.spFrom)
-    Spinner spFrom;
+    MaterialSpinner spFrom;
     @BindView(R.id.tvFromError)
     TextView tvFromError;
     @BindView(R.id.etTo)
@@ -176,8 +177,27 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
             CryptoNetAccountListViewModel cryptoNetAccountListViewModel = ViewModelProviders.of(this).get(CryptoNetAccountListViewModel.class);
             List<CryptoNetAccount> cryptoNetAccounts = cryptoNetAccountListViewModel.getCryptoNetAccountList();
             CryptoNetAccountAdapter fromSpinnerAdapter = new CryptoNetAccountAdapter(this.getContext(), android.R.layout.simple_spinner_item, cryptoNetAccounts);
-            spFrom.setAdapter(fromSpinnerAdapter);
-            spFrom.setSelection(0);
+
+            //spFrom.setAdapter(fromSpinnerAdapter);
+            //spFrom.setSelection(0);
+
+            /*
+            * Custom material spinner implementation
+            * */
+            spFrom.setItems(cryptoNetAccounts);
+            spFrom.setSelectedIndex(0);
+            spFrom.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<CryptoNetAccount>() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, CryptoNetAccount item) {
+                    sendTransactionValidator.validate();
+                }
+            });
+            spFrom.setOnNothingSelectedListener(new MaterialSpinner.OnNothingSelectedListener() {
+
+                @Override public void onNothingSelected(MaterialSpinner spinner) {
+
+                }
+            });
 
             // etFrom.setText(this.grapheneAccount.getName());
         }
@@ -230,10 +250,10 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
         }
     }
 
-    @OnItemSelected(R.id.spFrom)
+    /*@OnItemSelected(R.id.spFrom)
     public void afterFromSelected(Spinner spinner, int position) {
         this.sendTransactionValidator.validate();
-    }
+    }*/
 
     @OnTextChanged(value = R.id.etTo,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -311,7 +331,7 @@ public class SendTransactionFragment extends DialogFragment implements UIValidat
     @OnClick(R.id.btnSend)
     public void sendTransaction(){
         if (this.sendTransactionValidator.isValid()) {
-            CryptoNetAccount fromAccountSelected = (CryptoNetAccount) spFrom.getSelectedItem();
+            CryptoNetAccount fromAccountSelected = (CryptoNetAccount) spFrom.getItems().get(spFrom.getSelectedIndex());
 
 
             /*

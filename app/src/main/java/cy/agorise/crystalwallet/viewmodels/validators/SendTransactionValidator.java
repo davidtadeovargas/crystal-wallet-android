@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.jaredrummler.materialspinner.MaterialSpinner;
+
 import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.AmountValidationField;
 import cy.agorise.crystalwallet.viewmodels.validators.validationfields.AssetValidationField;
@@ -20,7 +22,7 @@ public class SendTransactionValidator extends UIValidator {
     private CryptoNetAccount account;
 
 
-    public SendTransactionValidator(Context context, CryptoNetAccount account, Spinner fromEdit, EditText toEdit, Spinner assetSpinner, EditText amountEdit, EditText memoEdit){
+    public SendTransactionValidator(Context context, CryptoNetAccount account, MaterialSpinner fromEdit, EditText toEdit, Spinner assetSpinner, EditText amountEdit, EditText memoEdit){
         super(context);
         this.account = account;
         this.addField(new FromValidationField(fromEdit));

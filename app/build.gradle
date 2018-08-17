@@ -52,6 +52,7 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    implementation 'com.jaredrummler:material-spinner:1.2.5'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     //testCompile 'com.android.support.test:runner:1.0.1'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' //DTVV Thrusday 31 July 2018

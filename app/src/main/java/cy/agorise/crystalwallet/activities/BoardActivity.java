@@ -120,6 +120,7 @@ public class BoardActivity  extends CustomActivity {
                     public void run() {
 
                         LinearLayout tabLayout = (LinearLayout)((ViewGroup) tabLayoutFinal.getChildAt(0)).getChildAt(tab.getPosition());
+                        tabLayout.setBackgroundColor(Color.TRANSPARENT);
                         TextView tabTextView = (TextView) tabLayout.getChildAt(1);
                         //tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP ,50);
                         Spannable WordtoSpan = new SpannableString(tabTextView.getText());

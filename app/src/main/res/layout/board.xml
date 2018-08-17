@@ -99,6 +99,7 @@
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_gravity="bottom"
+                android:background="@color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabSelectedTextColor="@color/white"

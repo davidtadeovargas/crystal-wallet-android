@@ -2,7 +2,10 @@ package cy.agorise.crystalwallet.viewmodels.validators.validationfields;
 
 import android.widget.Spinner;
 
+import com.jaredrummler.materialspinner.MaterialSpinner;
+
 import cy.agorise.crystalwallet.R;
+import cy.agorise.crystalwallet.models.CryptoNetAccount;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequestListener;
 import cy.agorise.crystalwallet.requestmanagers.CryptoNetInfoRequests;
 import cy.agorise.crystalwallet.requestmanagers.ValidateExistBitsharesAccountRequest;
@@ -14,9 +17,9 @@ import cy.agorise.crystalwallet.requestmanagers.ValidateExistBitsharesAccountReq
 public class FromValidationField extends ValidationField {
 
     //private EditText fromField;
-    private Spinner fromField;
+    private MaterialSpinner fromField;
 
-    public FromValidationField(Spinner fromField){
+    public FromValidationField(MaterialSpinner fromField){
         super(fromField);
         this.fromField = fromField;
     }
@@ -24,8 +27,9 @@ public class FromValidationField extends ValidationField {
     public void validate(){
         final String newValue;
 
-        if (fromField.getSelectedItem() != null) {
-            newValue = fromField.getSelectedItem().toString();
+        if (fromField.getSelectedIndex() != -1) {
+            final CryptoNetAccount cryptoNetAccount = (CryptoNetAccount) fromField.getItems().get(fromField.getSelectedIndex());
+            newValue = cryptoNetAccount.getName();
         } else {
             newValue = "";
         }
