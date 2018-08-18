@@ -105,7 +105,7 @@
                 app:tabSelectedTextColor="@color/white"
                 app:layout_collapseMode="pin"
                 app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-                app:tabTextColor="@color/whiteclear"
+                app:tabTextColor="@color/lightGrayClear"
                 android:animateLayoutChanges="true" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
