@@ -93,7 +93,7 @@ public abstract class GrapheneApiGenerator {
      *
      * Interface to catch only errors in connection with sockets
      * */
-    private static GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker;
+    private static OnErrorWebSocket onErrorWebSocket;
 
     /*
      *
@@ -247,7 +247,7 @@ public abstract class GrapheneApiGenerator {
                     }
                 }), CryptoNetManager.getURL(CryptoNet.BITSHARES));
         thread.setActivity(activity); //To catch websocket errors to user interface
-        thread.setOnErrorWebSocker(onErrorWebSocker); //To deliver websocket errors to user interface
+        thread.setOnErrorWebSocker(onErrorWebSocket); //To deliver websocket errors to user interface
         thread.start();
     }
 
@@ -740,15 +740,15 @@ public abstract class GrapheneApiGenerator {
         GrapheneApiGenerator.onResponsesWebSocker = onResponsesWebSocker;
     }
 
-    public static void setOnErrorWebSocker(OnErrorWebSocker onErrorWebSocker) {
-        GrapheneApiGenerator.onErrorWebSocker = onErrorWebSocker;
+    public static void setOnErrorWebSocket(OnErrorWebSocket onErrorWebSocket) {
+        GrapheneApiGenerator.onErrorWebSocket = onErrorWebSocket;
     }
 
     /*
      *
      * Interface to catch errors in connection with sockets
      * */
-    public interface OnErrorWebSocker{
+    public interface OnErrorWebSocket {
         void onError(Exception exception);
     }
 

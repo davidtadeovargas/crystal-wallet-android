@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketListener;
 
@@ -14,7 +13,6 @@ import java.util.HashMap;
 
 import cy.agorise.crystalwallet.activities.LoadingActivity;
 import cy.agorise.crystalwallet.apigenerator.GrapheneApiGenerator;
-import cy.agorise.crystalwallet.dialogs.material.DialogMaterial;
 
 /**
  * Created by henry on 8/10/2017.
@@ -43,7 +41,7 @@ public class WebSocketThread extends Thread {
      *
      * Interface to catch only errors in connection with sockets
      * */
-    private GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker;
+    private GrapheneApiGenerator.OnErrorWebSocket onErrorWebSocker;
 
     /*
      *
@@ -239,7 +237,7 @@ public class WebSocketThread extends Thread {
     }
 
 
-    public void setOnErrorWebSocker(GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker) {
+    public void setOnErrorWebSocker(GrapheneApiGenerator.OnErrorWebSocket onErrorWebSocker) {
         this.onErrorWebSocker = onErrorWebSocker;
     }
 

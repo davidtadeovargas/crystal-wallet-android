@@ -2,11 +2,9 @@ package cy.agorise.crystalwallet.network;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -70,7 +68,7 @@ public abstract class CryptoNetManager {
     public static void addCryptoNetURL(CryptoNet crypto,
                                        String[] urls,
                                        final Activity activity,
-                                       final GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker,
+                                       final GrapheneApiGenerator.OnErrorWebSocket onErrorWebSocker,
                                        final boolean showNormalError){
         addCryptoNetURL(crypto,urls,activity,onErrorWebSocker,null,showNormalError);
     }
@@ -95,7 +93,7 @@ public abstract class CryptoNetManager {
     public static void addCryptoNetURL(CryptoNet crypto,
                                                String[] urls,
                                                final Activity activity,
-                                               final GrapheneApiGenerator.OnErrorWebSocker onErrorWebSocker,
+                                               final GrapheneApiGenerator.OnErrorWebSocket onErrorWebSocker,
                                                final GrapheneApiGenerator.OnResponsesWebSocket onResponsesWebSocket,
                                                final boolean showNormalError) {
 
