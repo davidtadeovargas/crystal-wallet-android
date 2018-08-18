@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -217,8 +218,9 @@ public abstract class BitsharesFaucetApiGenerator {
 
     public interface IWebService {
         @Headers({"Content-Type: application/json"})
-        @POST("/api/v1/accounts")
+        @POST("/faucet/api/v1/accounts")
         Call<RegisterAccountResponse> getReg(@Body Map<String, HashMap> params);
+
     }
 
     public class RegisterAccountResponse {
