@@ -64,26 +64,6 @@ public class PocketRequestActivity extends AppCompatActivity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         this.configureForegroundDispatch();
-
-
-        String clave = "12345678901234567890";
-
-        char[] ch = clave.toCharArray();
-
-        StringBuilder builder = new StringBuilder();
-        for (char c : ch) {
-            String hexCode=String.format("%H", c);
-            builder.append(hexCode);
-        }
-        String claveHex = String.format("%040x", new BigInteger(1, clave.getBytes()));
-
-
-        long time = 1111111109/30;
-        String steps = Long.toHexString(time).toUpperCase();
-        while(steps.length() < 16) steps = "0" + steps;
-        Log.i("TEST", TOTP.generateTOTP(
-                claveHex,
-                steps, "6", "HmacSHA1"));
     }
 
     public void configureForegroundDispatch(){
@@ -130,17 +110,27 @@ public class PocketRequestActivity extends AppCompatActivity {
             tagIsoDep.connect();
             YkOathApi ykOathApi = new YkOathApi(tagIsoDep);
 
-            /*long unixTime = System.currentTimeMillis() / 1000L;
+            long unixTime = System.currentTimeMillis() / 1000L;
             byte[] timeStep = ByteBuffer.allocate(8).putLong(unixTime / 30L).array();
             byte[] response;
             response = ykOathApi.calculate("cy.agorise.crystalwallet",timeStep,true);
-            response[0].
-            private fun formatTruncated(data: ByteArray): String {
-                return with(ByteBuffer.wrap(data)) {
-                    val digits = get().toInt()
-                    int.toString().takeLast(digits).padStart(digits, '0')
-                }
-            }*/
+            ByteBuffer responseBB = ByteBuffer.wrap(response);
+            int digits = (int)responseBB.get();
+            String challengeString = ""+(responseBB.getInt());
+            String challenge = challengeString.substring(challengeString.length()-digits);
+            while (challenge.length() < digits){
+                challenge = '0'+challenge;
+            }
+
+            String storedChallenge = PasswordManager.totpd(yubikeySecret, unixTime, ykOathApi.getDeviceSalt());
+
+            Toast.makeText(this, "Secret:"+yubikeySecret+" StoredChallenge:"+storedChallenge+" Yubikey:"+challenge , Toast.LENGTH_LONG).show();
+
+            Log.i("TOTP","Secret: "+yubikeySecret);
+            Log.i("TOTP", "Unixtime: "+unixTime);
+            Log.i("TOTP", "Step: "+unixTime/30L);
+            Log.i("TOTP", "StoredChallenge: "+storedChallenge);
+            Log.i("TOTP", "Yubikey: "+challenge);
 
             tagIsoDep.close();
             //ykOathApi.

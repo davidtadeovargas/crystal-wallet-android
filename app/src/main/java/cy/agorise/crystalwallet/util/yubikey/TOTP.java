@@ -6,6 +6,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.crypto.Mac;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.util.TimeZone;
@@ -30,7 +32,7 @@ public class TOTP {
      */
 
     private static byte[] hmac_sha(String crypto, byte[] keyBytes,
-                                   byte[] text){
+                                   byte[] text, byte[] salt){
         try {
             Mac hmac;
             hmac = Mac.getInstance(crypto);
@@ -38,6 +40,10 @@ public class TOTP {
                     new SecretKeySpec(keyBytes, "RAW");
             hmac.init(macKey);
             return hmac.doFinal(text);
+            /*PBEKeySpec spec = new PBEKeySpec((new String(text)).toCharArray(), salt, 1000, 128);
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = skf.generateSecret(spec).getEncoded();
+            return hash;*/
         } catch (GeneralSecurityException gse) {
             throw new UndeclaredThrowableException(gse);
         }
@@ -82,8 +88,9 @@ public class TOTP {
 
     public static String generateTOTP(String key,
                                       String time,
-                                      String returnDigits){
-        return generateTOTP(key, time, returnDigits, "HmacSHA1");
+                                      String returnDigits,
+                                      byte[] salt){
+        return generateTOTP(key, time, returnDigits, "PBKDF2WithHmacSHA1", salt);
     }
 
 
@@ -101,8 +108,9 @@ public class TOTP {
 
     public static String generateTOTP256(String key,
                                          String time,
-                                         String returnDigits){
-        return generateTOTP(key, time, returnDigits, "HmacSHA256");
+                                         String returnDigits,
+                                         byte[] salt){
+        return generateTOTP(key, time, returnDigits, "HmacSHA256", salt);
     }
 
     /**
@@ -119,8 +127,9 @@ public class TOTP {
 
     public static String generateTOTP512(String key,
                                          String time,
-                                         String returnDigits){
-        return generateTOTP(key, time, returnDigits, "HmacSHA512");
+                                         String returnDigits,
+                                         byte[] salt){
+        return generateTOTP(key, time, returnDigits, "HmacSHA512", salt);
     }
 
 
@@ -140,7 +149,8 @@ public class TOTP {
     public static String generateTOTP(String key,
                                       String time,
                                       String returnDigits,
-                                      String crypto){
+                                      String crypto,
+                                      byte[] salt){
         int codeDigits = Integer.decode(returnDigits).intValue();
         String result = null;
 
@@ -153,7 +163,7 @@ public class TOTP {
         // Get the HEX in a Byte[]
         byte[] msg = hexStr2Bytes(time);
         byte[] k = hexStr2Bytes(key);
-        byte[] hash = hmac_sha(crypto, k, msg);
+        byte[] hash = hmac_sha(crypto, k, msg, salt);
 
         // put selected bytes into result int
         int offset = hash[hash.length - 1] & 0xf;
