@@ -60,7 +60,7 @@ public class CrystalApplication extends Application {
         SqlScoutServer.create(this, getPackageName());
 
         //Using Bitshares Agorise Testnet
-        CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_TESTNET_URL);
+        //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_TESTNET_URL);
 
         //This is for testing the equivalent values on the testnet TODO remove
         if(db.bitsharesAssetDao().getBitsharesAssetInfoById(bitEURAsset.getBitsharesId())== null){
@@ -91,7 +91,7 @@ public class CrystalApplication extends Application {
         CryptoNetEvents.getInstance().addListener(crystalWalletNotifier);
 
         //Next line is for use the bitshares main net
-        //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
+        CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
 
         GeneralSetting generalSettingPreferredLanguage = db.generalSettingDao().getSettingByName(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
 

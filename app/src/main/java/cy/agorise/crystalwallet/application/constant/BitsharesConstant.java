@@ -30,7 +30,9 @@ public abstract class BitsharesConstant {
                     "http://185.208.208.147:11012",      // Openledger node
             };
 
-    public final static String FAUCET_URL = "http://185.208.208.147:5010";
+    //testnet faucet
+    //public final static String FAUCET_URL = "http://185.208.208.147:5010";
+    public final static String FAUCET_URL = "https://de.palmpay.io";
     public final static String EQUIVALENT_URL = "wss://bitshares.openledger.info/ws";
 
     public final static BitsharesAsset[] SMARTCOINS = new BitsharesAsset[]{
