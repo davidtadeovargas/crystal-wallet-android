@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:configChanges="locale"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.LicenseActivity">
+        <activity android:name=".tests.activities.dialogs.Test_CrystalDialogActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,6 +87,14 @@
 
         <activity android:name=".activities.CreateContactActivity">
         </activity>
+
+
+        <!--Test activities-->
+        <activity android:name=".tests.activities.dialogs.Test_DialogMaterialActivity">
+        </activity>
+        <!--<activity android:name=".activities.Test_CrystalDialogActivity">
+        </activity>-->
+
     </application>
 
 </manifest>

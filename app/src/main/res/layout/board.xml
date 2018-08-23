@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
+            android:background="@color/red"
             app:contentScrim="@color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
@@ -30,10 +31,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <View
+            <ImageView
+                android:id="@+id/imagevieGIF"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimaryTransparent"/>
+                />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

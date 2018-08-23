@@ -33,6 +33,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -69,6 +72,9 @@ public class BoardActivity  extends CustomActivity {
     @BindView(R.id.fabAddContact)
     public FloatingActionButton fabAddContact;
 
+    @BindView(R.id.imagevieGIF)
+    public ImageView imagevieGIF;
+
     public BoardPagerAdapter boardAdapter;
 
     /*
@@ -102,6 +108,13 @@ public class BoardActivity  extends CustomActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /*
+        *  Set the bubbles animation
+        * */
+        final RequestOptions options = new RequestOptions();
+        options.centerCrop();
+        Glide.with(this).asGif().load(R.raw.burbujas).apply(options).into(imagevieGIF);
 
         /*
         * Listener tabLayout to resalt text when clicked
