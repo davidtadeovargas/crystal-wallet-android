@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <ImageView
+            <cy.agorise.crystalwallet.views.natives.GIFView
                 android:id="@+id/imagevieGIF"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

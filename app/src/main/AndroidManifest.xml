@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:configChanges="locale"
         android:theme="@style/AppTheme">
-        <activity android:name=".tests.activities.dialogs.Test_CrystalDialogActivity">
+        <activity android:name=".activities.LicenseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -92,8 +92,16 @@
         <!--Test activities-->
         <activity android:name=".tests.activities.dialogs.Test_DialogMaterialActivity">
         </activity>
-        <!--<activity android:name=".activities.Test_CrystalDialogActivity">
-        </activity>-->
+        <activity android:name=".tests.activities.dialogs.Test_LoadingActivity">
+        </activity>
+        <activity android:name=".tests.activities.dialogs.Test_CrystalDialogActivity">
+        </activity>
+        <activity android:name=".tests.activities.dialogs.Test_GIFActivity">
+        </activity>
+        <activity android:name=".tests.activities.dialogs.Test_ToastActivity">
+        </activity>
+        <activity android:name=".tests.activities.dialogs.Test_VideoActivity">
+        </activity>
 
     </application>
 

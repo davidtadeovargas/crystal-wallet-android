@@ -47,6 +47,7 @@ import cy.agorise.crystalwallet.fragments.ContactsFragment;
 import cy.agorise.crystalwallet.fragments.ReceiveTransactionFragment;
 import cy.agorise.crystalwallet.fragments.SendTransactionFragment;
 import cy.agorise.crystalwallet.fragments.TransactionsFragment;
+import cy.agorise.crystalwallet.views.natives.GIFView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import cy.agorise.crystalwallet.viewmodels.CryptoNetBalanceListViewModel;
 
@@ -73,7 +74,7 @@ public class BoardActivity  extends CustomActivity {
     public FloatingActionButton fabAddContact;
 
     @BindView(R.id.imagevieGIF)
-    public ImageView imagevieGIF;
+    public GIFView imagevieGIF;
 
     public BoardPagerAdapter boardAdapter;
 
@@ -112,9 +113,8 @@ public class BoardActivity  extends CustomActivity {
         /*
         *  Set the bubbles animation
         * */
-        final RequestOptions options = new RequestOptions();
-        options.centerCrop();
-        Glide.with(this).asGif().load(R.raw.burbujas).apply(options).into(imagevieGIF);
+        imagevieGIF.centerCrop();
+        imagevieGIF.load(R.raw.burbujas);
 
         /*
         * Listener tabLayout to resalt text when clicked
