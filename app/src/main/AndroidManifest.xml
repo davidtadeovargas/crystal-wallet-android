@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:configChanges="locale"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.LicenseActivity">
+        <activity android:name=".tests.activities.dialogs.Test_VideoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -100,8 +100,8 @@
         </activity>
         <activity android:name=".tests.activities.dialogs.Test_ToastActivity">
         </activity>
-        <activity android:name=".tests.activities.dialogs.Test_VideoActivity">
-        </activity>
+        <!--<activity android:name=".tests.activities.dialogs.Test_VideoActivity">
+        </activity>-->
 
     </application>
 

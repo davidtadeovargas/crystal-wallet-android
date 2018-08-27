@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="create_account_window_err_at_least_one_number" translatable="false">The Account Name should contains at least one number</string>
+    <string name="create_account_window_err_min_account_name_len" translatable="false">The Account Name should contains at least 10 characters length</string>
+    <string name="create_account_window_err_pin_empty" translatable="false">PIN is emtpy</string>
+    <string name="create_account_window_err_pin_confirmation_empty" translatable="false">PIN is emtpy</string>
+    <string name="create_account_window_err_account_empty" translatable="false">Account Name is emtpy</string>
+    <string name="create_account_window_err_at_least_one_character" translatable="false">The Account Name should contains at least one character</string>
+    <string name="create_account_window_err_at_least_pin_characters" translatable="false">The PIN should contains at least 6 digits</string>
+    <string name="create_account_window_err_at_least_one_script" translatable="false">The Account Name should contain at least one \'-\'</string>
+
+    <string name="network_err_no_server_connection" translatable="false">No server connection</string>
+
+
+</resources>
