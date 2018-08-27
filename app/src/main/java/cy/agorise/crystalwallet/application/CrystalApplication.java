@@ -93,7 +93,7 @@ public class CrystalApplication extends Application {
         CryptoNetEvents.getInstance().addListener(crystalWalletNotifier);
 
         //Next line is for use the bitshares main net
-        //CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
+        CryptoNetManager.addCryptoNetURL(CryptoNet.BITSHARES,BITSHARES_URL);
 
         GeneralSetting generalSettingPreferredLanguage = db.generalSettingDao().getSettingByName(GeneralSetting.SETTING_NAME_PREFERRED_LANGUAGE);
 

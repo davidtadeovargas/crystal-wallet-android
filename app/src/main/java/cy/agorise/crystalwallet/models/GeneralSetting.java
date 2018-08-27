@@ -23,6 +23,8 @@ public class GeneralSetting {
     public final static String SETTING_PATTERN = "PATTERN";
     public final static String SETTING_NAME_RECEIVED_FUNDS_SOUND_PATH = "RECEIVED_FUNDS_SOUND_PATH";
     public final static String SETTING_LAST_LICENSE_READ = "LAST_LICENSE_READ";
+    public final static String SETTING_YUBIKEY_OATH_TOTP_NAME = "YUBIKEY_OATH_TOTP_NAME";
+    public final static String SETTING_YUBIKEY_OATH_TOTP_PASSWORD = "YUBIKEY_OATH_TOTP_PASSWORD";
 
     /**
      * The id on the database

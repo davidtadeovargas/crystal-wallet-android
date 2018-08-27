@@ -610,7 +610,7 @@ public abstract class GrapheneApiGenerator {
                     public void onError(BaseResponse.Error error) {
                         request.getListener().fail(request.getId());
                     }
-                }), BitsharesConstant.EQUIVALENT_URL); //todo change equivalent url for current server url
+                }), CryptoNetManager.getURL(CryptoNet.BITSHARES)); //todo change equivalent url for current server url
         thread.start();
     }
 
@@ -626,7 +626,7 @@ public abstract class GrapheneApiGenerator {
         for (BitsharesAsset quoteAsset : quoteAssets) {
             WebSocketThread thread = new WebSocketThread(new GetLimitOrders(baseAsset.getBitsharesId(),
                     quoteAsset.getBitsharesId(), 10, new EquivalentValueListener(baseAsset,
-                    quoteAsset, context)), BitsharesConstant.EQUIVALENT_URL); //todo change equivalent url for current server url
+                    quoteAsset, context)), CryptoNetManager.getURL(CryptoNet.BITSHARES)); //todo change equivalent url for current server url
             thread.start();
         }
     }

@@ -6,6 +6,7 @@ buildscript {
         jcenter()
         google()
     }
+    ext.kotlin_version = '1.2.51'
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'

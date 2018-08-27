@@ -108,6 +108,7 @@ public class IntroActivity extends CustomActivity {
             } else {
                 //Intent intent = new Intent(this, CreateSeedActivity.class);
                 Intent intent = new Intent(this, BoardActivity.class);
+                //Intent intent = new Intent(this, PocketRequestActivity.class);
                 startActivity(intent);
             }
 
